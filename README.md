@@ -1,24 +1,26 @@
-# sign_vectors
+# Bijectivity of exponential and polynomial maps
 
-install ...
+## Installation
 
 From folder
 ```
 make install
 ```
 
-from github
-```
-sage -pip install git+https://github.com/IceTyp/bijectivity_exponential_maps.git
-```
+To download and install the latest development version on a system where Sage
+was built from source or installed from official packages, run
 
-To load the module `sign_vectors`, run
-```
-from sign_vectors import *
-```
+    sage -pip install git+https://github.com/IceTyp/bijectivity_exponential_maps.git
 
-To load the module `sign_vectors.oriented_matroids`, run
+or
+
+    sage -pip install --user git+https://github.com/IceTyp/bijectivity_exponential_maps.git
+
+The optional --user flag causes the package to be installed in your .sage directory instead of the Sage installation tree.
+
+
+To load the module `bijectivity_exponential_maps`, run
 ```
-from sign_vectors.oriented_matroids import *
+from bijectivity_exponential_maps import *
 ```
 
