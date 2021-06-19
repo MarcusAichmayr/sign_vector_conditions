@@ -8,7 +8,9 @@ make install
 ```
 
 from github
-...
+```
+sage -pip install git+https://github.com/IceTyp/bijectivity_exponential_maps.git
+```
 
 To load the module `sign_vectors`, run
 ```
