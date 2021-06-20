@@ -11,16 +11,16 @@ setup(
 #    description='todo',
     long_description = readfile("README.md"),
     long_description_content_type="text/markdown",
-    url='todo github',
+    url='https://github.com/MarcusAichmayr/bijectivity_exponential_maps',
     author='Marcus Aichmayr',
-    author_email='todo',
+#    author_email='',
     license='GPLv3',
     classifiers=[
       # How mature is this project? Common values are
       #   3 - Alpha
       #   4 - Beta
       #   5 - Production/Stable
-      'Development Status :: 4 - Beta',
+      'Development Status :: 5 - Stable',
       'Intended Audience :: Science/Research',
       'Topic :: Scientific/Engineering :: Mathematics',
       'License :: OSI Approved :: GNU General Public License v3',

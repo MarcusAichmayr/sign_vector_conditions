@@ -1,8 +1,4 @@
 .PHONY: install
-#test
-
-#build:
-#	sage -python setup.py build_ext --inplace
 
 install:
 	sage -pip install --upgrade --no-index .
