@@ -6,16 +6,16 @@ def readfile(filename):
         return f.read()
 
 setup(
-    name = "bijectivity_exponential_maps",
+    name = 'bijectivity_exponential_maps',
     version = readfile("VERSION").strip(), # the VERSION file is shared with the documentation
-#    description='todo',
+    description = 'a Sage package to work with bijectivity of exponential and polynomial maps',
     long_description = readfile("README.md"),
-    long_description_content_type="text/markdown",
-    url='https://github.com/MarcusAichmayr/bijectivity_exponential_maps',
-    author='Marcus Aichmayr',
-#    author_email='',
-    license='GPLv3',
-    classifiers=[
+    long_description_content_type = 'text/markdown',
+    url = 'https://github.com/MarcusAichmayr/bijectivity_exponential_maps',
+    author = 'Marcus Aichmayr',
+    author_email = 'aichmayr.marcus@gmail.com',
+    license = 'GPLv3',
+    classifiers = [
       # How mature is this project? Common values are
       #   3 - Alpha
       #   4 - Beta
