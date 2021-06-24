@@ -18,7 +18,6 @@ from sage.rings.infinity import Infinity
 from sage.misc.flatten import flatten
 from sage.geometry.polyhedron.constructor import Polyhedron
 
-# Thm14cond2
 def cond_faces(W, Wt):
     r"""
     Returns whether every positive ``X`` in ``sign(Wt)^perp`` has a positive
@@ -47,7 +46,6 @@ def cond_faces(W, Wt):
     return True
 
 
-# Thm14cond3
 def cond_nondegenerate(W, Wt, certificate=False):
     r"""
     Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
@@ -65,7 +63,6 @@ def cond_nondegenerate(W, Wt, certificate=False):
     return nondegenerate(W, Wt, certificate=certificate)
 
 
-# Thm14cond3
 def nondegenerate(W, Wt, certificate=False):
     r"""
     Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
@@ -87,7 +84,8 @@ def nondegenerate(W, Wt, certificate=False):
     c1 = nondeg_cond1(W, Wt, certificate=certificate)
     return c1
 
-def nondeg_cond1(W, Wt, certificate=False, debug=False):
+
+def nondeg_cond1(W, Wt, certificate=False):
     r"""
     INPUT:
     
@@ -104,12 +102,8 @@ def nondeg_cond1(W, Wt, certificate=False, debug=False):
     P = pos_covectors_from_matrix(W, kernel=True)
     
     if P == []:
-#        print('P empty')
         return True
     
-    if debug:
-        print("positive covectors:", P)
-        print()
     n = Wt.ncols() # length of vectors
     degenerate = False # might change in recursion
     
@@ -158,19 +152,6 @@ def nondeg_cond1(W, Wt, certificate=False, debug=False):
                 if A: # A is not empty matrix
                     evs = elementary_vectors(A, kernel=True)
                 
-                    if debug:
-                        print('  checking', X, 'for I =', I)
-                        print('  M_:')
-                        print(M_)
-                        print('  subspace:')
-                        print(M_.right_kernel_matrix())
-                        print('    evs:', evs)
-                        print('    L_: ', L_)
-    #                    print('    l_: ', l_)
-                        print('    R_:', R_)
-    #                    print('    R2_:', R2_)
-                        print('    exists_vector(evs, L_, R_) =', exists_vector(evs, L_, R_))
-                        print('    exists_vector(evs, L_, inf) =', exists_vector(evs, L_, inf))
                     if exists_vector(evs, L_, R_):
                         degenerate = True
 
@@ -182,19 +163,16 @@ def nondeg_cond1(W, Wt, certificate=False, debug=False):
                         rec(P[:], M_, I + [X.support()], L_, R_)
                     else:
                         if certificate:
-                            v = exists_vector(A, L_, inf, kernel=False, output_vector=True)[1]
+                            v = exists_vector(A, L_, inf, kernel=False, certificate=True)[1]
                             proof.append([v, I + [X.support()]])
                 else:
                     if certificate:
-                        v = exists_vector(A, L_, inf, kernel=False, output_vector=True)[1]
+                        v = exists_vector(A, L_, inf, kernel=False, certificate=True)[1]
                         proof.append([v, I + [X.support()]])
 
-#             else: # delete
-#                 print('  ', X, 'übersprungen')
-            
             if degenerate:
                 return
-        return # went through whole loop
+        return
     
     rec(P, M, [], L, R)
     
@@ -282,25 +260,15 @@ def find_vector(M, I):
     return P.representative_point()
 
 
-def nondeg_cond2(W, Wt, debug=False):
+def nondeg_cond2(W, Wt):
     ccWt = normalize(cocircuits_from_matrix(Wt))
     ccWp = pos_cocircuits_from_matrix(W)
-    if debug:
-        print('ccWt:', ccWt)
-        print('ccWp:', ccWp)
     for X in ccWt:
-#        if 1 in set(X): # positive component # not important. If there is --0-, then there is also ++0+.
         val = False
         for Y in ccWp:
             if set(X.zero_support()).issubset(Y.zero_support()):
-                if debug:
-                    print('X:', X)
-                    print('Y:', Y)
-                    print()
                 val = True
                 break
         if val == False:
-            if debug:
-                print('X:', X)
             return False
     return True
