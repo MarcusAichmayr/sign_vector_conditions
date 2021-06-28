@@ -20,8 +20,9 @@ from sage.geometry.polyhedron.constructor import Polyhedron
 
 def cond_faces(W, Wt):
     r"""
-    Returns whether every positive ``X`` in ``sign(Wt)^perp`` has a positive
-    ``Y`` in ``sign(W)^perp`` such that ``Y <= X``.
+    Returns whether every positive sign vector ``X`` corresponding to the rows of
+    ``Wt`` has a positive sign vector ``Y`` corresponding to the rows of ``W``
+    such that ``Y <= X``.
     
     INPUT:
     
@@ -57,8 +58,14 @@ def cond_nondegenerate(W, Wt, certificate=False):
     
     - ``Wt`` -- a matrix with ``n`` columns
     
+    - ``certificate`` -- a boolean (default: ``False``)
+
     OUTPUT:
     a boolean
+    
+    - If ``certificate`` is true:
+    
+      - If the result is true, returns a vector as a certificate.
     """
     return nondegenerate(W, Wt, certificate=certificate)
 
@@ -74,8 +81,14 @@ def nondegenerate(W, Wt, certificate=False):
     
     - ``Wt`` -- a matrix with ``n`` columns
     
+    - ``certificate`` -- a boolean (default: ``False``)
+
     OUTPUT:
     a boolean
+
+    - If ``certificate`` is true:
+    
+      - If the result is true, returns a vector as a certificate.
     """
     c2 = nondeg_cond2(W, Wt)
     if c2:
@@ -87,14 +100,22 @@ def nondegenerate(W, Wt, certificate=False):
 
 def nondeg_cond1(W, Wt, certificate=False):
     r"""
+    Returns whether the first condition of ``cond_nondegenerate`` is satisfied.
+    
     INPUT:
     
     - ``W`` -- a matrix with ``n`` columns
     
     - ``Wt`` -- a matrix with ``n`` columns
     
+    - ``certificate`` -- a boolean (default: ``False``)
+    
     OUTPUT:
     a boolean
+
+    - If ``certificate`` is true:
+    
+      - If the result is true, returns a vector as a certificate.
     """
     
     assert W.ncols() == Wt.ncols()

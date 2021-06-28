@@ -16,7 +16,7 @@ from sage.matrix.special import ones_matrix
 
 def f_pol(W, Wt, c=None):
     r"""
-    Returns a polynomial map.
+    Returns the polynomial map determined by the matrices ``W`` and ``Wt``.
     
     INPUT:
     
@@ -27,8 +27,6 @@ def f_pol(W, Wt, c=None):
     - ``c`` -- a vector (optional)
     
     OUTPUT:
-    
-    Returns the polynomial map determined by the matrices ``W`` and ``Wt``.
     
     - If ``c`` is omitted, the result take the vector consisting of ones.
     """
@@ -48,7 +46,7 @@ def f_pol(W, Wt, c=None):
 
 def f_exp(W, Wt, c=None):
     r"""
-    Returns an exponential map.
+    Returns the exponential map determined by the matrices ``W`` and ``Wt``.
     
     INPUT:
     
@@ -59,8 +57,6 @@ def f_exp(W, Wt, c=None):
     - ``c`` -- a vector (optional)
     
     OUTPUT:
-    
-    Returns the exponential map determined by the matrices ``W`` and ``Wt``.
     
     - If ``c`` is omitted, the result take the vector consisting of ones.
     """
