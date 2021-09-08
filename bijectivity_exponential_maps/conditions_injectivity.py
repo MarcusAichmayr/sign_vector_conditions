@@ -27,12 +27,13 @@ def cond_inj_intersection(W, Wt):
     OUTPUT:
     a boolean
     """
-    assert W.ncols() == Wt.ncols(), 'matrices have different number of columns'
+    if W.ncols() != Wt.ncols():
+        raise ValueError('Matrices have different number of columns.')
     
     cvW = covectors_from_matrix(W)
     try:
         cvWt = covectors_from_matrix(Wt, kernel=True)
-    except AssertionError: # kernel matrix might be empty, no elementary vectors
+    except ValueError: # kernel matrix might be empty, no elementary vectors
         return True
     cvWn = normalize(cvW)
     cvWtn = normalize(cvWt)
@@ -45,7 +46,8 @@ def max_minors_prod(A, B):
     r"""Multiplies the maximal minors of two matrices component-wise."""
     A1 = A.matrix_from_rows(A.pivot_rows())
     B1 = B.matrix_from_rows(B.pivot_rows())
-    assert A1.dimensions() == B1.dimensions()
+    if A1.dimensions() != B1.dimensions():
+        raise ValueError('Matrices must have same dimensions.')
     r = A1.nrows() # should be equal to B1.nrows()
     mA = A1.minors(r)
     mB = B1.minors(r)

@@ -30,12 +30,13 @@ def f_pol(W, Wt, c=None):
     
     - If ``c`` is omitted, the result take the vector consisting of ones.
     """
-    assert W.dimensions() == Wt.dimensions()
+    if W.dimensions() != Wt.dimensions():
+        raise ValueError('Matrices must have same dimensions.')
 
     if c == None:
         c = vector(ones_matrix(1, W.ncols()))
-    else:
-        assert len(c) == W.ncols()
+    elif len(c) != W.ncols():
+        raise ValueError('Number of columns and dimension of ``c`` do not match.')
     
     (d, n) = W.dimensions()
     
@@ -60,12 +61,13 @@ def f_exp(W, Wt, c=None):
     
     - If ``c`` is omitted, the result take the vector consisting of ones.
     """
-    assert W.dimensions() == Wt.dimensions()
+    if W.dimensions() != Wt.dimensions():
+        raise ValueError('Matrices must have same dimensions.')
 
     if c == None:
         c = vector(ones_matrix(1, W.ncols()))
-    else:
-        assert len(c) == W.ncols()
+    elif len(c) != W.ncols():
+        raise ValueError('Number of columns and dimension of ``c`` do not match.')
     
     (d, n) = W.dimensions()
     

@@ -118,7 +118,8 @@ def nondeg_cond1(W, Wt, certificate=False):
       - If the result is true, returns a vector as a certificate.
     """
     
-    assert W.ncols() == Wt.ncols()
+    if W.ncols() != Wt.ncols():
+        raise ValueError('Matrices have different number of columns.')
     # eventuell auf disjoint support achten. Sind +0 und 0+ dabei, dann müssen wir ++ nicht betrachten.
     P = pos_covectors_from_matrix(W, kernel=True)
     

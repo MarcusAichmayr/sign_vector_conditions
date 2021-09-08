@@ -64,7 +64,8 @@ def cond_closure_minors(W, Wt):
     OUTPUT:
     A boolean or a symbolic expression if variables occur.
     """
-    assert W.dimensions() == Wt.dimensions()
+    if W.dimensions() != Wt.dimensions():
+        raise ValueError('Matrices must have same dimensions.')
     d  = W.nrows()
     m  = W.minors(d)
     mt = Wt.minors(d)

@@ -70,7 +70,8 @@ def pos_covectors_from_matrix(A, kernel=False):
     ev = elementary_vectors(A, kernel=kernel)
     L = [sign_vector(v) for v in ev if not sign_vector(v) < 0] + [sign_vector(-v) for v in ev if not sign_vector(-v) < 0]
 
-    assert L, 'List of cocircuits is empty.'
+    if not L:
+        raise ValueError('List of cocircuits is empty.')
     n = L[0].length()
     F = []
     F_new = [zero_sign_vector(n)]
