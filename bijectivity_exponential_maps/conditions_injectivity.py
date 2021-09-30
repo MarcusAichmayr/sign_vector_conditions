@@ -124,7 +124,7 @@ Finally, we consider an example with variables::
 
 The matrix ``Wt`` contains the variables ``a, b \in \mathcal{R}``.
 Consequently, we cannot compute the corresponding oriented matroids.
-On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
+On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is::
 
     sage: m1 = W.minors(2)
     sage: m1
