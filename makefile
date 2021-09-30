@@ -9,3 +9,8 @@ test:
 	sage tests/test_conditions_injectivity.py -v # remove this later
 	sage tests/test_conditions_bijectivity_robust.py -v # remove this later
 
+doc:
+	cd docs && make html
+
+doc-pdf:
+	cd docs && make latexpdf
