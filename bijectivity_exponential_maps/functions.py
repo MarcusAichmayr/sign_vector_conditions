@@ -1,4 +1,7 @@
 r"""
+In this module, we compute polynomial and exponential maps
+corresponding to given matrices.
+
 EXAMPLES::
 
     sage: from bijectivity_exponential_maps.functions import *

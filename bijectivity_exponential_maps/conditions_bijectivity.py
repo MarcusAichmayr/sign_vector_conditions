@@ -1,4 +1,6 @@
 r"""
+In this module, we check bijectivity for exponential maps.
+
 EXAMPLES::
 
     sage: from bijectivity_exponential_maps import *
