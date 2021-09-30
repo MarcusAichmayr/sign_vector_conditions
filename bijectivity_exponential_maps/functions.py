@@ -1,3 +1,40 @@
+r"""
+EXAMPLES::
+
+    sage: from bijectivity_exponential_maps.functions import *
+    sage: var('x1, x2')
+    (x1, x2)
+    sage: W = matrix([[1,0,-1],[0,1,-1]])
+    sage: W
+    [ 1  0 -1]
+    [ 0  1 -1]
+    sage: Wt = matrix([[1,0,-1],[0,1,0]])
+    sage: Wt
+    [ 1  0 -1]
+    [ 0  1  0]
+    sage: c = vector([1,2,4])
+    sage: fc = f_pol(W, Wt, c)
+    sage: fc(x1, x2)
+    (x1 - 4/x1, 2*x2 - 4/x1)
+    sage: fc(1,2)
+    (-3, 0)
+    sage: fc = f_pol(W, Wt)
+    sage: fc(x1, x2)
+    (x1 - 1/x1, x2 - 1/x1)
+    sage: fc(1,2)
+    (0, 1)
+    sage: Fc = f_exp(W, Wt, c)
+    sage: Fc(x1, x2)
+    (-4*e^(-x1) + e^x1, -4*e^(-x1) + 2*e^x2)
+    sage: Fc(1,2)
+    (e - 4*e^(-1), 2*e^2 - 4*e^(-1))
+    sage: Fc = f_exp(W, Wt)
+    sage: Fc(x1, x2)
+    (-e^(-x1) + e^x1, -e^(-x1) + e^x2)
+    sage: Fc(1,2)
+    (e - e^(-1), e^2 - e^(-1))
+"""
+
 #############################################################################
 #  Copyright (C) 2021                                                       #
 #                Marcus Aichmayr (aichmayr.marcus@gmail.com)                #

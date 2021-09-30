@@ -1,3 +1,82 @@
+r"""
+EXAMPLES::
+
+    sage: from bijectivity_exponential_maps import *
+    sage: W = matrix([[1,0,-1],[0,1,-1]])
+    sage: W
+    [ 1  0 -1]
+    [ 0  1 -1]
+    sage: Wt = matrix([[1,0,-1],[0,1,0]])
+    sage: Wt
+    [ 1  0 -1]
+    [ 0  1  0]
+    sage: from sign_vectors.oriented_matroids import *
+    sage: cvW = covectors_from_matrix(W, algorithm='fe')
+    sage: cvW
+    [(000), (0-+), (+-0), (+0-), (-0+), (-+0), (0+-), (+-+), (+--), (-++), (--+), (-+-), (++-)]
+    sage: cvWt = covectors_from_matrix(Wt, kernel=True, algorithm='fe')
+    sage: cvWt
+    [(000), (+0+), (-0-)]
+    sage: set(cvW).intersection(cvWt)
+    {(000)}
+    sage: cond_inj_intersection(W, Wt)
+    True
+    sage: m1 = W.minors(2)
+    sage: m1
+    [1, -1, 1]
+    sage: m2 = Wt.minors(2)
+    sage: m2
+    [1, 0, 1]
+    sage: [m1[i]*m2[i] for i in range(len(m1))]
+    [1, 0, 1]
+    sage: cond_inj_minors(W, Wt)
+    True
+    sage: W = matrix([[1,0,-1],[0,1,-1]])
+    sage: W
+    [ 1  0 -1]
+    [ 0  1 -1]
+    sage: Wt = matrix([[1,0,-1],[0,1,1]])
+    sage: Wt
+    [ 1  0 -1]
+    [ 0  1  1]
+    sage: covectors_from_matrix(W, algorithm='fe', separate=True)
+    [[(000)], [(0-+), (+-0), (+0-), (-0+), (-+0), (0+-)], [(+-+), (+--), (-++), (--+), (-+-), (++-)]]
+    sage: covectors_from_matrix(Wt, kernel=True, algorithm='fe', separate=True)
+    [[(000)], [(+-+), (-+-)]]
+    sage: cond_inj_intersection(W, Wt)
+    False
+    sage: m1 = W.minors(2)
+    sage: m1
+    [1, -1, 1]
+    sage: m2 = Wt.minors(2)
+    sage: m2
+    [1, 1, 1]
+    sage: [m1[i]*m2[i] for i in range(len(m1))]
+    [1, -1, 1]
+    sage: cond_inj_minors(W, Wt)
+    False
+    sage: var('a,b')
+    (a, b)
+    sage: W = matrix([[1,0,-1],[0,1,-1]])
+    sage: W
+    [ 1  0 -1]
+    [ 0  1 -1]
+    sage: Wt = matrix([[1,0,a],[0,1,b]])
+    sage: Wt
+    [1 0 a]
+    [0 1 b]
+    sage: m1 = W.minors(2)
+    sage: m1
+    [1, -1, 1]
+    sage: m2 = Wt.minors(2)
+    sage: m2
+    [1, b, -a]
+    sage: [m1[i]*m2[i] for i in range(len(m1))]
+    [1, -b, -a]
+    sage: cond_inj_minors(W, Wt)
+    [-b >= 0, -a >= 0]
+"""
+
 #############################################################################
 #  Copyright (C) 2021                                                       #
 #                Marcus Aichmayr (aichmayr.marcus@gmail.com)                #

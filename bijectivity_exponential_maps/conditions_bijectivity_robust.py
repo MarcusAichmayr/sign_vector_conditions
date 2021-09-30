@@ -1,3 +1,56 @@
+r"""
+EXAMPLES::
+
+    sage: from bijectivity_exponential_maps import *
+    sage: W = matrix([[1,0,-1,0],[0,1,0,0]])
+    sage: W
+    [ 1  0 -1  0]
+    [ 0  1  0  0]
+    sage: Wt = matrix([[1,0,-1,0],[0,1,-1,1]])
+    sage: Wt
+    [ 1  0 -1  0]
+    [ 0  1 -1  1]
+    sage: from sign_vectors.oriented_matroids import *
+    sage: topes_from_matrix(W, kernel=True)
+    [(+0+-), (-0--), (-0-+), (+0++)]
+    sage: topes_from_matrix(Wt, kernel=True)
+    [(++++), (+-++), (---+), (+++-), (-+--), (----)]
+    sage: cond_closure_sign_vectors(W, Wt)
+    True
+    sage: W.minors(2)
+    [1, 0, 0, 1, 0, 0]
+    sage: Wt.minors(2)
+    [1, -1, 1, 1, 0, -1]
+    sage: cond_closure_minors(W, Wt)
+    True
+    sage: var('a,b,c')
+    (a, b, c)
+    sage: W = matrix([[1,0,-1],[0,c,-1]])
+    sage: W
+    [ 1  0 -1]
+    [ 0  c -1]
+    sage: Wt = matrix([[1,0,a],[0,1,b]])
+    sage: Wt
+    [1 0 a]
+    [0 1 b]
+    sage: W.minors(2)
+    [c, -1, c]
+    sage: Wt.minors(2)
+    [1, b, -a]
+    sage: cond_closure_minors(W, Wt)
+    [[-b > 0, [c == 0, 'or', c > 0], [c == 0, 'or', -a*c > 0]], 'or', [-b < 0, [c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]]
+    sage: cond_closure_minors(W, Wt(b=0))
+    False
+    sage: cond_closure_minors(W, Wt(b=2))
+    [[c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]
+    sage: cond_closure_minors(W(c=1), Wt(b=2))
+    False
+    sage: cond_closure_minors(W(c=0), Wt(b=2))
+    True
+    sage: cond_closure_minors(W(c=-1), Wt(b=2))
+    [a < 0]
+"""
+
 #############################################################################
 #  Copyright (C) 2021                                                       #
 #                Marcus Aichmayr (aichmayr.marcus@gmail.com)                #

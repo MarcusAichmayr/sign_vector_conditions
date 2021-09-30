@@ -1,3 +1,97 @@
+r"""
+EXAMPLES::
+
+    sage: from bijectivity_exponential_maps import *
+    sage: W = matrix([[1,0,1,0],[0,1,0,1]])
+    sage: W
+    [1 0 1 0]
+    [0 1 0 1]
+    sage: Wt = matrix([[1,0,0,-1],[0,1,1,1]])
+    sage: Wt
+    [ 1  0  0 -1]
+    [ 0  1  1  1]
+    sage: from sign_vectors.oriented_matroids import *
+    sage: covectors_from_matrix(W, kernel=True, algorithm='fe', separate=True)
+    [[(0000)], [(0+0-), (-0+0), (+0-0), (0-0+)], [(-++-), (++--), (+--+), (--++)]]
+    sage: covectors_from_matrix(Wt, algorithm='fe', separate=True)
+    [[(0000)], [(+00-), (+++0), (-00+), (---0), (0---), (0+++)], [(+++-), (---+), (----), (+---), (++++), (-+++)]]
+    sage: cond_inj_intersection(W, Wt)
+    True
+    sage: cc1 = cocircuits_from_matrix(W, kernel=False)
+    sage: cc1
+    [(+0+0), (0+0+), (-0-0), (0-0-)]
+    sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
+    sage: cc2
+    [(+++0), (-00+), (0+++), (---0), (+00-), (0---)]
+    sage: cc1p = [X for X in cc1 if X > 0]
+    sage: cc1p
+    [(+0+0), (0+0+)]
+    sage: cc2p = [X for X in cc2 if X > 0]
+    sage: cc2p
+    [(+++0), (0+++)]
+    sage: cond_faces(W, Wt)
+    True
+    sage: covectors_from_matrix(W, kernel=True)
+    [(0000), (-0+0), (0-0+), (+0-0), (0+0-), (-++-), (++--), (+--+), (--++)]
+    sage: cond_nondegenerate(W, Wt)
+    True
+    sage: W = matrix([[1,0,0,-1],[0,1,1,1]])
+    sage: W
+    [ 1  0  0 -1]
+    [ 0  1  1  1]
+    sage: Wt = matrix([[1,0,1,0],[0,1,0,1]])
+    sage: Wt
+    [1 0 1 0]
+    [0 1 0 1]
+    sage: cond_inj_intersection(W, Wt)
+    True
+    sage: cc1 = cocircuits_from_matrix(W, kernel=False)
+    sage: cc1
+    [(+++0), (-00+), (0+++), (---0), (+00-), (0---)]
+    sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
+    sage: cc2
+    [(+0+0), (0+0+), (-0-0), (0-0-)]
+    sage: cc1p = [X for X in cc1 if X > 0]
+    sage: cc1p
+    [(+++0), (0+++)]
+    sage: cc2p = [X for X in cc2 if X > 0]
+    sage: cc2p
+    [(+0+0), (0+0+)]
+    sage: cond_faces(W, Wt)
+    False
+    sage: var('wt')
+    wt
+    sage: W = matrix(3, 6, [0,0,1,1,-1,0,1,-1,0,0,0,-1,0,0,1,-1,0,0])
+    sage: W
+    [ 0  0  1  1 -1  0]
+    [ 1 -1  0  0  0 -1]
+    [ 0  0  1 -1  0  0]
+    sage: Wt = matrix(3, 6, [1,1,0,0,-1,wt,1,-1,0,0,0,0,0,0,1,-1,0,0])
+    sage: Wt
+    [ 1  1  0  0 -1 wt]
+    [ 1 -1  0  0  0  0]
+    [ 0  0  1 -1  0  0]
+    sage: cond_inj_intersection(W, Wt(wt=1))
+    True
+    sage: cond_faces(W, Wt(wt=1))
+    True
+    sage: cond_nondegenerate(W, Wt(wt=1/2))
+    True
+    sage: cond_nondegenerate(W, Wt(wt=3/2))
+    True
+    sage: cond_nondegenerate(W, Wt(wt=1))
+    False
+    sage: cond_nondegenerate(W, Wt(wt=2))
+    False
+    sage: cond_nondegenerate(W, Wt(wt=3))
+    False
+    sage: from bijectivity_exponential_maps.conditions_bijectivity import nondeg_cond1
+    sage: W = matrix([[1,1,0,0],[0,0,1,0]]).right_kernel_matrix()
+    sage: Wt = matrix([[1,0,2,0],[0,1,0,-1]])
+    sage: nondeg_cond1(W, Wt, certificate=True)
+    [False, [[[2], [0, 1]], (2, 2, 4, -2)]]
+"""
+
 #############################################################################
 #  Copyright (C) 2021                                                       #
 #                Marcus Aichmayr (aichmayr.marcus@gmail.com)                #
