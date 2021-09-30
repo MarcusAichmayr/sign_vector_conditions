@@ -26,6 +26,16 @@ def cond_inj_intersection(W, Wt):
     
     OUTPUT:
     a boolean
+
+    EXAMPLES::
+    
+    TESTS::
+    
+        sage: from bijectivity_exponential_maps.conditions_injectivity import cond_inj_intersection
+        sage: A = identity_matrix(3)
+        sage: B = A # kernel of B is empty
+        sage: cond_inj_intersection(A, B)
+        True
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
@@ -73,7 +83,27 @@ def compare_all(v, rel):
 
 
 def geq(v):
-    r"""Checks whether all entries are non-negative."""
+    r"""
+    Checks whether all entries are non-negative.
+    
+    EXAMPLES::
+    
+        sage: from bijectivity_exponential_maps.conditions_injectivity import geq
+        sage: l = [0, 5, 1]
+        sage: geq(l)
+        True
+        sage: l = [0, 0]
+        sage: geq(l)
+        True
+        sage: l = [0, -5]
+        sage: geq(l)
+        False
+        sage: var('x')
+        x
+        sage: l = [x, x**2 + 1, -1, 5]
+        sage: geq(l)
+        False
+    """
     def rel(a):
         try:
             return RR(a) >= 0 # cast to a real number
@@ -118,6 +148,15 @@ def geq_leq(v):
     
         - if the inequalities of exactly one of these lists are satisfied,
           then either each element of ``v`` is greater or equal zero or less or equal zero.
+
+    EXAMPLES::
+    
+        sage: from bijectivity_exponential_maps.conditions_injectivity import geq_leq
+        sage: var('x')
+        x
+        sage: l = [x, x**2 + 1, -1, 5]
+        sage: geq_leq(l)
+        False
     """
     ge = geq(v)
     le = leq(v)
