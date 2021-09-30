@@ -1,5 +1,7 @@
 # TODO
 
+* [ ] cite MHR19
+  Can we use only one reference across multiple files?
 
 ## functions (f_pol, f_exp)
 
@@ -32,9 +34,9 @@ Lists are no longer accepted as input.
 
 ## bijectivity
 
-* [ ] add examples and explanations (like in thesis) to top of file
+* [x] add examples and explanations (like in thesis) to top of file
     * [x] examples
-    * [ ] explanations
+    * [x] explanations
 * [ ] add examples
     * [ ] `cond_nondegenerate`, (but not for `nondegenerate`)
     * [ ] `nondeg_cond2`
