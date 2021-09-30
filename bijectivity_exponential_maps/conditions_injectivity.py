@@ -25,7 +25,7 @@ Therefore, we obtain the following exponential map::
     sage: Fc(x1, x2)
     (-c3*e^(-x1) + c1*e^x1, -c3*e^(-x1) + c2*e^x2)
 
-We want to check whether this map is injective for each ``c > 0``.
+We want to check whether this map is injective for each vector ``c > 0``.
 For this purpose, we compute the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
@@ -139,7 +139,7 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
     
 Therefore, the corresponding exponential map is injective if and only if
 :math:`a \leq 0` and :math:`b \leq 0`.
-The function ``cond_inj_minors`` also works for matrices with symbolic entries.
+The function :func:`~cond_inj_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
     sage: cond_inj_minors(W, Wt)
