@@ -124,7 +124,7 @@ Finally, we consider an example with variables::
     [1 0 a]
     [0 1 b]
 
-The matrix ``Wt`` contains the variables ``a, b \in \mathcal{R}``.
+The matrix ``Wt`` contains variables :math:`a, b \in \mathbb{R}`.
 Consequently, we cannot compute the corresponding oriented matroids.
 On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is::
 
@@ -138,7 +138,7 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
     [1, -b, -a]
     
 Therefore, the corresponding exponential map is injective if and only if
-``a \leq 0`` and ``b \leq 0``.
+:math:`a \leq 0` and :math:`b \leq 0`.
 The function ``cond_inj_minors`` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
