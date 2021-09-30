@@ -2,6 +2,9 @@ r"""
 EXAMPLES::
 
     sage: from bijectivity_exponential_maps.functions import *
+    
+We define some matrices and a vector c::
+
     sage: var('x1, x2')
     (x1, x2)
     sage: W = matrix([[1,0,-1],[0,1,-1]])
@@ -13,16 +16,28 @@ EXAMPLES::
     [ 1  0 -1]
     [ 0  1  0]
     sage: c = vector([1,2,4])
+    sage: c
+    (1, 2, 4)
+
+Next, we compute the polynomial map corresponding to ``W``, ``Wt`` and ``c``::
+
     sage: fc = f_pol(W, Wt, c)
     sage: fc(x1, x2)
     (x1 - 4/x1, 2*x2 - 4/x1)
     sage: fc(1,2)
     (-3, 0)
+
+We can also omit the argument ``c``.
+In this case, ``f_pol`` uses the vector that is one at every component::
+
     sage: fc = f_pol(W, Wt)
     sage: fc(x1, x2)
     (x1 - 1/x1, x2 - 1/x1)
     sage: fc(1,2)
     (0, 1)
+
+Similarly, we can compute the corresponding exponential map::
+
     sage: Fc = f_exp(W, Wt, c)
     sage: Fc(x1, x2)
     (-4*e^(-x1) + e^x1, -4*e^(-x1) + 2*e^x2)
