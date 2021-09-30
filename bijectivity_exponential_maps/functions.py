@@ -67,6 +67,36 @@ def f_exp(W, Wt, c=None):
     OUTPUT:
     
     - If ``c`` is omitted, the result take the vector consisting of ones.
+    
+    EXAMPLES::
+    
+        sage: from bijectivity_exponential_maps.functions import f_exp
+        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W
+        [ 1  0 -1]
+        [ 0  1 -1]
+        sage: Wt = matrix([[1,0,-1],[0,1,0]])
+        sage: Wt
+        [ 1  0 -1]
+        [ 0  1  0]
+        sage: c = vector([1,2,4])
+        sage: c
+        (1, 2, 4)
+        sage: Fc = f_exp(W, Wt, c)
+        sage: Fc(1,2)
+        (e - 4*e^(-1), 2*e^2 - 4*e^(-1))
+        sage: var('x,y')
+        (x, y)
+        sage: Fc(x,y)
+        (-4*e^(-x) + e^x, -4*e^(-x) + 2*e^y)
+
+    We can also omit the argument ``c``::
+    
+        sage: Fc = f_exp(W, Wt)
+        sage: Fc(1,2)
+        (e - e^(-1), e^2 - e^(-1))
+        sage: Fc(x,y)
+        (-e^(-x) + e^x, -e^(-x) + e^y)
     """
     return f_exp_pol(W, Wt, c, mode="exp")
 
@@ -85,5 +115,33 @@ def f_pol(W, Wt, c=None):
     OUTPUT:
     
     - If ``c`` is omitted, the result take the vector consisting of ones.
+
+    EXAMPLES::
+    
+        sage: from bijectivity_exponential_maps.functions import f_pol
+        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W
+        [ 1  0 -1]
+        [ 0  1 -1]
+        sage: Wt = matrix([[1,0,-1],[0,1,0]])
+        sage: Wt
+        [ 1  0 -1]
+        [ 0  1  0]
+        sage: c = vector([1,2,4])
+        sage: fc = f_pol(W, Wt, c)
+        sage: fc(1,2)
+        (-3, 0)
+        sage: var('x,y')
+        (x, y)
+        sage: fc(x,y)
+        (x - 4/x, 2*y - 4/x)
+
+    We can also omit the argument ``c``::
+
+        sage: fc = f_pol(W, Wt)
+        sage: fc(1,2)
+        (0, 1)
+        sage: fc(x,y)
+        (x - 1/x, y - 1/x)
     """
     return f_exp_pol(W, Wt, c, mode="pol")
