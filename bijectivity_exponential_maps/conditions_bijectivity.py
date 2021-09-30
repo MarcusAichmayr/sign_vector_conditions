@@ -32,6 +32,20 @@ def cond_faces(W, Wt):
     
     OUTPUT:
     a boolean
+
+    EXAMPLES::
+    
+        sage: from bijectivity_exponential_maps.conditions_bijectivity import cond_faces
+        sage: W = matrix([[1,0,-1,0],[0,1,0,-1]]).right_kernel_matrix()
+        sage: W
+        [1 0 1 0]
+        [0 1 0 1]
+        sage: Wt = matrix([[1,0,-1,1],[0,1,-1,0]]).right_kernel_matrix()
+        sage: Wt
+        [ 1  0  0 -1]
+        [ 0  1  1  1]
+        sage: cond_faces(W, Wt)
+        True
     """
     ccWp  = pos_cocircuits_from_matrix(W,  kernel=False)
     ccWtp = pos_cocircuits_from_matrix(Wt, kernel=False)
@@ -66,6 +80,11 @@ def cond_nondegenerate(W, Wt, certificate=False):
     - If ``certificate`` is true:
     
       - If the result is true, returns a vector as a certificate.
+
+    .. SEEALSO::
+        
+        :func:`~nondeg_cond1`
+        :func:`~nondeg_cond2`
     """
     return nondegenerate(W, Wt, certificate=certificate)
 
@@ -89,6 +108,12 @@ def nondegenerate(W, Wt, certificate=False):
     - If ``certificate`` is true:
     
       - If the result is true, returns a vector as a certificate.
+
+    .. SEEALSO::
+        
+        :func:`~cond_nondegenerate`
+        :func:`~nondeg_cond1`
+        :func:`~nondeg_cond2`
     """
     c2 = nondeg_cond2(W, Wt)
     if c2:
@@ -116,6 +141,74 @@ def nondeg_cond1(W, Wt, certificate=False):
     - If ``certificate`` is true:
     
       - If the result is true, returns a vector as a certificate.
+      
+    .. SEEALSO::
+        
+        :func:`~cond_nondegenerate`
+        :func:`~nondeg_cond2`
+
+    EXAMPLES::
+    
+        sage: from bijectivity_exponential_maps.conditions_bijectivity import nondeg_cond1
+        sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
+        sage: W
+        [ 10 -54 -23 -13]
+        sage: Wt = matrix([[-5,-1,2,2],[1,0,2,21],[-2,0,0,2]]).right_kernel_matrix()
+        sage: Wt
+        [  1 -25 -11   1]
+        sage: nondeg_cond1(W, Wt)
+        False
+
+        sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
+        sage: W
+        [ 10 -54 -23 -13]
+        sage: Wt = matrix([[-5,1,-2,2],[1,0,-2,21],[-2,0,0,2]]).right_kernel_matrix()
+        sage: Wt
+        [ 1 25 11  1]
+        sage: nondeg_cond1(W, Wt)
+        True
+
+        sage: W = matrix(2,4,[1,2,0,0,0,0,5,1]).right_kernel_matrix()
+        sage: W
+        [ 2 -1  0  0]
+        [ 0  0  1 -5]
+        sage: A = matrix([[1,1,2,2],[1,0,1,-1]]).right_kernel_matrix()
+        sage: A
+        [ 1  1 -1  0]
+        [ 0  4 -1 -1]
+        sage: Wt = A.right_kernel_matrix()
+        sage: Wt
+        [ 1  0  1 -1]
+        [ 0  1  1  3]
+        sage: nondeg_cond1(W, Wt)
+        False
+
+        sage: W = matrix(3,5,[1,2,0,0,0,0,0,5,1,0,0,0,0,0,1]).right_kernel_matrix()
+        sage: W
+        [ 2 -1  0  0  0]
+        [ 0  0  1 -5  0]
+        sage: A = matrix([[1,1,-2,-2,2],[1,0,1,-1,2]]).right_kernel_matrix()
+        sage: A
+        [ 1  1  0  1  0]
+        [ 0  2  0  2  1]
+        [ 0  0  1 -3 -2]
+        sage: Wt = A.right_kernel_matrix()
+        sage: Wt
+        [ 1  0  1 -1  2]
+        [ 0  1 -3 -1  0]
+        sage: nondeg_cond1(W, Wt)
+        False
+
+        sage: A = matrix([[1, 0, 0, 1], [0, 1, 1, -1]]).right_kernel_matrix()
+        sage: A
+        [ 1  0 -1 -1]
+        [ 0  1 -1  0]
+        sage: B = matrix([[1,1,0,0],[0,0,1,1]])
+        sage: B
+        [1 1 0 0]
+        [0 0 1 1]
+        sage: nondeg_cond1(B, A)
+        True
     """
     
     if W.ncols() != Wt.ncols():
@@ -283,6 +376,12 @@ def find_vector(M, I):
 
 
 def nondeg_cond2(W, Wt):
+    r"""
+    .. SEEALSO::
+        
+        :func:`~cond_nondegenerate`
+        :func:`~nondeg_cond1`
+    """
     ccWt = normalize(cocircuits_from_matrix(Wt))
     ccWp = pos_cocircuits_from_matrix(W)
     for X in ccWt:
