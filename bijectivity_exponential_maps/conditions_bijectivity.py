@@ -17,7 +17,7 @@ Let us consider the following matrices::
     [ 0  1  1  1]
 
     sage: var('x1, x2, c1, c2, c3, c4')
-    (x1, x2, c1, c2, c3,c 4)
+    (x1, x2, c1, c2, c3, c4)
     sage: c = [c1, c2, c3, c4]
 
 Therefore, we obtain the following exponential map::
