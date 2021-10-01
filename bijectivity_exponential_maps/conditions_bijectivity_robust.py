@@ -4,6 +4,9 @@ In this module, we check robust bijectivity for exponential maps.
 EXAMPLES::
 
     sage: from bijectivity_exponential_maps import *
+
+Let us consider the following matrices::
+
     sage: W = matrix([[1,0,-1,0],[0,1,0,0]])
     sage: W
     [ 1  0 -1  0]
@@ -12,19 +15,53 @@ EXAMPLES::
     sage: Wt
     [ 1  0 -1  0]
     [ 0  1 -1  1]
+
+Therefore, we consider the following exponential map::
+
+    sage: var('x1, x2, c1, c2, c3, c4')
+    (x1, x2, c1, c2, c3, c4)
+    sage: c = [c1, c2, c3, c4]
+    sage: Fc = f_exp(W, Wt, c)
+    sage: Fc(x1, x2)
+    (c1*e^x1 - c3*e^(-x1 - x2), c2*e^x2)
+
+To check, whether this map is a diffeomorphism for all ``c > 0``
+and all small perturbations of ``Wt``,
+we consider the topes of the corresponding oriented matroids::
+
     sage: from sign_vectors.oriented_matroids import *
     sage: topes_from_matrix(W, kernel=True)
     [(+0+-), (-0--), (-0-+), (+0++)]
     sage: topes_from_matrix(Wt, kernel=True)
     [(++++), (+-++), (---+), (+++-), (-+--), (----)]
+
+One can see that for every tope ``X`` of the oriented matroid corresponding to ``W`` there is a
+tope ``Y`` corresponding to ``Wt`` such that ``X`` conforms to ``Y``.
+Therefore, the exponential map is a diffeomorphism for all ``c > 0``
+and all small perturbations of ``Wt``.
+The package offers a function that checks this condition directly::
+
     sage: cond_closure_sign_vectors(W, Wt)
     True
+
+There is an equivalent condition.
+To verify it, we compute the maximal minors of the two matrices::
+
     sage: W.minors(2)
     [1, 0, 0, 1, 0, 0]
     sage: Wt.minors(2)
     [1, -1, 1, 1, 0, -1]
+
+From the output, we see whenever a minor of ``W`` is non-zero,
+the corresponding minor of ``Wt`` has the same sign.
+Hence, this condition is fulfilled.
+This condition can also be checked directly with the package::
+
     sage: cond_closure_minors(W, Wt)
     True
+
+Now, we consider matrices with variables::
+
     sage: var('a,b,c')
     (a, b, c)
     sage: W = matrix([[1,0,-1],[0,c,-1]])
@@ -35,22 +72,51 @@ EXAMPLES::
     sage: Wt
     [1 0 a]
     [0 1 b]
+
+We cannot check the first condition since there are variables in ``W`` and ``Wt``.
+Therefore, we want to obtain equations on the variables ``a``, ``b``, ``c``
+such that this condition is satisfied.
+First, we compute the minors of the matrices::
+
     sage: W.minors(2)
     [c, -1, c]
     sage: Wt.minors(2)
     [1, b, -a]
+
+The function from the package supports symbolic matrices as input.
+In this case, we obtain the following equations on the variables::
+
     sage: cond_closure_minors(W, Wt)
     [[-b > 0, [c == 0, 'or', c > 0], [c == 0, 'or', -a*c > 0]], 'or', [-b < 0, [c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]]
+
+From this system of equations, we can induce that ``b``  must be non-zero.
+Indeed, if ``b = 0``, we obtain::
+
     sage: cond_closure_minors(W, Wt(b=0))
     False
+
+Therefore, assume for instance ``b = 2``::
+
     sage: cond_closure_minors(W, Wt(b=2))
     [[c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]
+
+From the output, we see that either ``c = 0`` or ``c < 0``.
+Otherwise, we obtain::
+
     sage: cond_closure_minors(W(c=1), Wt(b=2))
     False
+
+If ``c = 0``, then the result will be ``True``::
+
     sage: cond_closure_minors(W(c=0), Wt(b=2))
     True
+
+For ``c < 0``, we are left with a condition on ``a``::
+
     sage: cond_closure_minors(W(c=-1), Wt(b=2))
     [a < 0]
+
+Analogously, we can assume that ``b < 0`` and we will obtain similar conditions on the other variables.
 """
 
 #############################################################################
