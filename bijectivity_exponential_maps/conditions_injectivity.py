@@ -15,12 +15,12 @@ We define some matrices::
     sage: Wt
     [ 1  0 -1]
     [ 0  1  0]
-    sage: var('x1, x2, c1, c2, c3')
-    (x1, x2, c1, c2, c3)
-    sage: c = [c1, c2, c3]
 
 Therefore, we obtain the following exponential map::
 
+    sage: var('x1, x2, c1, c2, c3')
+    (x1, x2, c1, c2, c3)
+    sage: c = [c1, c2, c3]
     sage: Fc = f_exp(W, Wt, c)
     sage: Fc(x1, x2)
     (-c3*e^(-x1) + c1*e^x1, -c3*e^(-x1) + c2*e^x2)
