@@ -1,3 +1,12 @@
+r"""
+In this package, we check several conditons from [MHR19]_ for exponential maps.
+
+.. [MHR19] Müller, S.; Hofbauer, J., and Regensburger, G.:
+   „On the bijectivity of families of exponential/generalized polynomial maps“.
+   In: SIAM Journal on Applied Algebra and Geometry 3.3 (2019),
+   pp. 412–438. doi: 10.1137/18M1178153.
+"""
+
 #############################################################################
 #  Copyright (C) 2021                                                       #
 #                Marcus Aichmayr (aichmayr.marcus@gmail.com)                #
