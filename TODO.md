@@ -2,6 +2,7 @@
 
 * [ ] cite MHR19
   Can we use only one reference across multiple files?
+  see https://sphinxcontrib-bibtex.readthedocs.io/en/latest/usage.html
 
 ## functions (f_pol, f_exp)
 
@@ -20,7 +21,7 @@
 
 * [x] add examples and explanations (like in thesis) to top of file
 * [ ] add examples
-    * [ ] `cond_inj_intersection`
+    * (optional) `cond_inj_intersection`
     * [ ] `max_minors_prod`
     * [ ] `compare_all`
     * [ ] `leq`
@@ -34,20 +35,18 @@
 
 * [x] add examples and explanations (like in thesis) to top of file
 * [ ] add examples
-    * [ ] `cond_nondegenerate`, (but not for `nondegenerate`)
-    * [ ] `nondeg_cond2`
+    * (optional) `cond_nondegenerate`, (but not for `nondegenerate`)
+    * [ ] `nondeg_cond1` add explanations
     * [ ] `equal_components`
     * [ ] `find_vector`
     * [ ] `nondeg_cond2`
 
 ## robust bijectivity
 
-* [ ] add examples and explanations (like in thesis) to top of file
-    * [x] examples
-    * [ ] explanations
+* [x] add examples and explanations (like in thesis) to top of file
 * [ ] add examples
-    * [ ] `cond_closure_sign_vectors`
-    * [ ] `cond_closure_minors`
+    * (optional) `cond_closure_sign_vectors`
+    * (optional) `cond_closure_minors`
 * [ ] remove random tests
 * [ ] add further results, perturbations in coefficients and exponents
 
