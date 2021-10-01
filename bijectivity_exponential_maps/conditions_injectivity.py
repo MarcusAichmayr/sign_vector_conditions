@@ -1,5 +1,6 @@
 r"""
-In this module, we check injectivity for exponential maps.
+In this module, we check injectivity for exponential maps
+by verifying conditions from [MHR19]_.
 
 EXAMPLES::
 
@@ -175,8 +176,6 @@ def cond_inj_intersection(W, Wt):
     OUTPUT:
     a boolean
 
-    EXAMPLES::
-    
     TESTS::
     
         sage: from bijectivity_exponential_maps.conditions_injectivity import cond_inj_intersection
