@@ -7,6 +7,4 @@ Documentation of bijectivity_exponential_maps
     :toctree: generated
 
     bijectivity_exponential_maps
-    bijectivity_exponential_maps.functions
-    bijectivity_exponential_maps.utility
 
