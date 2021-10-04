@@ -1,8 +1,6 @@
 # TODO
 
-* [ ] cite MHR19
-  Can we use only one reference across multiple files?
-  see https://sphinxcontrib-bibtex.readthedocs.io/en/latest/usage.html
+* [x] cite MHR19 (once)
 
 ## functions (f_pol, f_exp)
 
