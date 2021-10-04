@@ -1,3 +1,8 @@
+r"""
+This module offers utility functions that are used by the other functions
+of this package.
+"""
+
 #############################################################################
 #  Copyright (C) 2021                                                       #
 #                Marcus Aichmayr (aichmayr.marcus@gmail.com)                #
