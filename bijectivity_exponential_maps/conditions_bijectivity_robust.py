@@ -1,5 +1,6 @@
 r"""
-In this module, we check robust bijectivity for exponential maps.
+In this module, we check robust bijectivity for exponential maps
+by verifying conditions from [MHR19]_.
 
 EXAMPLES::
 
