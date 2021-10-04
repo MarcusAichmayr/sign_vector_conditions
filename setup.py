@@ -28,9 +28,7 @@ setup(
     ], # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords = ['bijectivity conditions', 'exponential maps', 'polynomial maps'],
     packages = ['bijectivity_exponential_maps'],
-#    setup_requires   = ['elementary_vectors', 'sign_vectors', 'sign_vectors.oriented_matroids'],
-#    install_requires   = ['elementary_vectors', 'sign_vectors', 'sign_vectors.oriented_matroids'],
-#    setup_requires   = ['sage-package'],
-#    install_requires = ['sage-package', 'sphinx'],
+    setup_requires   = ['sign_vectors'],
+    install_requires   = ['sign_vectors', 'sphinx'],
 )
 
