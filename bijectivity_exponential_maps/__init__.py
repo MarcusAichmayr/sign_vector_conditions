@@ -5,6 +5,13 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
    „On the bijectivity of families of exponential/generalized polynomial maps“.
    In: SIAM Journal on Applied Algebra and Geometry 3.3 (2019),
    pp. 412–438. doi: 10.1137/18M1178153.
+
+.. autosummary::
+    :toctree: generated
+    
+    bijectivity_exponential_maps.conditions_injectivity
+    bijectivity_exponential_maps.conditions_bijectivity
+    bijectivity_exponential_maps.conditions_bijectivity_robust
 """
 
 #############################################################################
