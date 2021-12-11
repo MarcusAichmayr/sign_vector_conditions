@@ -146,11 +146,11 @@ def cond_closure_sign_vectors(W, Wt):
     the closure of the oriented matroid corresponding to ``Wt``.
 
     INPUT:
-    
+
     - ``W`` -- a matrix with ``n`` columns
-    
+
     - ``Wt`` -- a matrix with ``n`` columns
-    
+
     OUTPUT:
     a boolean
     """
@@ -176,13 +176,13 @@ def cond_closure_minors(W, Wt):
     Returns whether for each non-zero maximal minor ``m`` of ``W``, we have
     either ``m mt > 0`` for each corresponding maximal minor ``mt`` of ``Wt`` or
     ``m mt < 0`` for each corresponding maximal minor ``mt`` of ``Wt``.
-    
+
     INPUT:
-    
+
     - ``W`` -- a matrix
-    
+
     - ``Wt`` -- a matrix with the same dimensions as ``W``
-    
+
     OUTPUT:
     A boolean or a symbolic expression if variables occur.
     """
@@ -193,21 +193,21 @@ def cond_closure_minors(W, Wt):
     mt = Wt.minors(d)
 #    print('minors of W: ', m)
 #    print('minors of Wt:', mt)
-    
+
     def eq(a):
         r"""
         Compares an expression with ``0``.
-        
+
         INPUT:
-        
+
         - ``a`` -- a real number or symbolic expression
-        
+
         OUTPUT:
-        
+
         - ``True``  -- The number ``a`` is equal to zero.
-        
+
         - ``False`` -- The number ``a`` is a non-zero real number.
-        
+
         - ``None``  -- The number ``a`` is a symbolic expression.
         """
         try:
@@ -224,7 +224,7 @@ def cond_closure_minors(W, Wt):
     # L_left, L_right will be the ``or`` pairs
     L_left = [] # will be set to a list of equalities.
     L_right = [] # will be set list of symbolic entries. Depending on s, each entry is ``> 0`` or ``< 0``.
-    
+
     for i in range(len(m)):
         if eq(m[i]) == None: # mi symbolic
             if eq(mt[i]) == True: # mti zero, hence, product zero and cannot be > or < 0
@@ -243,7 +243,7 @@ def cond_closure_minors(W, Wt):
             else:
                 if (s*m[i]*mt[i]) <= 0: # cast
                     return False
-    
+
     # construction of the output list
     if L == [] and L_eq == [] and L_left == []: # hence, L_right is also []
         return True
@@ -256,14 +256,14 @@ def cond_closure_minors(W, Wt):
             for l in L:
                 E_eq_left.append(l > 0)
                 E_eq_right.append(l < 0)
-                
+
         if L_left != []:
             E_or_left = []
             E_or_right = []
             for i in range(len(L_left)):
                 E_or_left.append([L_left[i], 'or', L_right[i] > 0])
                 E_or_right.append([L_left[i], 'or', L_right[i] < 0])
-        
+
         if L == []:
             if len(E_or_left) == 1: # hence, also len(E_or_right) == 1
                 out = [flatten(E_or_left), 'or', flatten(E_or_right)]
@@ -280,7 +280,7 @@ def cond_closure_minors(W, Wt):
         else:
             def rel(a):
                 return a < 0
-        
+
         if L != []:
             E_eq = []
             for l in L:
@@ -298,7 +298,7 @@ def cond_closure_minors(W, Wt):
             out = E_eq
         else:
             out = E_eq + E_or
-    
+
     if L_eq == []:
         return out
     else:

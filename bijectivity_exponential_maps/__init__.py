@@ -8,7 +8,7 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
 
 .. autosummary::
     :toctree: generated
-    
+
     bijectivity_exponential_maps.functions
     bijectivity_exponential_maps.conditions_injectivity
     bijectivity_exponential_maps.conditions_bijectivity
@@ -33,4 +33,3 @@ from .conditions_bijectivity import cond_faces, cond_nondegenerate, nondegenerat
 from .conditions_bijectivity_robust import cond_closure_sign_vectors, cond_closure_minors
 
 from .functions import f_pol, f_exp
-

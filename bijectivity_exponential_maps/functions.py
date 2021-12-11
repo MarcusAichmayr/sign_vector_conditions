@@ -5,7 +5,7 @@ corresponding to given matrices.
 EXAMPLES::
 
     sage: from bijectivity_exponential_maps.functions import *
-    
+
 We define some matrices and a vector c::
 
     sage: var('x1, x2')
@@ -72,19 +72,19 @@ from sage.matrix.special import ones_matrix
 def f_exp_pol(W, Wt, c=None, mode="exp"):
     r"""
     Returns the exponential or polynomial map determined by the matrices ``W`` and ``Wt``.
-    
+
     INPUT:
-    
+
     - ``W`` -- a matrix
-    
+
     - ``Wt`` -- a matrix
-    
+
     - ``c`` -- a vector (optional)
-    
+
     - ``mode`` -- a string. Either 'exp' (default) or 'pol'.
-    
+
     OUTPUT:
-    
+
     - If ``c`` is omitted, the result take the vector consisting of ones.
     """
     if W.dimensions() != Wt.dimensions():
@@ -94,9 +94,9 @@ def f_exp_pol(W, Wt, c=None, mode="exp"):
         c = vector(ones_matrix(1, W.ncols()))
     elif len(c) != W.ncols():
         raise ValueError('Number of columns and dimension of ``c`` do not match.')
-    
+
     (d, n) = W.dimensions()
-    
+
     if mode == "exp":
         def f(*x):
             return sum([c[i] * exp(Wt.column(i).dot_product(vector(x))) * W.column(i) for i in range(n)])
@@ -110,21 +110,21 @@ def f_exp_pol(W, Wt, c=None, mode="exp"):
 def f_exp(W, Wt, c=None):
     r"""
     Returns the exponential map determined by the matrices ``W`` and ``Wt``.
-    
+
     INPUT:
-    
+
     - ``W`` -- a matrix
-    
+
     - ``Wt`` -- a matrix
-    
+
     - ``c`` -- a vector (optional)
-    
+
     OUTPUT:
-    
+
     - If ``c`` is omitted, the result take the vector consisting of ones.
-    
+
     EXAMPLES::
-    
+
         sage: from bijectivity_exponential_maps.functions import f_exp
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
@@ -146,7 +146,7 @@ def f_exp(W, Wt, c=None):
         (-4*e^(-x) + e^x, -4*e^(-x) + 2*e^y)
 
     We can also omit the argument ``c``::
-    
+
         sage: Fc = f_exp(W, Wt)
         sage: Fc(1,2)
         (e - e^(-1), e^2 - e^(-1))
@@ -158,21 +158,21 @@ def f_exp(W, Wt, c=None):
 def f_pol(W, Wt, c=None):
     r"""
     Returns the polynomial map determined by the matrices ``W`` and ``Wt``.
-    
+
     INPUT:
-    
+
     - ``W`` -- a matrix
-    
+
     - ``Wt`` -- a matrix
-    
+
     - ``c`` -- a vector (optional)
-    
+
     OUTPUT:
-    
+
     - If ``c`` is omitted, the result take the vector consisting of ones.
 
     EXAMPLES::
-    
+
         sage: from bijectivity_exponential_maps.functions import f_pol
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W

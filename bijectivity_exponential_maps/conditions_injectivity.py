@@ -137,7 +137,7 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
     [1, b, -a]
     sage: [m1[i]*m2[i] for i in range(len(m1))]
     [1, -b, -a]
-    
+
 Therefore, the corresponding exponential map is injective if and only if
 :math:`a \leq 0` and :math:`b \leq 0`.
 The function :func:`~cond_inj_minors` also works for matrices with symbolic entries.
@@ -166,18 +166,18 @@ def cond_inj_intersection(W, Wt):
     r"""
     Returns whether the intersection of the oriented matroids corresponding to
     ``W`` and ``right_kernel(Wt)`` consists of the zero sign vector only.
-    
+
     INPUT:
-    
+
     - ``W`` -- a matrix with ``n`` columns
-    
+
     - ``Wt`` -- a matrix with ``n`` columns
-    
+
     OUTPUT:
     a boolean
 
     TESTS::
-    
+
         sage: from bijectivity_exponential_maps.conditions_injectivity import cond_inj_intersection
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
@@ -186,7 +186,7 @@ def cond_inj_intersection(W, Wt):
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
-    
+
     cvW = covectors_from_matrix(W)
     try:
         cvWt = covectors_from_matrix(Wt, kernel=True)
@@ -208,7 +208,7 @@ def max_minors_prod(A, B):
     r = A1.nrows() # should be equal to B1.nrows()
     mA = A1.minors(r)
     mB = B1.minors(r)
-    
+
     return [mA[i]*mB[i] for i in range(len(mA))]
 
 def compare_all(v, rel):
@@ -232,9 +232,9 @@ def compare_all(v, rel):
 def geq(v):
     r"""
     Checks whether all entries are non-negative.
-    
+
     EXAMPLES::
-    
+
         sage: from bijectivity_exponential_maps.conditions_injectivity import geq
         sage: l = [0, 5, 1]
         sage: geq(l)
@@ -271,33 +271,33 @@ def geq_leq(v):
     r"""
     Returns true if either each element of ``v`` is greater than or equal to zero or less than or equal to zero.
     Supports symbolic expressions.
-    
+
     INPUT:
-    
+
     - ``v`` -- a list of numbers or symbolic expressions.
-    
+
     OUTPUT:
     Depending on the input, the output can have several appearances:
-    
+
     - a boolean
-        
+
         - if true, no symbolic expressions have occured and either each entry of ``v`` is greater or equal zero
           or each entry is less or equal zero.
-          
+
         - if false, there are entries with opposing signs or every entry is zero.
-    
+
     - a list of inequalities
-    
+
         - if all inequalities are satisfied,
           then either each element of ``v`` is greater or equal zero or less or equal zero.
-    
+
     - a list of two lists of inequalities
-    
+
         - if the inequalities of exactly one of these lists are satisfied,
           then either each element of ``v`` is greater or equal zero or less or equal zero.
 
     EXAMPLES::
-    
+
         sage: from bijectivity_exponential_maps.conditions_injectivity import geq_leq
         sage: var('x')
         x
@@ -307,7 +307,7 @@ def geq_leq(v):
     """
     ge = geq(v)
     le = leq(v)
-    
+
     if ge == True and le == True: # all entries are zero
         return False
     elif ge == False and le == False: # mixed signs
@@ -333,13 +333,13 @@ def cond_inj_minors(W, Wt):
     r"""
     Returns whether the products of the corresponding maximal minors of the
     matrices ``W`` and ``Wt`` have the same sign.
-    
+
     INPUT:
-    
+
     - ``W`` -- a matrix
-    
+
     - ``Wt`` -- a matrix with the same dimensions as ``W``
-    
+
     OUTPUT:
     A boolean or a symbolic expression if variables occur.
     """
