@@ -1,6 +1,5 @@
 r"""
-In this module, we check bijectivity for exponential maps
-by verifying conditions from [MHR19]_.
+In this module, we check bijectivity for exponential maps by verifying conditions from [MHR19]_.
 
 EXAMPLES::
 
@@ -210,17 +209,16 @@ from .utility import normalize, pos_cocircuits_from_matrix, pos_covectors_from_m
 from elementary_vectors import elementary_vectors, exists_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
-from sage.modules.free_module_element import vector, zero_vector
+from sage.modules.free_module_element import zero_vector
 from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 from sage.misc.flatten import flatten
 from sage.geometry.polyhedron.constructor import Polyhedron
 
+
 def cond_faces(W, Wt):
     r"""
-    Returns whether every positive sign vector ``X`` corresponding to the rows of
-    ``Wt`` has a positive sign vector ``Y`` corresponding to the rows of ``W``
-    such that ``Y <= X``.
+    Check a condition on positive sign vectors of two matrices.
 
     INPUT:
 
@@ -229,7 +227,11 @@ def cond_faces(W, Wt):
     - ``Wt`` -- a matrix with ``n`` columns
 
     OUTPUT:
-    a boolean
+    Returns whether every positive sign vector ``X`` corresponding to the rows of
+    ``Wt`` has a positive sign vector ``Y`` corresponding to the rows of ``W``
+    such that ``Y <= X``.
+
+    Returns a boolean.
 
     EXAMPLES::
 
@@ -245,7 +247,7 @@ def cond_faces(W, Wt):
         sage: cond_faces(W, Wt)
         True
     """
-    ccWp  = pos_cocircuits_from_matrix(W,  kernel=False)
+    ccWp = pos_cocircuits_from_matrix(W,  kernel=False)
     ccWtp = pos_cocircuits_from_matrix(Wt, kernel=False)
 
     for X in ccWtp:
@@ -261,8 +263,7 @@ def cond_faces(W, Wt):
 
 def cond_nondegenerate(W, Wt, certificate=False):
     r"""
-    Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
-    ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
+    Check whether the pair of the given matrices is non-degenerate.
 
     INPUT:
 
@@ -273,7 +274,10 @@ def cond_nondegenerate(W, Wt, certificate=False):
     - ``certificate`` -- a boolean (default: ``False``)
 
     OUTPUT:
-    a boolean
+    Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
+    ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
+
+    Returns a boolean.
 
     - If ``certificate`` is true:
 
@@ -289,8 +293,7 @@ def cond_nondegenerate(W, Wt, certificate=False):
 
 def nondegenerate(W, Wt, certificate=False):
     r"""
-    Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
-    ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
+    Check whether the pair of the given matrices is non-degenerate.
 
     INPUT:
 
@@ -301,7 +304,11 @@ def nondegenerate(W, Wt, certificate=False):
     - ``certificate`` -- a boolean (default: ``False``)
 
     OUTPUT:
-    a boolean
+
+    Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
+    ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
+
+    Returns a boolean.
 
     - If ``certificate`` is true:
 
@@ -323,7 +330,7 @@ def nondegenerate(W, Wt, certificate=False):
 
 def nondeg_cond1(W, Wt, certificate=False):
     r"""
-    Returns whether the first condition of ``cond_nondegenerate`` is satisfied.
+    Return whether the first condition of ``cond_nondegenerate`` is satisfied.
 
     INPUT:
 
@@ -408,7 +415,6 @@ def nondeg_cond1(W, Wt, certificate=False):
         sage: nondeg_cond1(B, A)
         True
     """
-
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
     # eventuell auf disjoint support achten. Sind +0 und 0+ dabei, dann müssen wir ++ nicht betrachten.
@@ -417,12 +423,12 @@ def nondeg_cond1(W, Wt, certificate=False):
     if P == []:
         return True
 
-    n = Wt.ncols() # length of vectors
-    degenerate = False # might change in recursion
+    n = Wt.ncols()  # length of vectors
+    degenerate = False  # might change in recursion
 
     L = [-Infinity for i in range(n)]
     R = [0 for i in range(n)]
-    inf = [Infinity for i in range(n)] # does not change
+    inf = [Infinity for i in range(n)]  # does not change
 
 #    l = [True for i in range(n)]
     proof = []
@@ -431,7 +437,7 @@ def nondeg_cond1(W, Wt, certificate=False):
 
     def rec(P, M, I, L, R):
         r"""
-        recursive function
+        Recursive function.
 
         INPUT:
 
@@ -445,28 +451,28 @@ def nondeg_cond1(W, Wt, certificate=False):
 
         - ``R`` -- a list of values ``0`` and ``Infinity``
         """
-        nonlocal degenerate # use nonlocal to use the same ``degenerate``
+        nonlocal degenerate  # use nonlocal to use the same ``degenerate``
         nonlocal proof
 
         while P:
             X = P.pop()
-            if set(flatten(I)).issubset(X.zero_support()): # P[0].positive_support() subseteq J, insbesondere muss X ein + auf J haben
+            if set(flatten(I)).issubset(X.zero_support()):  # P[0].positive_support() subseteq J, insbesondere muss X ein + auf J haben
                 L_ = L[:]
                 R_ = R[:]
                 for i in X.support():
-                    L_[i]  = 1
+                    L_[i] = 1
                     R_[i] = Infinity
 
-                M_ = equal_components(M, X.support()) # make to echelon form?
+                M_ = equal_components(M, X.support())  # make to echelon form?
                 A = M_.right_kernel_matrix()
 
-                if A: # A is not empty matrix
+                if A:  # A is not empty matrix
                     evs = elementary_vectors(A, kernel=True)
 
                     if exists_vector(evs, L_, R_):
                         degenerate = True
 
-                        I = I + [X.support()]
+                        I += [X.support()]
                         if certificate:
                             proof = [I, find_vector(Wt, I)]
                         return
@@ -502,7 +508,6 @@ def equal_components(M, I):
 
     - ``I`` -- a list of indices
     """
-
     n = M.ncols()
 
     if len(I) >= 2:
@@ -518,7 +523,7 @@ def equal_components(M, I):
 
 def find_vector(M, I):
     r"""
-    Returns a vector
+    Return a vector.
 
     INPUT:
 
@@ -558,11 +563,11 @@ def find_vector(M, I):
     for i in range(n):
         v = zero_vector(n+1)
         if i in J:
-            v[0] = -1 # component - 1 >= 0 # instead of > 0
+            v[0] = -1  # component - 1 >= 0 # instead of > 0
             v[i+1] = 1
             ieqs.append(v)
         else:
-            v[i+1] = -1 # component <= 0
+            v[i+1] = -1  # component <= 0
             ieqs.append(v)
 
 #     print('ieqs:', ieqs)
@@ -573,6 +578,8 @@ def find_vector(M, I):
 
 def nondeg_cond2(W, Wt):
     r"""
+    Check a condition an matrices.
+
     .. SEEALSO::
 
         :func:`~cond_nondegenerate`
@@ -586,6 +593,6 @@ def nondeg_cond2(W, Wt):
             if set(X.zero_support()).issubset(Y.zero_support()):
                 val = True
                 break
-        if val == False:
+        if not val:
             return False
     return True

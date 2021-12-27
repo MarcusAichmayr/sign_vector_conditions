@@ -1,7 +1,4 @@
-r"""
-This module offers utility functions that are used by the other functions
-of this package.
-"""
+r"""This module offers utility functions that are used by the other functions of this package."""
 
 #############################################################################
 #  Copyright (C) 2021                                                       #
@@ -16,9 +13,13 @@ of this package.
 from elementary_vectors import elementary_vectors
 from sign_vectors import sign_vector, zero_sign_vector
 
+
 def normalize(L):
     r"""
     Compute a normalized list of sign vectors.
+
+    .. NOTE::
+
     A sign vector is normalized if it is the zero sign vector or the first non-zero entry is positive.
     """
     L_new = []
@@ -34,9 +35,10 @@ def normalize(L):
             L_new.append(X)
     return L_new
 
+
 def pos_cocircuits_from_matrix(A, kernel=False):
     r"""
-    Computes a list of positive cocircuits determined by a given matrix.
+    Compute a list of positive cocircuits determined by a given matrix.
 
     INPUT:
 
@@ -53,9 +55,10 @@ def pos_cocircuits_from_matrix(A, kernel=False):
     L = elementary_vectors(A, kernel=kernel)
     return [sign_vector(v) for v in L if sign_vector(v) > 0] + [sign_vector(-v) for v in L if sign_vector(-v) > 0]
 
+
 def pos_covectors_from_matrix(A, kernel=False):
     r"""
-    Uses a list of cocircuits to compute all covectors of the corresponding oriented matroid.
+    Use a list of cocircuits to compute all covectors of the corresponding oriented matroid.
 
     INPUT:
 
@@ -71,7 +74,6 @@ def pos_covectors_from_matrix(A, kernel=False):
 
       - If ``kernel`` is true, returns a list of cocircuits determined by the kernel of the matrix ``A``.
     """
-
     ev = elementary_vectors(A, kernel=kernel)
     L = [sign_vector(v) for v in ev if not sign_vector(v) < 0] + [sign_vector(-v) for v in ev if not sign_vector(-v) < 0]
 
@@ -84,7 +86,7 @@ def pos_covectors_from_matrix(A, kernel=False):
         Y = F_new.pop()
         for X in L:
             if X >= 0:
-                if not X <= Y: # otherwise Z = X.compose(Y) = Y in F
+                if not X <= Y:  # otherwise Z = X.compose(Y) = Y in F
                     Z = X.compose(Y)
                     if Z not in F:
                         if Z >= 0:

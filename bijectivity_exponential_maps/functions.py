@@ -1,6 +1,5 @@
 r"""
-In this module, we compute polynomial and exponential maps
-corresponding to given matrices.
+In this module, we compute polynomial and exponential maps corresponding to given matrices.
 
 EXAMPLES::
 
@@ -69,9 +68,10 @@ from sage.functions.log import exp
 from sage.modules.free_module_element import vector
 from sage.matrix.special import ones_matrix
 
+
 def f_exp_pol(W, Wt, c=None, mode="exp"):
     r"""
-    Returns the exponential or polynomial map determined by the matrices ``W`` and ``Wt``.
+    Return the exponential or polynomial map determined by the matrices ``W`` and ``Wt``.
 
     INPUT:
 
@@ -90,7 +90,7 @@ def f_exp_pol(W, Wt, c=None, mode="exp"):
     if W.dimensions() != Wt.dimensions():
         raise ValueError('Matrices must have same dimensions.')
 
-    if c == None:
+    if c is None:
         c = vector(ones_matrix(1, W.ncols()))
     elif len(c) != W.ncols():
         raise ValueError('Number of columns and dimension of ``c`` do not match.')
@@ -102,14 +102,15 @@ def f_exp_pol(W, Wt, c=None, mode="exp"):
             return sum([c[i] * exp(Wt.column(i).dot_product(vector(x))) * W.column(i) for i in range(n)])
     elif mode == "pol":
         def f(*x):
-            return vector([sum([W[i,j] * c[j] * prod([x[k]**Wt[k,j] for k in range(d)]) for j in range(n)]) for i in range(d)])
+            return vector([sum([W[i, j] * c[j] * prod([x[k]**Wt[k, j] for k in range(d)]) for j in range(n)]) for i in range(d)])
     else:
         raise ValueError("Mode '" + mode + "' is not available. Try 'exp' or 'pol'.")
     return f
 
+
 def f_exp(W, Wt, c=None):
     r"""
-    Returns the exponential map determined by the matrices ``W`` and ``Wt``.
+    Return the exponential map determined by the matrices ``W`` and ``Wt``.
 
     INPUT:
 
@@ -155,9 +156,10 @@ def f_exp(W, Wt, c=None):
     """
     return f_exp_pol(W, Wt, c, mode="exp")
 
+
 def f_pol(W, Wt, c=None):
     r"""
-    Returns the polynomial map determined by the matrices ``W`` and ``Wt``.
+    Return the polynomial map determined by the matrices ``W`` and ``Wt``.
 
     INPUT:
 
