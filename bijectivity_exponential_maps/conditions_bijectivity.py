@@ -420,9 +420,9 @@ def nondeg_cond1(W, Wt, certificate=False):
     n = Wt.ncols() # length of vectors
     degenerate = False # might change in recursion
 
-    L  = [-Infinity for i in range(n)]
-    R = [0   for i in range(n)]
-    inf = [Infinity  for i in range(n)] # does not change
+    L = [-Infinity for i in range(n)]
+    R = [0 for i in range(n)]
+    inf = [Infinity for i in range(n)] # does not change
 
 #    l = [True for i in range(n)]
     proof = []
@@ -455,8 +455,6 @@ def nondeg_cond1(W, Wt, certificate=False):
                 R_ = R[:]
                 for i in X.support():
                     L_[i]  = 1
-#                     L_[i]  = 0 # hier sollte auch 1 gehen und abgeschlossene Intervallhälfte.
-#                     l_[i]  = False # open interval
                     R_[i] = Infinity
 
                 M_ = equal_components(M, X.support()) # make to echelon form?
