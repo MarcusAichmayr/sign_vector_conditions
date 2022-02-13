@@ -189,7 +189,7 @@ Now, we check whether the non-degeneracy condition is satisfied::
     [False, [[[2], [0, 1]], (1, 1, 2, -1)]]
 
 From the output, we see that the condition is violated.
-The vector ``(2, 2, 4, −2)`` lies in the row space
+The vector ``(1, 1, 2, -1)`` lies in the row space
 of ``Wt`` and corresponds to the positive sign vectors
 ``(00+0)`` and ``(++00)``
 that are represented by the sets ``{2}`` and ``{0, 1}``.
@@ -469,28 +469,28 @@ def nondeg_cond1(W, Wt, certificate=False):
                 if A:  # A is not empty matrix
                     evs = elementary_vectors(A, kernel=True)
 
-                    if exists_vector(evs, setup_intervals(L_, R_)):
+                    intervals1 = setup_intervals(L_, R_)
+                    intervals2 = setup_intervals(L_, inf)
+                    if exists_vector(evs, intervals1):
                         degenerate = True
 
                         I += [X.support()]
                         if certificate:
-                            proof = [I, construct_vector(Wt, setup_intervals(L_, R_))]
+                            proof = [I, construct_vector(Wt, intervals1)]
                         return
-                    elif exists_vector(evs, setup_intervals(L_, inf)):
+                    elif exists_vector(evs, intervals2):
                         rec(P[:], M_, I + [X.support()], L_, R_)
                     else:
                         if certificate:
-                            intervals = setup_intervals(L_, inf)
                             for v in evs:
-                                if exists_normal_vector(v, intervals):
+                                if exists_normal_vector(v, intervals2):
                                     proof.append([v, I + [X.support()]])
                                     break
                 else:
                     if certificate:
                         evs = elementary_vectors(A, kernel=True)
-                        intervals = setup_intervals(L_, inf)
                         for v in evs:
-                            if exists_normal_vector(v, intervals):
+                            if exists_normal_vector(v, intervals2):
                                 proof.append([v, I + [X.support()]])
                                 break
 
