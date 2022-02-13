@@ -186,7 +186,7 @@ We consider some final example::
 Now, we check whether the non-degeneracy condition is satisfied::
 
     sage: nondeg_cond1(W, Wt, certificate=True)
-    [False, [[[2], [0, 1]], (2, 2, 4, -2)]]
+    [False, [[[2], [0, 1]], (1, 1, 2, -1)]]
 
 From the output, we see that the condition is violated.
 The vector ``(2, 2, 4, −2)`` lies in the row space
@@ -206,7 +206,7 @@ that are represented by the sets ``{2}`` and ``{0, 1}``.
 #############################################################################
 
 from .utility import normalize, pos_cocircuits_from_matrix, pos_covectors_from_matrix
-from elementary_vectors import elementary_vectors, exists_vector, exists_normal_vector, setup_intervals
+from elementary_vectors import elementary_vectors, exists_vector, exists_normal_vector, setup_intervals, construct_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 from sage.modules.free_module_element import zero_vector
@@ -474,7 +474,7 @@ def nondeg_cond1(W, Wt, certificate=False):
 
                         I += [X.support()]
                         if certificate:
-                            proof = [I, find_vector(Wt, I)]
+                            proof = [I, construct_vector(Wt, setup_intervals(L_, R_))]
                         return
                     elif exists_vector(evs, setup_intervals(L_, inf)):
                         rec(P[:], M_, I + [X.support()], L_, R_)
@@ -526,61 +526,6 @@ def equal_components(M, I):
             w[j] = -1
             M = matrix(list(M) + [w])
     return M
-
-
-def find_vector(M, I):
-    r"""
-    Return a vector.
-
-    INPUT:
-
-    - ``M`` -- a matrix
-
-    - ``I`` -- a list of lists of indices
-
-    OUTPUT:
-
-    Returns a vector $v$ in the row space of ``M`` such that:
-
-    - For each $I_k$ in ``I``, the entries $v_i$ with $i \in I_k$ are equal and positive.
-
-    - The remaining entries are zero or negative.
-    """
-    n = M.ncols()
-    ieqs = []
-    eqns = []
-    A = M.right_kernel_matrix()
-    # lie in rowspace of M
-    for v in A.rows():
-        eqns.append([0] + list(v))
-        # subspace with equal components
-
-    # components need to be equal that is opposite sign for kernel
-    for Ik in I:
-        if len(Ik) >= 2:
-            i = Ik[0]
-            v = zero_vector(n+1)
-            v[i+1] = 1
-            for j in Ik[1:]:
-                w = v[:]
-                w[j+1] = -1
-                eqns.append(w)
-
-    J = flatten(I)
-    for i in range(n):
-        v = zero_vector(n+1)
-        if i in J:
-            v[0] = -1  # component - 1 >= 0 # instead of > 0
-            v[i+1] = 1
-            ieqs.append(v)
-        else:
-            v[i+1] = -1  # component <= 0
-            ieqs.append(v)
-
-#     print('ieqs:', ieqs)
-#     print('eqns:', eqns)
-    P = Polyhedron(ieqs=ieqs, eqns=eqns)
-    return P.representative_point()
 
 
 def nondeg_cond2(W, Wt):
