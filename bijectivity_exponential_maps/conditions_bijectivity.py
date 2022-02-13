@@ -464,34 +464,25 @@ def nondeg_cond1(W, Wt, certificate=False):
 
                 M_ = equal_components(M, X.support())  # make to echelon form?
                 A = M_.right_kernel_matrix()
+                evs = elementary_vectors(A, kernel=True)
+                intervals = setup_intervals(L_, R_)
 
-                if A:  # A is not empty matrix
-                    evs = elementary_vectors(A, kernel=True)
-
-                    intervals1 = setup_intervals(L_, R_)
-                    intervals2 = setup_intervals(L_, inf)
-                    if exists_vector(evs, intervals1):
-                        degenerate = True
-
-                        I += [X.support()]
-                        if certificate:
-                            proof = [I, construct_vector(Wt, intervals1)]
-                        return
-                    elif exists_vector(evs, intervals2):
+                if exists_vector(evs, intervals):
+                    degenerate = True
+                    I += [X.support()]
+                    if certificate:
+                        proof = [I, construct_vector(Wt, intervals)]
+                    return
+                else:
+                    intervals = setup_intervals(L_, inf)
+                    if exists_vector(evs, intervals):
                         rec(P[:], M_, I + [X.support()], L_, R_)
                     else:
                         if certificate:
                             for v in evs:
-                                if exists_normal_vector(v, intervals2):
+                                if exists_normal_vector(v, intervals):
                                     proof.append([v, I + [X.support()]])
                                     break
-                else:
-                    if certificate:
-                        evs = elementary_vectors(A, kernel=True)
-                        for v in evs:
-                            if exists_normal_vector(v, intervals2):
-                                proof.append([v, I + [X.support()]])
-                                break
 
             if degenerate:
                 return
