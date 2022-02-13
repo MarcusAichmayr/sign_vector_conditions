@@ -20,7 +20,7 @@ def normalize(L):
 
     .. NOTE::
 
-    A sign vector is normalized if it is the zero sign vector or the first non-zero entry is positive.
+        A sign vector is normalized if it is the zero sign vector or the first non-zero entry is positive.
     """
     L_new = []
     for X in L:
