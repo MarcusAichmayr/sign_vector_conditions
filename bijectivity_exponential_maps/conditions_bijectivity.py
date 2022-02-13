@@ -417,20 +417,19 @@ def nondeg_cond1(W, Wt, certificate=False):
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
-    # eventuell auf disjoint support achten. Sind +0 und 0+ dabei, dann müssen wir ++ nicht betrachten.
+    #TODO: consider disjoint support: If we have "+0" and "0+", then we do not need to consider "++".
     P = pos_covectors_from_matrix(W, kernel=True)
 
     if P == []:
         return True
 
     n = Wt.ncols()  # length of vectors
-    degenerate = False  # might change in recursion
+    degenerate = False
 
     L = [-Infinity for i in range(n)]
     R = [0 for i in range(n)]
-    inf = [Infinity for i in range(n)]  # does not change
+    inf = [Infinity for i in range(n)]
 
-#    l = [True for i in range(n)]
     proof = []
 
     M = Wt.right_kernel_matrix()
@@ -451,12 +450,12 @@ def nondeg_cond1(W, Wt, certificate=False):
 
         - ``R`` -- a list of values ``0`` and ``Infinity``
         """
-        nonlocal degenerate  # use nonlocal to use the same ``degenerate``
+        nonlocal degenerate
         nonlocal proof
 
         while P:
             X = P.pop()
-            if set(flatten(I)).issubset(X.zero_support()):  # P[0].positive_support() subseteq J, insbesondere muss X ein + auf J haben
+            if set(flatten(I)).issubset(X.zero_support()):  # X.positive_support() subseteq J, X must have a "+" on J
                 L_ = L[:]
                 R_ = R[:]
                 for i in X.support():
