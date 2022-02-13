@@ -213,7 +213,6 @@ from sage.modules.free_module_element import zero_vector
 from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 from sage.misc.flatten import flatten
-from sage.geometry.polyhedron.constructor import Polyhedron
 
 
 def cond_faces(W, Wt):
