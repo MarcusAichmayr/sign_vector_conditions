@@ -274,7 +274,7 @@ def cond_nondegenerate(W, Wt, certificate=False):
     - ``certificate`` -- a boolean (default: ``False``)
 
     OUTPUT:
-    Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
+    Let ``S``, ``St`` be the subspaces corresponding to the matrices ``W``,
     ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
 
     Returns a boolean.
@@ -305,7 +305,7 @@ def nondegenerate(W, Wt, certificate=False):
 
     OUTPUT:
 
-    Let ``S``, ``St`` be the sub spaces corresponding to the matrices ``W``,
+    Let ``S``, ``St`` be the subspaces corresponding to the matrices ``W``,
     ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
 
     Returns a boolean.
