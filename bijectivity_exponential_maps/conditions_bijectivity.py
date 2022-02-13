@@ -206,7 +206,7 @@ that are represented by the sets ``{2}`` and ``{0, 1}``.
 #############################################################################
 
 from .utility import normalize, pos_cocircuits_from_matrix, pos_covectors_from_matrix
-from elementary_vectors import elementary_vectors, exists_vector, setup_intervals
+from elementary_vectors import elementary_vectors, exists_vector, exists_normal_vector, setup_intervals
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 from sage.modules.free_module_element import zero_vector
@@ -478,14 +478,21 @@ def nondeg_cond1(W, Wt, certificate=False):
                         return
                     elif exists_vector(evs, setup_intervals(L_, inf)):
                         rec(P[:], M_, I + [X.support()], L_, R_)
-#                    else:
-#                        if certificate:
-#                            v = exists_vector(A, setup_intervals(L_, inf), kernel=False, certificate=True)[1]
-#                            proof.append([v, I + [X.support()]])
-#                else:
-#                    if certificate:
-#                        v = exists_vector(A, L_, inf, kernel=False, certificate=True)[1]
-#                        proof.append([v, I + [X.support()]])
+                    else:
+                        if certificate:
+                            intervals = setup_intervals(L_, inf)
+                            for v in evs:
+                                if exists_normal_vector(v, intervals):
+                                    proof.append([v, I + [X.support()]])
+                                    break
+                else:
+                    if certificate:
+                        evs = elementary_vectors(A, kernel=True)
+                        intervals = setup_intervals(L_, inf)
+                        for v in evs:
+                            if exists_normal_vector(v, intervals):
+                                proof.append([v, I + [X.support()]])
+                                break
 
             if degenerate:
                 return
