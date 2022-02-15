@@ -207,7 +207,7 @@ def max_minors_prod(A, B):
     B1 = B.matrix_from_rows(B.pivot_rows())
     if A1.dimensions() != B1.dimensions():
         raise ValueError('Matrices must have same dimensions.')
-    r = A1.nrows()  # should be equal to B1.nrows()
+    r = A1.nrows()
     mA = A1.minors(r)
     mB = B1.minors(r)
 
@@ -219,16 +219,13 @@ def compare_all(v, rel):
     l = []
     for a in v:
         if rel(a) is False:
-            # print('system cannot be satisfied')
             return False
         # here a >= 0 is either True or there are variables
         elif rel(a) is not True:
             l.append(rel(a))
     if len(l) == 0:
-        # print('all entries are non-negative')
         return True
     else:
-        # print('all conditions of this list should hold:')
         return l
 
 
@@ -323,16 +320,13 @@ def geq_leq(v):
         if le is True:
             return True
         else:
-            # print('all of these conditions have to be satisfied:')
             return le
     elif le is False:
         if ge is True:
             return True
         else:
-            # print('all of these conditions have to be satisfied 2:')
             return ge
     else:
-        # print('either all of the first or all of the second conditions have to be satisfied:')
         return [ge, le]
 
 
@@ -354,5 +348,4 @@ def cond_inj_minors(W, Wt):
     Returns a boolean or a symbolic expression if variables occur.
     """
     m = max_minors_prod(W, Wt)
-#    print(m)
     return geq_leq(m)

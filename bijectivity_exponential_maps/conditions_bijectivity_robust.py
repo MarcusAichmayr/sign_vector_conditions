@@ -153,9 +153,7 @@ def cond_closure_sign_vectors(W, Wt):
     tW = topes_from_matrix(W, kernel=True)
     tWt = topes_from_matrix(Wt, kernel=True)
     tWn = normalize(tW)  # 0++0
-#    tWtn = normalize(tWt) # +--+ Do not normalize second list of Topes.
-#    print('tWn:', tWn)
-#    print('tWtn:', tWtn)
+    # +--+ Do not normalize second list of Topes.
     for X in tWn:
         val = True
         for Y in tWt:
@@ -180,8 +178,8 @@ def cond_closure_minors(W, Wt):
 
     OUTPUT:
     Returns whether for each non-zero maximal minor ``m`` of ``W``, we have
-    either ``m mt > 0`` for each corresponding maximal minor ``mt`` of ``Wt`` or
-    ``m mt < 0`` for each corresponding maximal minor ``mt`` of ``Wt``.
+    either ``m mt > 0`` for each corresponding maximal minor ``mt`` of ``Wt``
+    or ``m mt < 0`` for each corresponding maximal minor ``mt`` of ``Wt``.
 
     Returns a boolean or a symbolic expression if variables occur.
     """
@@ -190,8 +188,6 @@ def cond_closure_minors(W, Wt):
     d = W.nrows()
     m = W.minors(d)
     mt = Wt.minors(d)
-#    print('minors of W: ', m)
-#    print('minors of Wt:', mt)
 
     def eq(a):
         r"""

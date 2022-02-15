@@ -206,7 +206,8 @@ that are represented by the sets ``{2}`` and ``{0, 1}``.
 #############################################################################
 
 from .utility import normalize, pos_cocircuits_from_matrix, pos_covectors_from_matrix
-from elementary_vectors import elementary_vectors, exists_vector, exists_normal_vector, setup_intervals, construct_vector
+from elementary_vectors import elementary_vectors
+from elementary_vectors import setup_intervals, exists_vector, exists_normal_vector, construct_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 from sage.modules.free_module_element import zero_vector
@@ -416,7 +417,7 @@ def nondeg_cond1(W, Wt, certificate=False):
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
-    #TODO: consider disjoint support: If we have "+0" and "0+", then we do not need to consider "++".
+    # TODO: consider disjoint support: If we have "+0" and "0+", then we do not need to consider "++".
     P = pos_covectors_from_matrix(W, kernel=True)
 
     if P == []:
