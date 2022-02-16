@@ -265,13 +265,16 @@ def max_minors_prod(A, B):
 
 
 def compare_all(v, rel):
-    r"""Check whether all entries satisfy the relation."""
+    r"""
+    Check whether all entries satisfy the relation.
+
+    This is an auxiliary function used by :func:`geq` and :func:`leq`.
+    """
     l = []
     for a in v:
         if rel(a) is False:
             return False
-        # here a >= 0 is either True or there are variables
-        elif rel(a) is not True:
+        elif rel(a) is not True:  # if variables occur, we will return the expression
             l.append(rel(a))
     if len(l) == 0:
         return True
@@ -282,6 +285,13 @@ def compare_all(v, rel):
 def geq(v):
     r"""
     Check whether all entries are non-negative.
+
+    INPUT:
+
+    - ``v`` -- an iterable
+
+    OUTPUT:
+    a boolean or symbolic expression
 
     EXAMPLES::
 
@@ -308,6 +318,13 @@ def geq(v):
 def leq(v):
     r"""
     Check whether all entries are non-positive.
+
+    INPUT:
+
+    - ``v`` -- an iterable
+
+    OUTPUT:
+    a boolean or symbolic expression
 
     EXAMPLES::
 
