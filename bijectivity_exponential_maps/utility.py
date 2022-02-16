@@ -18,9 +18,34 @@ def normalize(L):
     r"""
     Compute a normalized list of sign vectors.
 
+    INPUT:
+
+    - ``L`` -- a list of sign vectors
+
+    OUTPUT:
+    a list of sign vectors consisting only of those sign vectors of ``L``
+    that are normalized
+
     .. NOTE::
 
-        A sign vector is normalized if it is the zero sign vector or the first non-zero entry is positive.
+        A sign vector is normalized if it is the zero sign vector
+        or the first non-zero entry is positive.
+
+    EXAMPLES::
+
+        sage: from sign_vectors import sign_vector
+        sage: L = [
+        ....:     sign_vector('++0'), sign_vector('--0'), sign_vector('-0+'),
+        ....:     sign_vector('+0-'), sign_vector('0++'), sign_vector('0--')
+        ....: ]
+        sage: L
+        [(++0), (--0), (-0+), (+0-), (0++), (0--)]
+        sage: from bijectivity_exponential_maps.utility import normalize
+        sage: normalize(L)
+        [(++0), (+0-), (0++)]
+        sage: L = [sign_vector('000'), sign_vector('-++')]
+        sage: normalize(L)
+        [(000)]
     """
     L_new = []
     for X in L:
@@ -51,6 +76,20 @@ def pos_cocircuits_from_matrix(A, kernel=False):
     - If ``kernel`` is false, returns a list of positive cocircuits determined by the rows of the matrix ``A``.
 
     - If ``kernel`` is true, returns a list of positive cocircuits determined by the kernel of the matrix ``A``.
+
+    EXAMPLES::
+
+        sage: M = matrix([[1, 1, 0, 0], [0, 2, -1, 1], [0, 0, 0, 1]])
+        sage: M
+        [ 1  1  0  0]
+        [ 0  2 -1  1]
+        [ 0  0  0  1]
+        sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
+        sage: cocircuits_from_matrix(M)
+        [(--00), (-0-0), (000-), (0-+0), (++00), (+0+0), (000+), (0+-0)]
+        sage: from bijectivity_exponential_maps.utility import pos_cocircuits_from_matrix
+        sage: pos_cocircuits_from_matrix(M)
+        [(++00), (+0+0), (000+)]
     """
     L = elementary_vectors(A, kernel=kernel)
     return [sign_vector(v) for v in L if sign_vector(v) > 0] + [sign_vector(-v) for v in L if sign_vector(-v) > 0]
@@ -73,6 +112,30 @@ def pos_covectors_from_matrix(A, kernel=False):
       - If ``kernel`` is false, returns a list of cocircuits determined by the rows of the matrix ``A``.
 
       - If ``kernel`` is true, returns a list of cocircuits determined by the kernel of the matrix ``A``.
+
+    EXAMPLES::
+
+        sage: M = matrix([[1, 1, 0, 0], [0, 2, -1, 1], [0, 0, 0, 1]])
+        sage: M
+        [ 1  1  0  0]
+        [ 0  2 -1  1]
+        [ 0  0  0  1]
+        sage: from sign_vectors.oriented_matroids import covectors_from_matrix
+        sage: covectors_from_matrix(M)
+        [(0000),
+        (--00),
+        (-0-0),
+        (000-),
+        (0-+0),
+        (++00),
+        (+0+0),
+        (000+),
+        ...
+        (++0-),
+        (--0-)]
+        sage: from bijectivity_exponential_maps.utility import pos_covectors_from_matrix
+        sage: pos_covectors_from_matrix(M)
+        [(++00), (+0+0), (000+), (++0+), (+0++), (++++), (+++0)]
     """
     ev = elementary_vectors(A, kernel=kernel)
     L = [sign_vector(v) for v in ev if not sign_vector(v) < 0] + [sign_vector(-v) for v in ev if not sign_vector(-v) < 0]

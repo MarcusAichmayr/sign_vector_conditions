@@ -13,7 +13,7 @@
 
 ## utility
 
-* [ ] add examples
+* [x] add examples
 
 ## injectivity
 
