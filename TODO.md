@@ -1,7 +1,5 @@
 # TODO
 
-* [x] cite MHR19 (once)
-
 ## functions (f_pol, f_exp)
 
 * [x] add examples and explanations (like in thesis) to top of file
@@ -26,8 +24,6 @@
     * [x] `geq_leq` add more examples
     * [x] `cond_inj_minors`
 * [ ] remove random tests
-* [x] support latex statements in documentation for inline math
-  (`a, b \in \mathcal{R}`, `\leq`, `\geq`)
 
 ## bijectivity
 
@@ -41,9 +37,7 @@
 ## robust bijectivity
 
 * [x] add examples and explanations (like in thesis) to top of file
-* [ ] add examples
-    * (optional) `cond_closure_sign_vectors`
-    * (optional) `cond_closure_minors`
+* (optional) add examples
 * [ ] remove random tests
 * [ ] add further results, perturbations in coefficients and exponents
 
