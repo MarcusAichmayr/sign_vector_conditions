@@ -18,13 +18,13 @@
 ## injectivity
 
 * [x] add examples and explanations (like in thesis) to top of file
-* [ ] add examples
-    * (optional) `cond_inj_intersection`
-    * [ ] `max_minors_prod`
-    * [ ] `compare_all`
-    * [ ] `leq`
-    * [ ] `geq_leq` add more examples
-    * [ ] `cond_inj_minors`
+* [x] add examples
+    * [x] `cond_inj_intersection`
+    * [x] `max_minors_prod`
+    * (optional) `compare_all`
+    * [x] `leq`
+    * [x] `geq_leq` add more examples
+    * [x] `cond_inj_minors`
 * [ ] remove random tests
 * [x] support latex statements in documentation for inline math
   (`a, b \in \mathcal{R}`, `\leq`, `\geq`)

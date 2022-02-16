@@ -177,6 +177,30 @@ def cond_inj_intersection(W, Wt):
 
     Returns a boolean.
 
+    EXAMPLES::
+
+        sage: from bijectivity_exponential_maps import *
+        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W
+        [ 1  0 -1]
+        [ 0  1 -1]
+        sage: Wt = matrix([[1,0,-1],[0,1,0]])
+        sage: Wt
+        [ 1  0 -1]
+        [ 0  1  0]
+        sage: cond_inj_intersection(W, Wt)
+        True
+        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W
+        [ 1  0 -1]
+        [ 0  1 -1]
+        sage: Wt = matrix([[1,0,-1],[0,1,1]])
+        sage: Wt
+        [ 1  0 -1]
+        [ 0  1  1]
+        sage: cond_inj_intersection(W, Wt)
+        False
+
     TESTS::
 
         sage: from bijectivity_exponential_maps.conditions_injectivity import cond_inj_intersection
@@ -202,11 +226,37 @@ def cond_inj_intersection(W, Wt):
 
 
 def max_minors_prod(A, B):
-    r"""Multiply the maximal minors of two matrices component-wise."""
+    r"""
+    Multiply the maximal minors of two matrices component-wise.
+
+    EXAMPLES::
+
+        sage: A = matrix([[1, 0, 1], [0, 1, 2]])
+        sage: B = matrix([[1, 0, -1], [0, 1, 3]])
+        sage: A.minors(2)
+        [1, 2, -1]
+        sage: B.minors(2)
+        [1, 3, 1]
+        sage: from bijectivity_exponential_maps.conditions_injectivity import max_minors_prod
+        sage: max_minors_prod(A, B)
+        [1, 6, -1]
+
+    TESTS::
+
+        sage: A = matrix([[1, 0, 1], [0, 1, 2], [0, 1, 2]])
+        sage: B = matrix([[1, 0, -1], [0, 1, 3]])
+        sage: max_minors_prod(A, B)
+        [1, 6, -1]
+        sage: A = matrix([[1, 0, 1], [0, 1, 2], [0, 0, 1]])
+        sage: max_minors_prod(A, B)
+        Traceback (most recent call last):
+        ...
+        ValueError: Matrices must have same rank and number of columns.
+    """
     A1 = A.matrix_from_rows(A.pivot_rows())
     B1 = B.matrix_from_rows(B.pivot_rows())
     if A1.dimensions() != B1.dimensions():
-        raise ValueError('Matrices must have same dimensions.')
+        raise ValueError('Matrices must have same rank and number of columns.')
     r = A1.nrows()
     mA = A1.minors(r)
     mB = B1.minors(r)
@@ -236,20 +286,16 @@ def geq(v):
     EXAMPLES::
 
         sage: from bijectivity_exponential_maps.conditions_injectivity import geq
-        sage: l = [0, 5, 1]
-        sage: geq(l)
+        sage: geq([0, 5, 1])
         True
-        sage: l = [0, 0]
-        sage: geq(l)
+        sage: geq([0, 0])
         True
-        sage: l = [0, -5]
-        sage: geq(l)
+        sage: geq([0, -5])
         False
-        sage: var('x')
-        x
-        sage: l = [x, x**2 + 1, -1, 5]
-        sage: geq(l)
+        sage: geq([x, x^2 + 1, -1, 5])
         False
+        sage: geq([x, x^2 + 1])
+        [x >= 0, x^2 + 1 >= 0]
     """
     def rel(a):
         try:
@@ -260,7 +306,23 @@ def geq(v):
 
 
 def leq(v):
-    r"""Check whether all entries are non-positive."""
+    r"""
+    Check whether all entries are non-positive.
+
+    EXAMPLES::
+
+        sage: from bijectivity_exponential_maps.conditions_injectivity import leq
+        sage: leq([0, 5, 1])
+        False
+        sage: leq([0, 0])
+        True
+        sage: leq([0, -5])
+        True
+        sage: leq([x, x^2 + 1, -1, 5])
+        False
+        sage: leq([x, x^2 + 1])
+        [x <= 0, x^2 + 1 <= 0]
+    """
     def rel(a):
         try:
             return RR(a) <= 0  # cast to a real number
@@ -303,11 +365,16 @@ def geq_leq(v):
     EXAMPLES::
 
         sage: from bijectivity_exponential_maps.conditions_injectivity import geq_leq
-        sage: var('x')
-        x
-        sage: l = [x, x**2 + 1, -1, 5]
-        sage: geq_leq(l)
+        sage: geq_leq([0, 5, 1])
+        True
+        sage: geq_leq([0, 0])
         False
+        sage: geq_leq([0, -5])
+        True
+        sage: geq_leq([x, x^2 + 1, -1, 5])
+        False
+        sage: geq_leq([x, x^2 + 1])
+        [[x >= 0, x^2 + 1 >= 0], [x <= 0, x^2 + 1 <= 0]]
     """
     ge = geq(v)
     le = leq(v)
@@ -346,6 +413,42 @@ def cond_inj_minors(W, Wt):
     matrices ``W`` and ``Wt`` have the same sign.
 
     Returns a boolean or a symbolic expression if variables occur.
+
+    EXAMPLES::
+
+        sage: from bijectivity_exponential_maps import *
+        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W
+        [ 1  0 -1]
+        [ 0  1 -1]
+        sage: Wt = matrix([[1,0,-1],[0,1,0]])
+        sage: Wt
+        [ 1  0 -1]
+        [ 0  1  0]
+        sage: cond_inj_minors(W, Wt)
+        True
+        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W
+        [ 1  0 -1]
+        [ 0  1 -1]
+        sage: Wt = matrix([[1,0,-1],[0,1,1]])
+        sage: Wt
+        [ 1  0 -1]
+        [ 0  1  1]
+        sage: cond_inj_minors(W, Wt)
+        False
+        sage: var('a,b')
+        (a, b)
+        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W
+        [ 1  0 -1]
+        [ 0  1 -1]
+        sage: Wt = matrix([[1,0,a],[0,1,b]])
+        sage: Wt
+        [1 0 a]
+        [0 1 b]
+        sage: cond_inj_minors(W, Wt)
+        [-b >= 0, -a >= 0]
     """
     m = max_minors_prod(W, Wt)
     return geq_leq(m)
