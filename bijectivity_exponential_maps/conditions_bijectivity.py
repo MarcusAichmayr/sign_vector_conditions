@@ -15,7 +15,6 @@ Let us consider the following matrices::
     sage: Wt
     [ 1  0  0 -1]
     [ 0  1  1  1]
-
     sage: var('x1, x2, c1, c2, c3, c4')
     (x1, x2, c1, c2, c3, c4)
     sage: c = [c1, c2, c3, c4]
@@ -293,7 +292,7 @@ def cond_nondegenerate(W, Wt, certificate=False):
 
 def nondegenerate(W, Wt, certificate=False):
     r"""
-    Check whether the pair of the given matrices is non-degenerate.
+    Check whether the pair of given matrices is non-degenerate.
 
     INPUT:
 
@@ -304,7 +303,6 @@ def nondegenerate(W, Wt, certificate=False):
     - ``certificate`` -- a boolean (default: ``False``)
 
     OUTPUT:
-
     Let ``S``, ``St`` be the subspaces corresponding to the matrices ``W``,
     ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
 
@@ -363,7 +361,6 @@ def nondeg_cond1(W, Wt, certificate=False):
         [  1 -25 -11   1]
         sage: nondeg_cond1(W, Wt)
         False
-
         sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
@@ -372,7 +369,6 @@ def nondeg_cond1(W, Wt, certificate=False):
         [ 1 25 11  1]
         sage: nondeg_cond1(W, Wt)
         True
-
         sage: W = matrix(2,4,[1,2,0,0,0,0,5,1]).right_kernel_matrix()
         sage: W
         [ 2 -1  0  0]
@@ -387,7 +383,6 @@ def nondeg_cond1(W, Wt, certificate=False):
         [ 0  1  1  3]
         sage: nondeg_cond1(W, Wt)
         False
-
         sage: W = matrix(3,5,[1,2,0,0,0,0,0,5,1,0,0,0,0,0,1]).right_kernel_matrix()
         sage: W
         [ 2 -1  0  0  0]
@@ -403,7 +398,6 @@ def nondeg_cond1(W, Wt, certificate=False):
         [ 0  1 -3 -1  0]
         sage: nondeg_cond1(W, Wt)
         False
-
         sage: A = matrix([[1, 0, 0, 1], [0, 1, 1, -1]]).right_kernel_matrix()
         sage: A
         [ 1  0 -1 -1]
@@ -423,7 +417,7 @@ def nondeg_cond1(W, Wt, certificate=False):
     if P == []:
         return True
 
-    n = Wt.ncols()  # length of vectors
+    n = Wt.ncols()
     degenerate = False
 
     L = [-Infinity for i in range(n)]
@@ -462,7 +456,7 @@ def nondeg_cond1(W, Wt, certificate=False):
                     L_[i] = 1
                     R_[i] = Infinity
 
-                M_ = equal_components(M, X.support())  # make to echelon form?
+                M_ = equal_components(M, X.support())
                 A = M_.right_kernel_matrix()
                 evs = elementary_vectors(A, kernel=True)
                 intervals = setup_intervals(L_, R_)
@@ -497,13 +491,37 @@ def nondeg_cond1(W, Wt, certificate=False):
 
 def equal_components(M, I):
     r"""
-    The kernel matrix has equal components on ``I``.
+    Insert additional rows to a matrix, such that given components of the kernel matrix are equal.
 
     INPUT:
 
     - ``M`` -- a matrix
 
     - ``I`` -- a list of indices
+
+    OUTPUT:
+    a matrix with additional rows.
+
+    EXAMPLES::
+
+        sage: M = matrix([[1, 0, 1, 0], [0, 0 ,-1, 2]])
+        sage: M
+        [ 1  0  1  0]
+        [ 0  0 -1  2]
+        sage: from bijectivity_exponential_maps.conditions_bijectivity import equal_components
+        sage: equal_components(M, [0, 1])
+        [ 1  0  1  0]
+        [ 0  0 -1  2]
+        [ 1 -1  0  0]
+        sage: _.right_kernel_matrix()
+        [ 2  2 -2 -1]
+        sage: equal_components(M, [0, 1, 2])
+        [ 1  0  1  0]
+        [ 0  0 -1  2]
+        [ 1 -1  0  0]
+        [ 1  0 -1  0]
+        sage: _.right_kernel_matrix()
+        []
     """
     n = M.ncols()
 
@@ -526,6 +544,65 @@ def nondeg_cond2(W, Wt):
 
         :func:`~cond_nondegenerate`
         :func:`~nondeg_cond1`
+
+    EXAMPLES::
+
+        sage: from bijectivity_exponential_maps.conditions_bijectivity import nondeg_cond2
+        sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
+        sage: W
+        [ 10 -54 -23 -13]
+        sage: Wt = matrix([[-5,-1,2,2],[1,0,2,21],[-2,0,0,2]]).right_kernel_matrix()
+        sage: Wt
+        [  1 -25 -11   1]
+        sage: nondeg_cond2(W, Wt)
+        False
+        sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
+        sage: W
+        [ 10 -54 -23 -13]
+        sage: Wt = matrix([[-5,1,-2,2],[1,0,-2,21],[-2,0,0,2]]).right_kernel_matrix()
+        sage: Wt
+        [ 1 25 11  1]
+        sage: nondeg_cond2(W, Wt)
+        False
+        sage: W = matrix(2,4,[1,2,0,0,0,0,5,1]).right_kernel_matrix()
+        sage: W
+        [ 2 -1  0  0]
+        [ 0  0  1 -5]
+        sage: A = matrix([[1,1,2,2],[1,0,1,-1]]).right_kernel_matrix()
+        sage: A
+        [ 1  1 -1  0]
+        [ 0  4 -1 -1]
+        sage: Wt = A.right_kernel_matrix()
+        sage: Wt
+        [ 1  0  1 -1]
+        [ 0  1  1  3]
+        sage: nondeg_cond2(W, Wt)
+        False
+        sage: W = matrix(3,5,[1,2,0,0,0,0,0,5,1,0,0,0,0,0,1]).right_kernel_matrix()
+        sage: W
+        [ 2 -1  0  0  0]
+        [ 0  0  1 -5  0]
+        sage: A = matrix([[1,1,-2,-2,2],[1,0,1,-1,2]]).right_kernel_matrix()
+        sage: A
+        [ 1  1  0  1  0]
+        [ 0  2  0  2  1]
+        [ 0  0  1 -3 -2]
+        sage: Wt = A.right_kernel_matrix()
+        sage: Wt
+        [ 1  0  1 -1  2]
+        [ 0  1 -3 -1  0]
+        sage: nondeg_cond2(W, Wt)
+        False
+        sage: A = matrix([[1, 0, 0, 1], [0, 1, 1, -1]]).right_kernel_matrix()
+        sage: A
+        [ 1  0 -1 -1]
+        [ 0  1 -1  0]
+        sage: B = matrix([[1,1,0,0],[0,0,1,1]])
+        sage: B
+        [1 1 0 0]
+        [0 0 1 1]
+        sage: nondeg_cond2(B, A)
+        False
     """
     ccWt = normalize(cocircuits_from_matrix(Wt))
     ccWp = pos_cocircuits_from_matrix(W)

@@ -35,9 +35,8 @@
 * [ ] add examples
     * (optional) `cond_nondegenerate`, (but not for `nondegenerate`)
     * [ ] `nondeg_cond1` add explanations
-    * [ ] `equal_components`
-    * [ ] `find_vector`
-    * [ ] `nondeg_cond2`
+    * [x] `equal_components`
+    * [x] `nondeg_cond2`
 
 ## robust bijectivity
 
