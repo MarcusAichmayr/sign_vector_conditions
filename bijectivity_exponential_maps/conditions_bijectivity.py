@@ -29,9 +29,11 @@ Hence, we obtain the oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
     sage: covectors_from_matrix(W, kernel=True, algorithm='fe', separate=True)
-    [[(0000)], [(0+0-), (-0+0), (+0-0), (0-0+)], [(-++-), (++--), (+--+), (--++)]]
+    [[(0000)], [(0+0-), (-0+0), (+0-0), (0-0+)], [(-++-), (++--), (--++), (+--+)]]
     sage: covectors_from_matrix(Wt, algorithm='fe', separate=True)
-    [[(0000)], [(+00-), (+++0), (-00+), (---0), (0---), (0+++)], [(+++-), (---+), (----), (+---), (++++), (-+++)]]
+    [[(0000)],
+     [(+00-), (+++0), (0---), (---0), (-00+), (0+++)],
+     [(+++-), (----), (---+), (+---), (++++), (-+++)]]
 
 We can check injectivity by using the function :func:`~cond_inj_intersection`::
 
@@ -46,10 +48,10 @@ corresponding to the matrices::
 
     sage: cc1 = cocircuits_from_matrix(W, kernel=False)
     sage: cc1
-    [(+0+0), (0+0+), (-0-0), (0-0-)]
+    [(+0+0), (-0-0), (0+0+), (0-0-)]
     sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
     sage: cc2
-    [(+++0), (-00+), (0+++), (---0), (+00-), (0---)]
+    [(+++0), (---0), (-00+), (+00-), (0+++), (0---)]
 
 Here, we are only interested in the positive cocircuits::
 
@@ -72,7 +74,7 @@ We need to check a third condition to verify surjectivity.
 For this purpose, we consider again the oriented matroid determined by ``W``::
 
     sage: covectors_from_matrix(W, kernel=True)
-    [(0000), (-0+0), (0-0+), (+0-0), (0+0-), (-++-), (++--), (+--+), (--++)]
+    [(0000), (-0+0), (+0-0), (0-0+), (0+0-), (-++-), (++--), (+--+), (--++)]
 
 Since there is no positive covector,
 the exponential map is surjective.
@@ -104,10 +106,10 @@ Now, we attempt to check the face condition::
 
     sage: cc1 = cocircuits_from_matrix(W, kernel=False)
     sage: cc1
-    [(+++0), (-00+), (0+++), (---0), (+00-), (0---)]
+    [(+++0), (---0), (-00+), (+00-), (0+++), (0---)]
     sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
     sage: cc2
-    [(+0+0), (0+0+), (-0-0), (0-0-)]
+    [(+0+0), (-0-0), (0+0+), (0-0-)]
 
 Again, we are only interested in the positive cocircuits::
 

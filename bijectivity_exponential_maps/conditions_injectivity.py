@@ -31,7 +31,19 @@ For this purpose, we compute the corresponding oriented matroids::
     sage: from sign_vectors.oriented_matroids import *
     sage: cvW = covectors_from_matrix(W, algorithm='fe')
     sage: cvW
-    [(000), (0-+), (+-0), (+0-), (-0+), (-+0), (0+-), (+-+), (+--), (-++), (--+), (-+-), (++-)]
+    [(000),
+     (0-+),
+     (+-0),
+     (-0+),
+     (-+0),
+     (+0-),
+     (0+-),
+     (+-+),
+     (-++),
+     (+--),
+     (--+),
+     (-+-),
+     (++-)]
     sage: cvWt = covectors_from_matrix(Wt, kernel=True, algorithm='fe')
     sage: cvWt
     [(000), (+0+), (-0-)]
@@ -84,7 +96,9 @@ Now, we consider another example::
 Next, we compute the corresponding oriented matroids::
 
     sage: covectors_from_matrix(W, algorithm='fe', separate=True)
-    [[(000)], [(0-+), (+-0), (+0-), (-0+), (-+0), (0+-)], [(+-+), (+--), (-++), (--+), (-+-), (++-)]]
+    [[(000)],
+     [(0-+), (+-0), (-0+), (-+0), (+0-), (0+-)],
+     [(+-+), (-++), (+--), (--+), (-+-), (++-)]]
     sage: covectors_from_matrix(Wt, kernel=True, algorithm='fe', separate=True)
     [[(000)], [(+-+), (-+-)]]
 

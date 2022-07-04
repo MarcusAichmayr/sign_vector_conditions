@@ -12,7 +12,7 @@ r"""This module offers utility functions that are used by the other functions of
 
 from elementary_vectors import elementary_vectors
 from sign_vectors import sign_vector, zero_sign_vector
-
+from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 def normalize(L):
     r"""
@@ -86,13 +86,16 @@ def pos_cocircuits_from_matrix(A, kernel=False):
         [ 0  0  0  1]
         sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
         sage: cocircuits_from_matrix(M)
-        [(--00), (-0-0), (000-), (0-+0), (++00), (+0+0), (000+), (0+-0)]
+        [(--00), (++00), (-0-0), (+0+0), (000-), (000+), (0-+0), (0+-0)]
         sage: from bijectivity_exponential_maps.utility import pos_cocircuits_from_matrix
         sage: pos_cocircuits_from_matrix(M)
         [(++00), (+0+0), (000+)]
     """
-    L = elementary_vectors(A, kernel=kernel)
-    return [sign_vector(v) for v in L if sign_vector(v) > 0] + [sign_vector(-v) for v in L if sign_vector(-v) > 0]
+    evs = elementary_vectors(A, kernel=kernel)
+    return [
+        X for X in cocircuits_from_matrix(A, kernel=kernel)
+        if X > 0
+    ]
 
 
 def pos_covectors_from_matrix(A, kernel=False):
@@ -123,22 +126,30 @@ def pos_covectors_from_matrix(A, kernel=False):
         sage: from sign_vectors.oriented_matroids import covectors_from_matrix
         sage: covectors_from_matrix(M)
         [(0000),
-        (--00),
-        (-0-0),
-        (000-),
-        (0-+0),
-        (++00),
-        (+0+0),
-        (000+),
-        ...
-        (++0-),
-        (--0-)]
+         (--00),
+         (++00),
+         (-0-0),
+         (+0+0),
+         (000-),
+         (000+),
+         (0-+0),
+         ...
+         (++0-),
+         (--0-)]
         sage: from bijectivity_exponential_maps.utility import pos_covectors_from_matrix
         sage: pos_covectors_from_matrix(M)
         [(++00), (+0+0), (000+), (++0+), (+0++), (++++), (+++0)]
     """
-    ev = elementary_vectors(A, kernel=kernel)
-    L = [sign_vector(v) for v in ev if not sign_vector(v) < 0] + [sign_vector(-v) for v in ev if not sign_vector(-v) < 0]
+    evs = elementary_vectors(A, kernel=kernel)
+    L = [
+        sign_vector(v)
+        for v in evs
+        if not sign_vector(v) < 0
+    ] + [
+        sign_vector(-v)
+        for v in evs
+        if not sign_vector(-v) < 0
+    ]
 
     if not L:
         raise ValueError('List of cocircuits is empty.')
