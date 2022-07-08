@@ -29,7 +29,7 @@ We want to check whether this map is injective for each vector ``c > 0``.
 For this purpose, we compute the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cvW = covectors_from_matrix(W, algorithm='fe')
+    sage: cvW = covectors_from_matrix(W, kernel=False, algorithm='fe')
     sage: cvW
     [(000),
      (0-+),
@@ -95,7 +95,7 @@ Now, we consider another example::
 
 Next, we compute the corresponding oriented matroids::
 
-    sage: covectors_from_matrix(W, algorithm='fe', separate=True)
+    sage: covectors_from_matrix(W, kernel=False, algorithm='fe', separate=True)
     [[(000)],
      [(0-+), (+-0), (-0+), (-+0), (+0-), (0+-)],
      [(+-+), (-++), (+--), (--+), (-+-), (++-)]]
@@ -226,7 +226,7 @@ def cond_inj_intersection(W, Wt):
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
 
-    cvW = covectors_from_matrix(W)
+    cvW = covectors_from_matrix(W, kernel=False)
     try:
         cvWt = covectors_from_matrix(Wt, kernel=True)
     except ValueError:  # kernel matrix might be empty, no elementary vectors

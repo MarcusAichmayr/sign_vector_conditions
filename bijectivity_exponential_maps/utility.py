@@ -14,6 +14,7 @@ from elementary_vectors import elementary_vectors
 from sign_vectors import sign_vector, zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
+
 def normalize(L):
     r"""
     Compute a normalized list of sign vectors.
@@ -47,21 +48,18 @@ def normalize(L):
         sage: normalize(L)
         [(000)]
     """
-    L_new = []
-    for X in L:
-        val = True
+    def is_normalized(X):
         for Xi in X:
             if Xi > 0:
-                break
+                return True
             elif Xi < 0:
-                val = False
-                break
-        if val:
-            L_new.append(X)
-    return L_new
+                return False
+        return True
+
+    return [X for X in L if is_normalized(X)]
 
 
-def pos_cocircuits_from_matrix(A, kernel=False):
+def pos_cocircuits_from_matrix(M, kernel=True):
     r"""
     Compute a list of positive cocircuits determined by a given matrix.
 
@@ -69,21 +67,19 @@ def pos_cocircuits_from_matrix(A, kernel=False):
 
     - ``A`` -- a matrix with real arguments.
 
-    - ``kernel`` -- a boolean (default: False)
+    - ``kernel`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
-    - If ``kernel`` is false, returns a list of positive cocircuits determined by the rows of the matrix ``A``.
-
     - If ``kernel`` is true, returns a list of positive cocircuits determined by the kernel of the matrix ``A``.
+
+    - If ``kernel`` is false, returns a list of positive cocircuits determined by the rows of the matrix ``A``.
 
     EXAMPLES::
 
-        sage: M = matrix([[1, 1, 0, 0], [0, 2, -1, 1], [0, 0, 0, 1]])
+        sage: M = matrix([[2, -1, -1, 0]])
         sage: M
-        [ 1  1  0  0]
-        [ 0  2 -1  1]
-        [ 0  0  0  1]
+        [ 2 -1 -1  0]
         sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
         sage: cocircuits_from_matrix(M)
         [(--00), (++00), (-0-0), (+0+0), (000-), (000+), (0-+0), (0+-0)]
@@ -91,14 +87,13 @@ def pos_cocircuits_from_matrix(A, kernel=False):
         sage: pos_cocircuits_from_matrix(M)
         [(++00), (+0+0), (000+)]
     """
-    evs = elementary_vectors(A, kernel=kernel)
     return [
-        X for X in cocircuits_from_matrix(A, kernel=kernel)
+        X for X in cocircuits_from_matrix(M, kernel=kernel)
         if X > 0
     ]
 
 
-def pos_covectors_from_matrix(A, kernel=False):
+def pos_covectors_from_matrix(M, kernel=True):
     r"""
     Use a list of cocircuits to compute all covectors of the corresponding oriented matroid.
 
@@ -106,23 +101,21 @@ def pos_covectors_from_matrix(A, kernel=False):
 
     - ``L`` -- a list of cocircuits of an oriented matroid.
 
-    - ``kernel`` -- a boolean (default: False)
+    - ``kernel`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
     - a list of all covectors of the oriented matroid.
 
-      - If ``kernel`` is false, returns a list of cocircuits determined by the rows of the matrix ``A``.
-
       - If ``kernel`` is true, returns a list of cocircuits determined by the kernel of the matrix ``A``.
+
+      - If ``kernel`` is false, returns a list of cocircuits determined by the rows of the matrix ``A``.
 
     EXAMPLES::
 
-        sage: M = matrix([[1, 1, 0, 0], [0, 2, -1, 1], [0, 0, 0, 1]])
+        sage: M = matrix([[2, -1, -1, 0]])
         sage: M
-        [ 1  1  0  0]
-        [ 0  2 -1  1]
-        [ 0  0  0  1]
+        [ 2 -1 -1  0]
         sage: from sign_vectors.oriented_matroids import covectors_from_matrix
         sage: covectors_from_matrix(M)
         [(0000),
@@ -140,23 +133,17 @@ def pos_covectors_from_matrix(A, kernel=False):
         sage: pos_covectors_from_matrix(M)
         [(++00), (+0+0), (000+), (++0+), (+0++), (++++), (+++0)]
     """
-    evs = elementary_vectors(A, kernel=kernel)
     L = [
-        sign_vector(v)
-        for v in evs
-        if not sign_vector(v) < 0
-    ] + [
-        sign_vector(-v)
-        for v in evs
-        if not sign_vector(-v) < 0
+        X for X in cocircuits_from_matrix(M, kernel=kernel)
+        if not X < 0
     ]
 
     if not L:
         raise ValueError('List of cocircuits is empty.')
     n = L[0].length()
-    F = []
-    F_new = [zero_sign_vector(n)]
-    while F_new != []:
+    F = set()
+    F_new = {zero_sign_vector(n)}
+    while F_new != set():
         Y = F_new.pop()
         for X in L:
             if X >= 0:
@@ -164,6 +151,6 @@ def pos_covectors_from_matrix(A, kernel=False):
                     Z = X.compose(Y)
                     if Z not in F:
                         if Z >= 0:
-                            F.append(Z)
-                            F_new.append(Z)
-    return F
+                            F.add(Z)
+                            F_new.add(Z)
+    return list(F)
