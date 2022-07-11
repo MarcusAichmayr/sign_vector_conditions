@@ -30,7 +30,7 @@ Hence, we obtain the oriented matroids::
     sage: from sign_vectors.oriented_matroids import *
     sage: covectors_from_matrix(W, kernel=True, algorithm='fe', separate=True)
     [[(0000)], [(0+0-), (-0+0), (+0-0), (0-0+)], [(-++-), (++--), (--++), (+--+)]]
-    sage: covectors_from_matrix(Wt, algorithm='fe', separate=True)
+    sage: covectors_from_matrix(Wt, kernel=False, algorithm='fe', separate=True)
     [[(0000)],
      [(+00-), (+++0), (0---), (---0), (-00+), (0+++)],
      [(+++-), (----), (---+), (+---), (++++), (-+++)]]
@@ -606,8 +606,8 @@ def nondeg_cond2(W, Wt):
         sage: nondeg_cond2(B, A)
         False
     """
-    ccWt = normalize(cocircuits_from_matrix(Wt))
-    ccWp = pos_cocircuits_from_matrix(W)
+    ccWt = normalize(cocircuits_from_matrix(Wt, kernel=False))
+    ccWp = pos_cocircuits_from_matrix(W, kernel=False)
     for X in ccWt:
         val = False
         for Y in ccWp:

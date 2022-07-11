@@ -172,7 +172,7 @@ In this case, it returns a system of inequalities::
 
 from .utility import normalize
 from sign_vectors.oriented_matroids import covectors_from_matrix
-from sage.rings.real_mpfr import RR  # used for casting
+from sage.rings.real_mpfr import RR
 
 
 def cond_inj_intersection(W, Wt):
@@ -227,16 +227,10 @@ def cond_inj_intersection(W, Wt):
         raise ValueError('Matrices have different number of columns.')
 
     cvW = covectors_from_matrix(W, kernel=False)
-    try:
-        cvWt = covectors_from_matrix(Wt, kernel=True)
-    except ValueError:  # kernel matrix might be empty, no elementary vectors
-        return True
+    cvWt = covectors_from_matrix(Wt, kernel=True)
     cvWn = normalize(cvW)
     cvWtn = normalize(cvWt)
-    for X in cvWtn[1:]:  # first element is zero vector
-        if X in cvWn[1:]:  # first element is zero vector
-            return False
-    return True
+    return len(set(cvWn).intersection(set(cvWtn))) == 1
 
 
 def max_minors_prod(A, B):
@@ -323,7 +317,7 @@ def geq(v):
     """
     def rel(a):
         try:
-            return RR(a) >= 0  # cast to a real number
+            return RR(a) >= 0
         except TypeError:
             return a >= 0
     return compare_all(v, rel)
@@ -356,7 +350,7 @@ def leq(v):
     """
     def rel(a):
         try:
-            return RR(a) <= 0  # cast to a real number
+            return RR(a) <= 0
         except TypeError:
             return a <= 0
     return compare_all(v, rel)
@@ -428,7 +422,6 @@ def geq_leq(v):
         return [ge, le]
 
 
-# Corollary 4 condition 2
 def cond_inj_minors(W, Wt):
     r"""
     Return whether the products of maximal minors have the same sign.

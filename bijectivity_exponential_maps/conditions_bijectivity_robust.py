@@ -136,7 +136,6 @@ from sage.rings.real_mpfr import RR  # used for casting
 from sage.rings.integer_ring import ZZ
 
 
-# Cor33cond2
 def cond_closure_sign_vectors(W, Wt):
     r"""
     Return whether the oriented matroid corresponding to ``W`` is a subset of the closure of the oriented matroid corresponding to ``Wt``.
@@ -165,7 +164,6 @@ def cond_closure_sign_vectors(W, Wt):
     return True
 
 
-# Cor33cond3
 def cond_closure_minors(W, Wt):
     r"""
     Check a condition on maximal minors of two matrices.
