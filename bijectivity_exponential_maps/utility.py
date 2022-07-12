@@ -17,14 +17,14 @@ from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 def normalize(L):
     r"""
-    Compute a normalized list of sign vectors.
+    Compute a normalized set of sign vectors.
 
     INPUT:
 
-    - ``L`` -- a list of sign vectors
+    - ``L`` -- an iterable of sign vectors
 
     OUTPUT:
-    a list of sign vectors consisting only of those sign vectors of ``L``
+    a set of sign vectors consisting only of those sign vectors of ``L``
     that are normalized
 
     .. NOTE::
@@ -43,10 +43,10 @@ def normalize(L):
         [(++0), (--0), (-0+), (+0-), (0++), (0--)]
         sage: from bijectivity_exponential_maps.utility import normalize
         sage: normalize(L)
-        [(++0), (+0-), (0++)]
+        {(0++), (++0), (+0-)}
         sage: L = [sign_vector('000'), sign_vector('-++')]
         sage: normalize(L)
-        [(000)]
+        {(000)}
     """
     def is_normalized(X):
         for Xi in X:
@@ -56,12 +56,12 @@ def normalize(L):
                 return False
         return True
 
-    return [X for X in L if is_normalized(X)]
+    return set(X for X in L if is_normalized(X))
 
 
 def pos_cocircuits_from_matrix(M, kernel=True):
     r"""
-    Compute a list of positive cocircuits determined by a given matrix.
+    Compute the positive cocircuits determined by a given matrix.
 
     INPUT:
 
@@ -71,9 +71,9 @@ def pos_cocircuits_from_matrix(M, kernel=True):
 
     OUTPUT:
 
-    - If ``kernel`` is true, returns a list of positive cocircuits determined by the kernel of the matrix ``A``.
+    - If ``kernel`` is true, returns a set of positive cocircuits determined by the kernel of the matrix ``A``.
 
-    - If ``kernel`` is false, returns a list of positive cocircuits determined by the rows of the matrix ``A``.
+    - If ``kernel`` is false, returns a set of positive cocircuits determined by the rows of the matrix ``A``.
 
     EXAMPLES::
 
@@ -82,15 +82,15 @@ def pos_cocircuits_from_matrix(M, kernel=True):
         [ 2 -1 -1  0]
         sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
         sage: cocircuits_from_matrix(M)
-        [(--00), (++00), (-0-0), (+0+0), (000-), (000+), (0-+0), (0+-0)]
+        {(--00), (000-), (0-+0), (+0+0), (++00), (-0-0), (000+), (0+-0)}
         sage: from bijectivity_exponential_maps.utility import pos_cocircuits_from_matrix
         sage: pos_cocircuits_from_matrix(M)
-        [(++00), (+0+0), (000+)]
+        {(+0+0), (++00), (000+)}
     """
-    return [
+    return set(
         X for X in cocircuits_from_matrix(M, kernel=kernel)
         if X > 0
-    ]
+    )
 
 
 def pos_covectors_from_matrix(M, kernel=True):
@@ -118,20 +118,21 @@ def pos_covectors_from_matrix(M, kernel=True):
         [ 2 -1 -1  0]
         sage: from sign_vectors.oriented_matroids import covectors_from_matrix
         sage: covectors_from_matrix(M)
-        [(0000),
-         (--00),
-         (++00),
-         (-0-0),
-         (+0+0),
-         (000-),
-         (000+),
+        {(0000),
          (0-+0),
-         ...
+         (0-+-),
+         (++++),
+         (--0+),
+         (000-),
+         (----),
          (++0-),
-         (--0-)]
+         (+-++),
+         ...
+         (-+-0),
+         (--0-)}
         sage: from bijectivity_exponential_maps.utility import pos_covectors_from_matrix
         sage: pos_covectors_from_matrix(M)
-        [(++00), (+0+0), (000+), (++0+), (+0++), (++++), (+++0)]
+        [(+0++), (+++0), (++++), (+0+0), (++00), (++0+), (000+)]
     """
     L = [
         X for X in cocircuits_from_matrix(M, kernel=kernel)
@@ -140,7 +141,7 @@ def pos_covectors_from_matrix(M, kernel=True):
 
     if not L:
         raise ValueError('List of cocircuits is empty.')
-    n = L[0].length()
+    n = M.ncols()
     F = set()
     F_new = {zero_sign_vector(n)}
     while F_new != set():

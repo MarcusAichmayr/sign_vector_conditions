@@ -31,22 +31,22 @@ For this purpose, we compute the corresponding oriented matroids::
     sage: from sign_vectors.oriented_matroids import *
     sage: cvW = covectors_from_matrix(W, kernel=False, algorithm='fe')
     sage: cvW
-    [(000),
-     (0-+),
-     (+-0),
-     (-0+),
-     (-+0),
-     (+0-),
-     (0+-),
+    {(000),
      (+-+),
+     (-+0),
+     (-+-),
+     (0-+),
      (-++),
      (+--),
+     (0+-),
+     (+-0),
+     (+0-),
+     (-0+),
      (--+),
-     (-+-),
-     (++-)]
+     (++-)}
     sage: cvWt = covectors_from_matrix(Wt, kernel=True, algorithm='fe')
     sage: cvWt
-    [(000), (+0+), (-0-)]
+    {(000), (+0+), (-0-)}
 
 The intersection of these oriented matroids consists only of the zero sign vector.
 We can compute the intersection directly by applying the built in method intersection::
@@ -96,11 +96,11 @@ Now, we consider another example::
 Next, we compute the corresponding oriented matroids::
 
     sage: covectors_from_matrix(W, kernel=False, algorithm='fe', separate=True)
-    [[(000)],
-     [(0-+), (+-0), (-0+), (-+0), (+0-), (0+-)],
-     [(+-+), (-++), (+--), (--+), (-+-), (++-)]]
+    [{(000)},
+     {(-+0), (0-+), (0+-), (+-0), (+0-), (-0+)},
+     {(+-+), (-+-), (--+), (-++), (++-), (+--)}]
     sage: covectors_from_matrix(Wt, kernel=True, algorithm='fe', separate=True)
-    [[(000)], [(+-+), (-+-)]]
+    [{(000)}, {(+-+), (-+-)}]
 
 Now, we check the condition from before::
 

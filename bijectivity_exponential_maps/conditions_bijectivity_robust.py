@@ -31,9 +31,9 @@ we consider the topes of the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
     sage: topes_from_matrix(W, kernel=True)
-    [(+0+-), (-0--), (+0++), (-0-+)]
+    {(+0+-), (+0++), (-0--), (-0-+)}
     sage: topes_from_matrix(Wt, kernel=True)
-    [(++++), (---+), (+-++), (+++-), (----), (-+--)]
+    {(---+), (-+--), (++++), (----), (+-++), (+++-)}
 
 One can see that for every tope ``X`` of the oriented matroid corresponding to ``W`` there is a
 tope ``Y`` corresponding to ``Wt`` such that ``X`` conforms to ``Y``.
