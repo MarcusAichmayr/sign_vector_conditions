@@ -13,7 +13,7 @@ setup(
     long_description_content_type = 'text/markdown',
     url = 'https://github.com/MarcusAichmayr/bijectivity_exponential_maps',
     author = 'Marcus Aichmayr',
-    author_email = 'aichmayr.marcus@gmail.com',
+    author_email = 'aichmayr@mathematik.uni-kassel.de',
     license = 'GPLv3',
     classifiers = [
       # How mature is this project? Common values are
