@@ -21,15 +21,15 @@ The package [sign_vectors](https://github.com/MarcusAichmayr/sign_vectors) is ne
 
 ### Local install from source
 
-Download the source from the git repository::
+Download the source from the git repository:
 
     $ git clone https://github.com/MarcusAichmayr/bijectivity_exponential_maps.git
 
-Change to the root directory and run::
+Change to the root directory of the repository and run:
 
     $ sage -pip install --upgrade --no-index -v .
 
-You can also run instead the shorthand::
+You can also run instead the shorthand:
 
     $ make install
 
@@ -56,7 +56,7 @@ or
 
     $ make doc-pdf
 
-at the root of the git checkout.
+at the root directory of the repository.
 
 ### Testing
 
@@ -64,4 +64,4 @@ To run the test suite, install the package and run the command
 
     $ make test
 
-at the root of the git checkout.
+at the root directory of the repository.
