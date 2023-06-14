@@ -261,13 +261,13 @@ def max_minors_prod(A, B):
         ...
         ValueError: Matrices must have same rank and number of columns.
     """
-    A1 = A.matrix_from_rows(A.pivot_rows())
-    B1 = B.matrix_from_rows(B.pivot_rows())
-    if A1.dimensions() != B1.dimensions():
+    A = A.matrix_from_rows(A.pivot_rows())
+    B = B.matrix_from_rows(B.pivot_rows())
+    if A.dimensions() != B.dimensions():
         raise ValueError('Matrices must have same rank and number of columns.')
-    r = A1.nrows()
-    mA = A1.minors(r)
-    mB = B1.minors(r)
+    r = A.nrows()
+    mA = A.minors(r)
+    mB = B.minors(r)
 
     return [mA[i]*mB[i] for i in range(len(mA))]
 
