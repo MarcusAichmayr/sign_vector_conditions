@@ -461,7 +461,7 @@ def nondeg_cond1(W, Wt, certificate=False):
 
                 M_ = equal_components(M, X.support())
                 A = M_.right_kernel_matrix()
-                evs = elementary_vectors(A, kernel=True)
+                evs = elementary_vectors(A)
                 intervals = setup_intervals(L_, R_)
 
                 if exists_vector(evs, intervals):
