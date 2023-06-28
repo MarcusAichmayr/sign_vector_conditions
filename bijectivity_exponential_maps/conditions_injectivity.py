@@ -409,15 +409,9 @@ def geq_leq(v):
     elif ge is False and le is False:  # mixed signs
         return False
     elif ge is False:
-        if le is True:
-            return True
-        else:
-            return le
+        return True if le is True else le
     elif le is False:
-        if ge is True:
-            return True
-        else:
-            return ge
+        return True if ge is True else ge
     else:
         return [ge, le]
 
