@@ -36,9 +36,9 @@ Hence, we obtain the oriented matroids::
      {(-+++), (----), (---+), (+---), (++++), (+++-)}]
 
 
-We can check injectivity by using the function :func:`~cond_inj_intersection`::
+We can check injectivity by using the function :func:`~condition_inj_intersection`::
 
-    sage: cond_inj_intersection(W, Wt)
+    sage: condition_inj_intersection(W, Wt)
     True
 
 Therefore, the corresponding exponential map is injective for all vectors ``c > 0``.
@@ -68,7 +68,7 @@ the face condition is satisfied.
 There is also a function in the package that can be used directly
 to check whether this condition is fulfilled::
 
-    sage: cond_faces(W, Wt)
+    sage: condition_faces(W, Wt)
     True
 
 We need to check a third condition to verify surjectivity.
@@ -81,7 +81,7 @@ Since there is no positive covector,
 the exponential map is surjective.
 The package offers a function to check this condition condition::
 
-    sage: cond_nondegenerate(W, Wt)
+    sage: condition_nondegenerate(W, Wt)
     True
 
 Hence, the exponential map is bijective.
@@ -100,7 +100,7 @@ We swap the two matrices from before::
 
 Because of symmetry, the corresponding exponential map is injective::
 
-    sage: cond_inj_intersection(W, Wt)
+    sage: condition_inj_intersection(W, Wt)
     True
 
 Now, we attempt to check the face condition::
@@ -124,7 +124,7 @@ Again, we are only interested in the positive cocircuits::
 Therefore, condition does not hold.
 We also apply the corresponding function from the package::
 
-    sage: cond_faces(W, Wt)
+    sage: condition_faces(W, Wt)
     False
 
 Consequently, this map is not bijective.
@@ -150,33 +150,33 @@ The first two conditions depend on the sign vectors of the corresponding oriente
 Consequently, the choice of the positive parameter ``wt`` does not affect the result.
 In order to compute the sign vectors, we set ``wt`` to ``1``::
 
-    sage: cond_inj_intersection(W, Wt(wt=1))
+    sage: condition_inj_intersection(W, Wt(wt=1))
     True
 
 Hence, the map is injective.
 Also the face condition is satisfied::
 
-    sage: cond_faces(W, Wt(wt=1))
+    sage: condition_faces(W, Wt(wt=1))
     True
 
 For specific values of ``wt``, the pair of subspaces
 determined by kernels of the matrices is non-degenerate.
 This is the case for :math:`wt \in (0, 1) \cup (1, 2)`::
 
-    sage: cond_nondegenerate(W, Wt(wt=1/2))
+    sage: condition_nondegenerate(W, Wt(wt=1/2))
     True
-    sage: cond_nondegenerate(W, Wt(wt=3/2))
+    sage: condition_nondegenerate(W, Wt(wt=3/2))
     True
 
 On the other hand, this condition does not hold if
 :math:`wt \in {1} \cup [2, \infty)`.
 In this case, the exponential map is injective but not surjective::
 
-    sage: cond_nondegenerate(W, Wt(wt=1))
+    sage: condition_nondegenerate(W, Wt(wt=1))
     False
-    sage: cond_nondegenerate(W, Wt(wt=2))
+    sage: condition_nondegenerate(W, Wt(wt=2))
     False
-    sage: cond_nondegenerate(W, Wt(wt=3))
+    sage: condition_nondegenerate(W, Wt(wt=3))
     False
 
 We consider some final example::
@@ -218,7 +218,7 @@ from sage.rings.infinity import Infinity
 from sage.misc.flatten import flatten
 
 
-def cond_faces(W, Wt):
+def condition_faces(W, Wt):
     r"""
     Check a condition on positive sign vectors of two matrices.
 
@@ -237,7 +237,7 @@ def cond_faces(W, Wt):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.conditions_bijectivity import cond_faces
+        sage: from bijectivity_exponential_maps.conditions_bijectivity import condition_faces
         sage: W = matrix([[1,0,-1,0],[0,1,0,-1]]).right_kernel_matrix()
         sage: W
         [1 0 1 0]
@@ -246,7 +246,7 @@ def cond_faces(W, Wt):
         sage: Wt
         [ 1  0  0 -1]
         [ 0  1  1  1]
-        sage: cond_faces(W, Wt)
+        sage: condition_faces(W, Wt)
         True
     """
     ccWp = pos_cocircuits_from_matrix(W,  kernel=False)
@@ -263,7 +263,7 @@ def cond_faces(W, Wt):
     return True
 
 
-def cond_nondegenerate(W, Wt, certificate=False):
+def condition_nondegenerate(W, Wt, certificate=False):
     r"""
     Check whether the pair of the given matrices is non-degenerate.
 
@@ -317,7 +317,7 @@ def nondegenerate(W, Wt, certificate=False):
 
     .. SEEALSO::
 
-        :func:`~cond_nondegenerate`
+        :func:`~condition_nondegenerate`
         :func:`~nondeg_cond1`
         :func:`~nondeg_cond2`
     """
@@ -331,7 +331,7 @@ def nondegenerate(W, Wt, certificate=False):
 
 def nondeg_cond1(W, Wt, certificate=False):
     r"""
-    Return whether the first condition of ``cond_nondegenerate`` is satisfied.
+    Return whether the first condition of ``condition_nondegenerate`` is satisfied.
 
     INPUT:
 
@@ -350,7 +350,7 @@ def nondeg_cond1(W, Wt, certificate=False):
 
     .. SEEALSO::
 
-        :func:`~cond_nondegenerate`
+        :func:`~condition_nondegenerate`
         :func:`~nondeg_cond2`
 
     EXAMPLES::
@@ -545,7 +545,7 @@ def nondeg_cond2(W, Wt):
 
     .. SEEALSO::
 
-        :func:`~cond_nondegenerate`
+        :func:`~condition_nondegenerate`
         :func:`~nondeg_cond1`
 
     EXAMPLES::

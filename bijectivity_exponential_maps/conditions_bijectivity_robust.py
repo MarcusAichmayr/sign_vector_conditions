@@ -41,7 +41,7 @@ Therefore, the exponential map is a diffeomorphism for all ``c > 0``
 and all small perturbations of ``Wt``.
 The package offers a function that checks this condition directly::
 
-    sage: cond_closure_sign_vectors(W, Wt)
+    sage: condition_closure_sign_vectors(W, Wt)
     True
 
 There is an equivalent condition.
@@ -57,7 +57,7 @@ the corresponding minor of ``Wt`` has the same sign.
 Hence, this condition is fulfilled.
 This condition can also be checked directly with the package::
 
-    sage: cond_closure_minors(W, Wt)
+    sage: condition_closure_minors(W, Wt)
     True
 
 Now, we consider matrices with variables::
@@ -86,34 +86,34 @@ First, we compute the minors of the matrices::
 The function from the package supports symbolic matrices as input.
 In this case, we obtain the following equations on the variables::
 
-    sage: cond_closure_minors(W, Wt)
+    sage: condition_closure_minors(W, Wt)
     [[-b > 0, [c == 0, 'or', c > 0], [c == 0, 'or', -a*c > 0]], 'or', [-b < 0, [c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]]
 
 From this system of equations, we can induce that ``b``  must be non-zero.
 Indeed, if ``b = 0``, we obtain::
 
-    sage: cond_closure_minors(W, Wt(b=0))
+    sage: condition_closure_minors(W, Wt(b=0))
     False
 
 Therefore, assume for instance ``b = 2``::
 
-    sage: cond_closure_minors(W, Wt(b=2))
+    sage: condition_closure_minors(W, Wt(b=2))
     [[c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]
 
 From the output, we see that either ``c = 0`` or ``c < 0``.
 Otherwise, we obtain::
 
-    sage: cond_closure_minors(W(c=1), Wt(b=2))
+    sage: condition_closure_minors(W(c=1), Wt(b=2))
     False
 
 If ``c = 0``, then the result will be ``True``::
 
-    sage: cond_closure_minors(W(c=0), Wt(b=2))
+    sage: condition_closure_minors(W(c=0), Wt(b=2))
     True
 
 For ``c < 0``, we are left with a condition on ``a``::
 
-    sage: cond_closure_minors(W(c=-1), Wt(b=2))
+    sage: condition_closure_minors(W(c=-1), Wt(b=2))
     [a < 0]
 
 Analogously, we can assume that ``b < 0`` and we will obtain similar conditions on the other variables.
@@ -136,7 +136,7 @@ from sage.rings.real_mpfr import RR  # used for casting
 from sage.rings.integer_ring import ZZ
 
 
-def cond_closure_sign_vectors(W, Wt):
+def condition_closure_sign_vectors(W, Wt):
     r"""
     Return whether the oriented matroid corresponding to ``W`` is a subset of the closure of the oriented matroid corresponding to ``Wt``.
 
@@ -152,7 +152,7 @@ def cond_closure_sign_vectors(W, Wt):
     tW = topes_from_matrix(W, kernel=True)
     tWt = topes_from_matrix(Wt, kernel=True)
     tWn = normalize(tW)  # 0++0
-    # +--+ Do not normalize second list of Topes.
+    # +--+ Do not normalize second list of topes.
     for X in tWn:
         val = True
         for Y in tWt:
@@ -164,7 +164,7 @@ def cond_closure_sign_vectors(W, Wt):
     return True
 
 
-def cond_closure_minors(W, Wt):
+def condition_closure_minors(W, Wt):
     r"""
     Check a condition on maximal minors of two matrices.
 

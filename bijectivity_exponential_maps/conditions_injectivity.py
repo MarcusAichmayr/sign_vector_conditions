@@ -57,7 +57,7 @@ We can compute the intersection directly by applying the built in method interse
 Therefore, the corresponding exponential map is injective.
 We can also check this condition in the following way::
 
-    sage: cond_inj_intersection(W, Wt)
+    sage: condition_inj_intersection(W, Wt)
     True
 
 There is another way to check injectivity for exponential maps
@@ -79,7 +79,7 @@ Since all arguments are greater or equal zero, the map is injective.
 We can also check this condition by applying the following function
 from this package::
 
-    sage: cond_inj_minors(W, Wt)
+    sage: condition_inj_minors(W, Wt)
     True
 
 Now, we consider another example::
@@ -104,7 +104,7 @@ Next, we compute the corresponding oriented matroids::
 
 Now, we check the condition from before::
 
-    sage: cond_inj_intersection(W, Wt)
+    sage: condition_inj_intersection(W, Wt)
     False
 
 Therefore, the corresponding exponential map is not injective.
@@ -122,7 +122,7 @@ Furthermore, we obtain the following minors::
 There are positive and negative elements in the resulting list.
 Hence, this condition also states that the map is not injective::
 
-    sage: cond_inj_minors(W, Wt)
+    sage: condition_inj_minors(W, Wt)
     False
 
 Finally, we consider an example with variables::
@@ -153,10 +153,10 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
 
 Therefore, the corresponding exponential map is injective if and only if
 :math:`a \leq 0` and :math:`b \leq 0`.
-The function :func:`~cond_inj_minors` also works for matrices with symbolic entries.
+The function :func:`~condition_inj_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
-    sage: cond_inj_minors(W, Wt)
+    sage: condition_inj_minors(W, Wt)
     [-b >= 0, -a >= 0]
 """
 
@@ -175,7 +175,7 @@ from sign_vectors.oriented_matroids import covectors_from_matrix
 from sage.rings.real_mpfr import RR
 
 
-def cond_inj_intersection(W, Wt):
+def condition_inj_intersection(W, Wt):
     r"""
     Return whether the intersection of two oriented matroids consists of the zero sign vector only.
 
@@ -202,7 +202,7 @@ def cond_inj_intersection(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  0]
-        sage: cond_inj_intersection(W, Wt)
+        sage: condition_inj_intersection(W, Wt)
         True
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
@@ -212,15 +212,15 @@ def cond_inj_intersection(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  1]
-        sage: cond_inj_intersection(W, Wt)
+        sage: condition_inj_intersection(W, Wt)
         False
 
     TESTS::
 
-        sage: from bijectivity_exponential_maps.conditions_injectivity import cond_inj_intersection
+        sage: from bijectivity_exponential_maps.conditions_injectivity import condition_inj_intersection
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
-        sage: cond_inj_intersection(A, B)
+        sage: condition_inj_intersection(A, B)
         True
     """
     if W.ncols() != Wt.ncols():
@@ -416,7 +416,7 @@ def geq_leq(v):
         return [ge, le]
 
 
-def cond_inj_minors(W, Wt):
+def condition_inj_minors(W, Wt):
     r"""
     Return whether the products of maximal minors have the same sign.
 
@@ -443,7 +443,7 @@ def cond_inj_minors(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  0]
-        sage: cond_inj_minors(W, Wt)
+        sage: condition_inj_minors(W, Wt)
         True
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
@@ -453,7 +453,7 @@ def cond_inj_minors(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  1]
-        sage: cond_inj_minors(W, Wt)
+        sage: condition_inj_minors(W, Wt)
         False
         sage: var('a,b')
         (a, b)
@@ -465,7 +465,7 @@ def cond_inj_minors(W, Wt):
         sage: Wt
         [1 0 a]
         [0 1 b]
-        sage: cond_inj_minors(W, Wt)
+        sage: condition_inj_minors(W, Wt)
         [-b >= 0, -a >= 0]
     """
     m = max_minors_prod(W, Wt)
