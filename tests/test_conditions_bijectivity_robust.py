@@ -1,5 +1,5 @@
 from sage.all import *
-from bijectivity_exponential_maps.conditions_bijectivity_robust import cond_closure_sign_vectors, cond_closure_minors
+from bijectivity_exponential_maps.conditions_bijectivity_robust import condition_closure_sign_vectors, condition_closure_minors
 import unittest
 
 class Tests(unittest.TestCase):
@@ -13,7 +13,7 @@ class Tests(unittest.TestCase):
             if A.rank() != 3 or B.rank() != 3:
                 print('not full rank')
             else:
-                self.assertEqual(cond_closure_sign_vectors(A, B), cond_closure_minors(A, B))
+                self.assertEqual(condition_closure_sign_vectors(A, B), condition_closure_minors(A, B))
 
 if __name__ == '__main__':
     unittest.main()
