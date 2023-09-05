@@ -6,12 +6,12 @@ def readfile(filename):
         return f.read()
 
 setup(
-    name = 'bijectivity_exponential_maps',
+    name = 'sign_vector_conditions',
     version = readfile("VERSION").strip(), # the VERSION file is shared with the documentation
     description = 'a Sage package to work with bijectivity of exponential and polynomial maps',
     long_description = readfile("README.md"),
     long_description_content_type = 'text/markdown',
-    url = 'https://github.com/MarcusAichmayr/bijectivity_exponential_maps',
+    url = 'https://github.com/MarcusAichmayr/sign_vector_conditions',
     author = 'Marcus Aichmayr',
     author_email = 'aichmayr@mathematik.uni-kassel.de',
     license = 'GPLv3',
@@ -26,9 +26,8 @@ setup(
       'License :: OSI Approved :: GNU General Public License v3',
       'Programming Language :: Python :: 3.8.5',
     ], # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    keywords = ['bijectivity conditions', 'exponential maps', 'polynomial maps'],
-    packages = ['bijectivity_exponential_maps'],
+    keywords = ['chemical reaction networks', 'sign-vector conditions'],
+    packages = ['sign_vector_conditions'],
     setup_requires   = ['sign_vectors'],
     install_requires   = ['sign_vectors', 'sphinx'],
 )
-

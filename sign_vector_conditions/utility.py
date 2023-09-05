@@ -41,7 +41,7 @@ def normalize(L):
         ....: ]
         sage: L
         [(++0), (--0), (-0+), (+0-), (0++), (0--)]
-        sage: from bijectivity_exponential_maps.utility import normalize
+        sage: from sign_vector_conditions.utility import normalize
         sage: normalize(L)
         {(0++), (++0), (+0-)}
         sage: L = [sign_vector('000'), sign_vector('-++')]
@@ -83,7 +83,7 @@ def pos_cocircuits_from_matrix(M, kernel=True):
         sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
         sage: cocircuits_from_matrix(M)
         {(--00), (000-), (0-+0), (+0+0), (++00), (-0-0), (000+), (0+-0)}
-        sage: from bijectivity_exponential_maps.utility import pos_cocircuits_from_matrix
+        sage: from sign_vector_conditions.utility import pos_cocircuits_from_matrix
         sage: pos_cocircuits_from_matrix(M)
         {(+0+0), (++00), (000+)}
     """
@@ -130,7 +130,7 @@ def pos_covectors_from_matrix(M, kernel=True):
          ...
          (-+-0),
          (--0-)}
-        sage: from bijectivity_exponential_maps.utility import pos_covectors_from_matrix
+        sage: from sign_vector_conditions.utility import pos_covectors_from_matrix
         sage: pos_covectors_from_matrix(M)
         [(+0++), (+++0), (++++), (+0+0), (++00), (++0+), (000+)]
     """

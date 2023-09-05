@@ -3,7 +3,7 @@ In this module, we check injectivity for exponential maps by verifying condition
 
 EXAMPLES::
 
-    sage: from bijectivity_exponential_maps import *
+    sage: from sign_vector_conditions import *
 
 We define some matrices::
 
@@ -193,7 +193,7 @@ def condition_inj_intersection(W, Wt):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps import *
+        sage: from sign_vector_conditions import *
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
         [ 1  0 -1]
@@ -217,7 +217,7 @@ def condition_inj_intersection(W, Wt):
 
     TESTS::
 
-        sage: from bijectivity_exponential_maps.conditions_injectivity import condition_inj_intersection
+        sage: from sign_vector_conditions.conditions_injectivity import condition_inj_intersection
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
         sage: condition_inj_intersection(A, B)
@@ -245,7 +245,7 @@ def max_minors_prod(A, B):
         [1, 2, -1]
         sage: B.minors(2)
         [1, 3, 1]
-        sage: from bijectivity_exponential_maps.conditions_injectivity import max_minors_prod
+        sage: from sign_vector_conditions.conditions_injectivity import max_minors_prod
         sage: max_minors_prod(A, B)
         [1, 6, -1]
 
@@ -303,7 +303,7 @@ def geq(v):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.conditions_injectivity import geq
+        sage: from sign_vector_conditions.conditions_injectivity import geq
         sage: geq([0, 5, 1])
         True
         sage: geq([0, 0])
@@ -336,7 +336,7 @@ def leq(v):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.conditions_injectivity import leq
+        sage: from sign_vector_conditions.conditions_injectivity import leq
         sage: leq([0, 5, 1])
         False
         sage: leq([0, 0])
@@ -389,7 +389,7 @@ def geq_leq(v):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.conditions_injectivity import geq_leq
+        sage: from sign_vector_conditions.conditions_injectivity import geq_leq
         sage: geq_leq([0, 5, 1])
         True
         sage: geq_leq([0, 0])
@@ -434,7 +434,7 @@ def condition_inj_minors(W, Wt):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps import *
+        sage: from sign_vector_conditions import *
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
         [ 1  0 -1]

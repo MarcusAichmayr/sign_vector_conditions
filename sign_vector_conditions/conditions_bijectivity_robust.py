@@ -3,7 +3,7 @@ In this module, we check robust bijectivity for exponential maps by verifying co
 
 EXAMPLES::
 
-    sage: from bijectivity_exponential_maps import *
+    sage: from sign_vector_conditions import *
 
 Let us consider the following matrices::
 

@@ -1,5 +1,5 @@
 from sage.all import *
-from bijectivity_exponential_maps.conditions_bijectivity_robust import condition_closure_sign_vectors, condition_closure_minors
+from sign_vector_conditions.conditions_bijectivity_robust import condition_closure_sign_vectors, condition_closure_minors
 import unittest
 
 class Tests(unittest.TestCase):

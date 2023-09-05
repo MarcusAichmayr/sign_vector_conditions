@@ -3,7 +3,7 @@ In this module, we compute polynomial and exponential maps corresponding to give
 
 EXAMPLES::
 
-    sage: from bijectivity_exponential_maps.functions import *
+    sage: from sign_vector_conditions.functions import *
 
 We define some matrices and a vector c::
 
@@ -126,7 +126,7 @@ def f_exp(W, Wt, c=None):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.functions import f_exp
+        sage: from sign_vector_conditions.functions import f_exp
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
         [ 1  0 -1]
@@ -175,7 +175,7 @@ def f_pol(W, Wt, c=None):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.functions import f_pol
+        sage: from sign_vector_conditions.functions import f_pol
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
         [ 1  0 -1]

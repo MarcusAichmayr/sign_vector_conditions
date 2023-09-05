@@ -9,11 +9,11 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
 .. autosummary::
     :toctree: generated
 
-    bijectivity_exponential_maps.functions
-    bijectivity_exponential_maps.conditions_injectivity
-    bijectivity_exponential_maps.conditions_bijectivity
-    bijectivity_exponential_maps.conditions_bijectivity_robust
-    bijectivity_exponential_maps.utility
+    sign_vector_conditions.functions
+    sign_vector_conditions.conditions_injectivity
+    sign_vector_conditions.conditions_bijectivity
+    sign_vector_conditions.conditions_bijectivity_robust
+    sign_vector_conditions.utility
 """
 
 #############################################################################

@@ -1,4 +1,4 @@
-Documentation of bijectivity_exponential_maps
+Documentation of sign_vector_conditions
 =============================================
 
 .. rubric:: Bijectivity of exponential maps
@@ -6,5 +6,5 @@ Documentation of bijectivity_exponential_maps
 .. autosummary::
     :toctree: generated
 
-    bijectivity_exponential_maps
+    sign_vector_conditions
 

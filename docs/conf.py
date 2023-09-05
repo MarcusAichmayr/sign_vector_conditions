@@ -18,12 +18,12 @@ sys.path.insert(0, os.path.abspath('../src'))
 
 # Imports of some subpackages of Sage fail if executed in the wrong order.
 # We work around that issue by having Sphinx import sage.all before trying
-# to import anything from bijectivity_exponential_maps.
+# to import anything from sign_vector_conditions.
 import sage.all
 
 # -- Project information -----------------------------------------------------
 
-project = u'bijectivity_exponential_maps'
+project = u'sign_vector_conditions'
 copyright = u'2022, Marcus Aichmayr'
 author = u'Marcus Aichmayr'
 
@@ -108,7 +108,7 @@ html_static_path = []
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'bijectivity_exponential_maps_doc'
+htmlhelp_basename = 'sign_vector_conditions_doc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -135,7 +135,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'bijectivity_exponential_maps.tex', u'bijectivity\\_exponential\\_maps Documentation',
+    (master_doc, 'sign_vector_conditions.tex', u'bijectivity\\_exponential\\_maps Documentation',
      u'Marcus Aichmayr', 'manual'),
 ]
 
@@ -145,7 +145,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'bijectivity_exponential_maps', u'bijectivity_exponential_maps Documentation',
+    (master_doc, 'sign_vector_conditions', u'sign_vector_conditions Documentation',
      [author], 1)
 ]
 
@@ -156,8 +156,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'bijectivity_exponential_maps', u'bijectivity_exponential_maps Documentation',
-     author, 'bijectivity_exponential_maps', 'One line description of project.',
+    (master_doc, 'sign_vector_conditions', u'sign_vector_conditions Documentation',
+     author, 'sign_vector_conditions', 'One line description of project.',
      'Miscellaneous'),
 ]
 

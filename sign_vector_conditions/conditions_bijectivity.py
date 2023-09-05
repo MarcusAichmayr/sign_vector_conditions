@@ -3,7 +3,7 @@ In this module, we check bijectivity for exponential maps by verifying condition
 
 EXAMPLES::
 
-    sage: from bijectivity_exponential_maps import *
+    sage: from sign_vector_conditions import *
 
 Let us consider the following matrices::
 
@@ -181,7 +181,7 @@ In this case, the exponential map is injective but not surjective::
 
 We consider some final example::
 
-    sage: from bijectivity_exponential_maps.conditions_bijectivity import nondeg_cond1
+    sage: from sign_vector_conditions.conditions_bijectivity import nondeg_cond1
     sage: W = matrix([[1,1,0,0],[0,0,1,0]]).right_kernel_matrix()
     sage: Wt = matrix([[1,0,2,0],[0,1,0,-1]])
 
@@ -237,7 +237,7 @@ def condition_faces(W, Wt):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.conditions_bijectivity import condition_faces
+        sage: from sign_vector_conditions.conditions_bijectivity import condition_faces
         sage: W = matrix([[1,0,-1,0],[0,1,0,-1]]).right_kernel_matrix()
         sage: W
         [1 0 1 0]
@@ -355,7 +355,7 @@ def nondeg_cond1(W, Wt, certificate=False):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.conditions_bijectivity import nondeg_cond1
+        sage: from sign_vector_conditions.conditions_bijectivity import nondeg_cond1
         sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
@@ -511,7 +511,7 @@ def equal_components(M, I):
         sage: M
         [ 1  0  1  0]
         [ 0  0 -1  2]
-        sage: from bijectivity_exponential_maps.conditions_bijectivity import equal_components
+        sage: from sign_vector_conditions.conditions_bijectivity import equal_components
         sage: equal_components(M, [0, 1])
         [ 1  0  1  0]
         [ 0  0 -1  2]
@@ -550,7 +550,7 @@ def nondeg_cond2(W, Wt):
 
     EXAMPLES::
 
-        sage: from bijectivity_exponential_maps.conditions_bijectivity import nondeg_cond2
+        sage: from sign_vector_conditions.conditions_bijectivity import nondeg_cond2
         sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]

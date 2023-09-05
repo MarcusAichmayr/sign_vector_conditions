@@ -1,5 +1,5 @@
 from sage.all import *
-from bijectivity_exponential_maps.conditions_injectivity import condition_inj_intersection, condition_inj_minors, geq, leq, geq_leq
+from sign_vector_conditions.conditions_injectivity import condition_inj_intersection, condition_inj_minors, geq, leq, geq_leq
 import unittest
 
 class Tests(unittest.TestCase):
