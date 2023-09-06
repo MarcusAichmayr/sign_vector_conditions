@@ -157,7 +157,7 @@ The function :func:`~condition_inj_minors` also works for matrices with symbolic
 In this case, it returns a system of inequalities::
 
     sage: condition_inj_minors(W, Wt)
-    [-b >= 0, -a >= 0]
+    {-b >= 0, -a >= 0}
 """
 
 #############################################################################
@@ -278,12 +278,12 @@ def compare_all(v, rel):
 
     This is an auxiliary function used by :func:`geq` and :func:`leq`.
     """
-    l = []
+    l = set()
     for a in v:
         if rel(a) is False:
             return False
         elif rel(a) is not True:  # if variables occur, we will return the expression
-            l.append(rel(a))
+            l.add(rel(a))
     if len(l) == 0:
         return True
     else:
@@ -312,8 +312,8 @@ def geq(v):
         False
         sage: geq([x, x^2 + 1, -1, 5])
         False
-        sage: geq([x, x^2 + 1])
-        [x >= 0, x^2 + 1 >= 0]
+        sage: geq([x, x^2 + 1]) # random
+        {x^2 + 1 >= 0, x >= 0}
     """
     def rel(a):
         try:
@@ -346,7 +346,7 @@ def leq(v):
         sage: leq([x, x^2 + 1, -1, 5])
         False
         sage: leq([x, x^2 + 1])
-        [x <= 0, x^2 + 1 <= 0]
+        {x^2 + 1 <= 0, x <= 0}
     """
     def rel(a):
         try:
@@ -362,7 +362,7 @@ def geq_leq(v):
 
     INPUT:
 
-    - ``v`` -- a list of numbers or symbolic expressions.
+    - ``v`` -- an iterable of numbers or symbolic expressions.
 
     OUTPUT:
     Returns true if either each element of ``v`` is greater than or equal to zero or less than or equal to zero.
@@ -377,14 +377,14 @@ def geq_leq(v):
 
         - if false, there are entries with opposing signs or every entry is zero.
 
-    - a list of inequalities
+    - a set of inequalities
 
         - if all inequalities are satisfied,
           then either each element of ``v`` is greater or equal zero or less or equal zero.
 
-    - a list of two lists of inequalities
+    - a list of two sets of inequalities
 
-        - if the inequalities of exactly one of these lists are satisfied,
+        - if the inequalities of exactly one of these sets are satisfied,
           then either each element of ``v`` is greater or equal zero or less or equal zero.
 
     EXAMPLES::
@@ -398,8 +398,8 @@ def geq_leq(v):
         True
         sage: geq_leq([x, x^2 + 1, -1, 5])
         False
-        sage: geq_leq([x, x^2 + 1])
-        [[x >= 0, x^2 + 1 >= 0], [x <= 0, x^2 + 1 <= 0]]
+        sage: geq_leq([x, x^2 + 1]) # random
+        [{x^2 + 1 >= 0, x >= 0}, {x^2 + 1 <= 0, x <= 0}]
     """
     ge = geq(v)
     le = leq(v)
@@ -435,38 +435,38 @@ def condition_inj_minors(W, Wt):
     EXAMPLES::
 
         sage: from sign_vector_conditions import *
-        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
         sage: W
         [ 1  0 -1]
         [ 0  1 -1]
-        sage: Wt = matrix([[1,0,-1],[0,1,0]])
+        sage: Wt = matrix([[1, 0, -1], [0, 1, 0]])
         sage: Wt
         [ 1  0 -1]
         [ 0  1  0]
         sage: condition_inj_minors(W, Wt)
         True
-        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
         sage: W
         [ 1  0 -1]
         [ 0  1 -1]
-        sage: Wt = matrix([[1,0,-1],[0,1,1]])
+        sage: Wt = matrix([[1, 0, -1], [0, 1, 1]])
         sage: Wt
         [ 1  0 -1]
         [ 0  1  1]
         sage: condition_inj_minors(W, Wt)
         False
-        sage: var('a,b')
+        sage: var('a, b')
         (a, b)
-        sage: W = matrix([[1,0,-1],[0,1,-1]])
+        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
         sage: W
         [ 1  0 -1]
         [ 0  1 -1]
-        sage: Wt = matrix([[1,0,a],[0,1,b]])
+        sage: Wt = matrix([[1, 0, a], [0, 1, b]])
         sage: Wt
         [1 0 a]
         [0 1 b]
         sage: condition_inj_minors(W, Wt)
-        [-b >= 0, -a >= 0]
+        {-b >= 0, -a >= 0}
     """
     m = max_minors_prod(W, Wt)
     return geq_leq(m)
