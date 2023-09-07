@@ -1,5 +1,5 @@
 from sage.all import *
-from sign_vector_conditions.conditions_injectivity import condition_inj_intersection, condition_inj_minors, geq, leq, geq_leq
+from sign_vector_conditions.uniqueness import condition_uniqueness_signvectors, condition_uniqueness_minors, geq, leq, geq_leq
 import unittest
 
 class Tests(unittest.TestCase):
@@ -13,7 +13,7 @@ class Tests(unittest.TestCase):
             if A.rank() != B.rank():
                 print('different rank')
             else:
-                self.assertEqual(condition_inj_intersection(A, B), condition_inj_minors(A, B))
+                self.assertEqual(condition_uniqueness_signvectors(A, B), condition_uniqueness_minors(A, B))
 
 if __name__ == '__main__':
     unittest.main()

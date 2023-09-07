@@ -1,5 +1,5 @@
 r"""
-In this module, we check robust bijectivity for exponential maps by verifying conditions from [MHR19]_.
+Robustness of existence and uniqueness of equilibria
 
 EXAMPLES::
 
@@ -138,7 +138,7 @@ from sage.rings.integer_ring import ZZ
 
 def condition_closure_sign_vectors(W, Wt):
     r"""
-    Return whether the oriented matroid corresponding to ``W`` is a subset of the closure of the oriented matroid corresponding to ``Wt``.
+    Closure condition on sign vectors for robustness
 
     INPUT:
 
@@ -147,7 +147,8 @@ def condition_closure_sign_vectors(W, Wt):
     - ``Wt`` -- a matrix with ``n`` columns
 
     OUTPUT:
-    a boolean
+    Return whether the oriented matroid corresponding to ``W`` is a subset of the closure
+    of the oriented matroid corresponding to ``Wt``.
     """
     tW = topes_from_matrix(W, kernel=True)
     tWt = topes_from_matrix(Wt, kernel=True)
@@ -166,7 +167,7 @@ def condition_closure_sign_vectors(W, Wt):
 
 def condition_closure_minors(W, Wt):
     r"""
-    Check a condition on maximal minors of two matrices.
+    Closure condition on maximal minors for robustness
 
     INPUT:
 

@@ -1,5 +1,5 @@
 r"""
-In this module, we check injectivity for exponential maps by verifying conditions from [MHR19]_.
+Uniqueness of equilibria
 
 EXAMPLES::
 
@@ -55,9 +55,10 @@ We can compute the intersection directly by applying the built in method interse
     {(000)}
 
 Therefore, the corresponding exponential map is injective.
+This means that the chemical reaction network has at most one solution.
 We can also check this condition in the following way::
 
-    sage: condition_inj_intersection(W, Wt)
+    sage: condition_uniqueness_signvectors(W, Wt)
     True
 
 There is another way to check injectivity for exponential maps
@@ -79,7 +80,7 @@ Since all arguments are greater or equal zero, the map is injective.
 We can also check this condition by applying the following function
 from this package::
 
-    sage: condition_inj_minors(W, Wt)
+    sage: condition_uniqueness_minors(W, Wt)
     True
 
 Now, we consider another example::
@@ -104,7 +105,7 @@ Next, we compute the corresponding oriented matroids::
 
 Now, we check the condition from before::
 
-    sage: condition_inj_intersection(W, Wt)
+    sage: condition_uniqueness_signvectors(W, Wt)
     False
 
 Therefore, the corresponding exponential map is not injective.
@@ -122,7 +123,7 @@ Furthermore, we obtain the following minors::
 There are positive and negative elements in the resulting list.
 Hence, this condition also states that the map is not injective::
 
-    sage: condition_inj_minors(W, Wt)
+    sage: condition_uniqueness_minors(W, Wt)
     False
 
 Finally, we consider an example with variables::
@@ -153,10 +154,10 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
 
 Therefore, the corresponding exponential map is injective if and only if
 :math:`a \leq 0` and :math:`b \leq 0`.
-The function :func:`~condition_inj_minors` also works for matrices with symbolic entries.
+The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
-    sage: condition_inj_minors(W, Wt)
+    sage: condition_uniqueness_minors(W, Wt)
     {-b >= 0, -a >= 0}
 """
 
@@ -175,9 +176,9 @@ from sign_vectors.oriented_matroids import covectors_from_matrix
 from sage.rings.real_mpfr import RR
 
 
-def condition_inj_intersection(W, Wt):
+def condition_uniqueness_signvectors(W, Wt):
     r"""
-    Return whether the intersection of two oriented matroids consists of the zero sign vector only.
+    Use sign vectors to verify that the chemical reaction network has at most one equilibrium.
 
     INPUT:
 
@@ -188,8 +189,6 @@ def condition_inj_intersection(W, Wt):
     OUTPUT:
     Returns whether the intersection of the oriented matroids corresponding to
     ``W`` and ``right_kernel(Wt)`` consists of the zero sign vector only.
-
-    Returns a boolean.
 
     EXAMPLES::
 
@@ -202,7 +201,7 @@ def condition_inj_intersection(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  0]
-        sage: condition_inj_intersection(W, Wt)
+        sage: condition_uniqueness_signvectors(W, Wt)
         True
         sage: W = matrix([[1,0,-1],[0,1,-1]])
         sage: W
@@ -212,15 +211,15 @@ def condition_inj_intersection(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  1]
-        sage: condition_inj_intersection(W, Wt)
+        sage: condition_uniqueness_signvectors(W, Wt)
         False
 
     TESTS::
 
-        sage: from sign_vector_conditions.conditions_injectivity import condition_inj_intersection
+        sage: from sign_vector_conditions.uniqueness import condition_uniqueness_signvectors
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
-        sage: condition_inj_intersection(A, B)
+        sage: condition_uniqueness_signvectors(A, B)
         True
     """
     if W.ncols() != Wt.ncols():
@@ -245,7 +244,7 @@ def max_minors_prod(A, B):
         [1, 2, -1]
         sage: B.minors(2)
         [1, 3, 1]
-        sage: from sign_vector_conditions.conditions_injectivity import max_minors_prod
+        sage: from sign_vector_conditions.uniqueness import max_minors_prod
         sage: max_minors_prod(A, B)
         [1, 6, -1]
 
@@ -303,7 +302,7 @@ def geq(v):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.conditions_injectivity import geq
+        sage: from sign_vector_conditions.uniqueness import geq
         sage: geq([0, 5, 1])
         True
         sage: geq([0, 0])
@@ -336,7 +335,7 @@ def leq(v):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.conditions_injectivity import leq
+        sage: from sign_vector_conditions.uniqueness import leq
         sage: leq([0, 5, 1])
         False
         sage: leq([0, 0])
@@ -389,7 +388,7 @@ def geq_leq(v):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.conditions_injectivity import geq_leq
+        sage: from sign_vector_conditions.uniqueness import geq_leq
         sage: geq_leq([0, 5, 1])
         True
         sage: geq_leq([0, 0])
@@ -416,9 +415,9 @@ def geq_leq(v):
         return [ge, le]
 
 
-def condition_inj_minors(W, Wt):
+def condition_uniqueness_minors(W, Wt):
     r"""
-    Return whether the products of maximal minors have the same sign.
+    Use maximal minors to verify that the chemical reaction network has at most one equilibrium.
 
     INPUT:
 
@@ -443,7 +442,7 @@ def condition_inj_minors(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  0]
-        sage: condition_inj_minors(W, Wt)
+        sage: condition_uniqueness_minors(W, Wt)
         True
         sage: W = matrix([[1, 0, -1], [0, 1, -1]])
         sage: W
@@ -453,7 +452,7 @@ def condition_inj_minors(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  1]
-        sage: condition_inj_minors(W, Wt)
+        sage: condition_uniqueness_minors(W, Wt)
         False
         sage: var('a, b')
         (a, b)
@@ -465,7 +464,7 @@ def condition_inj_minors(W, Wt):
         sage: Wt
         [1 0 a]
         [0 1 b]
-        sage: condition_inj_minors(W, Wt)
+        sage: condition_uniqueness_minors(W, Wt)
         {-b >= 0, -a >= 0}
     """
     m = max_minors_prod(W, Wt)

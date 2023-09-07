@@ -6,8 +6,8 @@ install:
 test:
 	sage -t sign_vector_conditions/
 
-	sage tests/test_conditions_injectivity.py -v # remove this later
-	sage tests/test_conditions_bijectivity_robust.py -v # remove this later
+	sage tests/test_uniqueness.py -v # TODO remove this later
+	sage tests/test_robustness.py -v # TODO remove this later
 
 doc:
 	cd docs && make html

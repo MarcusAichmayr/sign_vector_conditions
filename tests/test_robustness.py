@@ -1,9 +1,9 @@
 from sage.all import *
-from sign_vector_conditions.conditions_bijectivity_robust import condition_closure_sign_vectors, condition_closure_minors
+from sign_vector_conditions.robustness import condition_closure_sign_vectors, condition_closure_minors
 import unittest
 
 class Tests(unittest.TestCase):
-    def test_conditions_bijectivity_robust_equivalence_random(self):
+    def test_robustness_equivalence_random(self):
         m = 3
         n = 4
 

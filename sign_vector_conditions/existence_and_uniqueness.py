@@ -1,5 +1,5 @@
 r"""
-In this module, we check bijectivity for exponential maps by verifying conditions from [MHR19]_.
+Existence and uniqueness of equilibria
 
 EXAMPLES::
 
@@ -36,9 +36,9 @@ Hence, we obtain the oriented matroids::
      {(-+++), (----), (---+), (+---), (++++), (+++-)}]
 
 
-We can check injectivity by using the function :func:`~condition_inj_intersection`::
+We can check injectivity by using the function :func:`~condition_uniqueness_signvectors`::
 
-    sage: condition_inj_intersection(W, Wt)
+    sage: condition_uniqueness_signvectors(W, Wt)
     True
 
 Therefore, the corresponding exponential map is injective for all vectors ``c > 0``.
@@ -100,7 +100,7 @@ We swap the two matrices from before::
 
 Because of symmetry, the corresponding exponential map is injective::
 
-    sage: condition_inj_intersection(W, Wt)
+    sage: condition_uniqueness_signvectors(W, Wt)
     True
 
 Now, we attempt to check the face condition::
@@ -150,7 +150,7 @@ The first two conditions depend on the sign vectors of the corresponding oriente
 Consequently, the choice of the positive parameter ``wt`` does not affect the result.
 In order to compute the sign vectors, we set ``wt`` to ``1``::
 
-    sage: condition_inj_intersection(W, Wt(wt=1))
+    sage: condition_uniqueness_signvectors(W, Wt(wt=1))
     True
 
 Hence, the map is injective.
@@ -181,7 +181,7 @@ In this case, the exponential map is injective but not surjective::
 
 We consider some final example::
 
-    sage: from sign_vector_conditions.conditions_bijectivity import nondeg_cond1
+    sage: from sign_vector_conditions.existence_and_uniqueness import nondeg_cond1
     sage: W = matrix([[1,1,0,0],[0,0,1,0]]).right_kernel_matrix()
     sage: Wt = matrix([[1,0,2,0],[0,1,0,-1]])
 
@@ -220,7 +220,7 @@ from sage.misc.flatten import flatten
 
 def condition_faces(W, Wt):
     r"""
-    Check a condition on positive sign vectors of two matrices.
+    Condition on positive sign vectors for existence and uniqueness of equilibria
 
     INPUT:
 
@@ -237,7 +237,7 @@ def condition_faces(W, Wt):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.conditions_bijectivity import condition_faces
+        sage: from sign_vector_conditions.existence_and_uniqueness import condition_faces
         sage: W = matrix([[1,0,-1,0],[0,1,0,-1]]).right_kernel_matrix()
         sage: W
         [1 0 1 0]
@@ -265,7 +265,7 @@ def condition_faces(W, Wt):
 
 def condition_nondegenerate(W, Wt, certificate=False):
     r"""
-    Check whether the pair of the given matrices is non-degenerate.
+    Non-degeneracy condition for existence and uniqueness of equilibria
 
     INPUT:
 
@@ -355,7 +355,7 @@ def nondeg_cond1(W, Wt, certificate=False):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.conditions_bijectivity import nondeg_cond1
+        sage: from sign_vector_conditions.existence_and_uniqueness import nondeg_cond1
         sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
@@ -511,7 +511,7 @@ def equal_components(M, I):
         sage: M
         [ 1  0  1  0]
         [ 0  0 -1  2]
-        sage: from sign_vector_conditions.conditions_bijectivity import equal_components
+        sage: from sign_vector_conditions.existence_and_uniqueness import equal_components
         sage: equal_components(M, [0, 1])
         [ 1  0  1  0]
         [ 0  0 -1  2]
@@ -550,7 +550,7 @@ def nondeg_cond2(W, Wt):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.conditions_bijectivity import nondeg_cond2
+        sage: from sign_vector_conditions.existence_and_uniqueness import nondeg_cond2
         sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]

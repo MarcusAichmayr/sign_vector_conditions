@@ -10,9 +10,9 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
     :toctree: generated
 
     sign_vector_conditions.functions
-    sign_vector_conditions.conditions_injectivity
-    sign_vector_conditions.conditions_bijectivity
-    sign_vector_conditions.conditions_bijectivity_robust
+    sign_vector_conditions.uniqueness
+    sign_vector_conditions.existence_and_uniqueness
+    sign_vector_conditions.robustness
     sign_vector_conditions.utility
 """
 
@@ -28,8 +28,8 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
 
 from __future__ import absolute_import
 
-from .conditions_injectivity import condition_inj_intersection, condition_inj_minors
-from .conditions_bijectivity import condition_faces, condition_nondegenerate, nondegenerate
-from .conditions_bijectivity_robust import condition_closure_sign_vectors, condition_closure_minors
+from .uniqueness import condition_uniqueness_signvectors, condition_uniqueness_minors
+from .existence_and_uniqueness import condition_faces, condition_nondegenerate, nondegenerate
+from .robustness import condition_closure_sign_vectors, condition_closure_minors
 
 from .functions import f_pol, f_exp
