@@ -1,5 +1,5 @@
 from sage.all import *
-from sign_vector_conditions.uniqueness import condition_uniqueness_signvectors, condition_uniqueness_minors, geq, leq, geq_leq
+from sign_vector_conditions.uniqueness import condition_uniqueness_signvectors, condition_uniqueness_minors
 import unittest
 
 class Tests(unittest.TestCase):
@@ -8,8 +8,8 @@ class Tests(unittest.TestCase):
         n = 4
 
         for i in range(50):
-            A = random_matrix(ZZ,m,n)
-            B = random_matrix(ZZ,m,n)
+            A = random_matrix(ZZ, m, n)
+            B = random_matrix(ZZ, m, n)
             if A.rank() != B.rank():
                 print('different rank')
             else:

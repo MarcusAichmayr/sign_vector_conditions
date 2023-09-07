@@ -52,7 +52,7 @@ def normalize(L):
         for Xi in X:
             if Xi > 0:
                 return True
-            elif Xi < 0:
+            if Xi < 0:
                 return False
         return True
 
@@ -87,10 +87,7 @@ def pos_cocircuits_from_matrix(M, kernel=True):
         sage: pos_cocircuits_from_matrix(M)
         {(+0+0), (++00), (000+)}
     """
-    return set(
-        X for X in cocircuits_from_matrix(M, kernel=kernel)
-        if X > 0
-    )
+    return set(X for X in cocircuits_from_matrix(M, kernel=kernel) if X > 0)
 
 
 def pos_covectors_from_matrix(M, kernel=True):
@@ -99,7 +96,7 @@ def pos_covectors_from_matrix(M, kernel=True):
 
     INPUT:
 
-    - ``L`` -- a list of cocircuits of an oriented matroid.
+    - ``M`` -- a matrix
 
     - ``kernel`` -- a boolean (default: ``True``)
 
@@ -134,24 +131,18 @@ def pos_covectors_from_matrix(M, kernel=True):
         sage: pos_covectors_from_matrix(M)
         [(+0++), (+++0), (++++), (+0+0), (++00), (++0+), (000+)]
     """
-    L = [
-        X for X in cocircuits_from_matrix(M, kernel=kernel)
-        if not X < 0
-    ]
+    cocircuits = [X for X in cocircuits_from_matrix(M, kernel=kernel) if not X < 0]
 
-    if not L:
+    if not cocircuits:
         raise ValueError('List of cocircuits is empty.')
-    n = M.ncols()
-    F = set()
-    F_new = {zero_sign_vector(n)}
-    while F_new != set():
-        Y = F_new.pop()
-        for X in L:
-            if X >= 0:
-                if not X <= Y:  # otherwise Z = X.compose(Y) = Y in F
-                    Z = X.compose(Y)
-                    if Z not in F:
-                        if Z >= 0:
-                            F.add(Z)
-                            F_new.add(Z)
-    return list(F)
+    output = set()
+    new_elements = {zero_sign_vector(M.ncols())}
+    while new_elements:
+        Y = new_elements.pop()
+        for X in cocircuits:
+            if X >= 0 and not X <= Y: # otherwise Z = X.compose(Y) = Y in F
+                Z = X.compose(Y)
+                if Z not in output and Z >= 0:
+                    output.add(Z)
+                    new_elements.add(Z)
+    return list(output)

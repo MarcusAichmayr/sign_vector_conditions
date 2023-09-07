@@ -149,11 +149,11 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
     sage: m2 = Wt.minors(2)
     sage: m2
     [1, b, -a]
-    sage: [m1[i]*m2[i] for i in range(len(m1))]
+    sage: [m1[i] * m2[i] for i in range(len(m1))]
     [1, -b, -a]
 
 Therefore, the corresponding exponential map is injective if and only if
-:math:`a \leq 0` and :math:`b \leq 0`.
+:math:`a \entries_non_positive 0` and :math:`b \entries_non_positive 0`.
 The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
@@ -225,11 +225,11 @@ def condition_uniqueness_signvectors(W, Wt):
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
 
-    cvW = covectors_from_matrix(W, kernel=False)
-    cvWt = covectors_from_matrix(Wt, kernel=True)
-    cvWn = normalize(cvW)
-    cvWtn = normalize(cvWt)
-    return len(set(cvWn).intersection(set(cvWtn))) == 1
+    return len(
+        set(normalize(covectors_from_matrix(W, kernel=False))).intersection(
+            set(normalize(covectors_from_matrix(Wt, kernel=True)))
+        )
+    ) == 1
 
 
 def max_minors_prod(A, B):
@@ -264,32 +264,28 @@ def max_minors_prod(A, B):
     B = B.matrix_from_rows(B.pivot_rows())
     if A.dimensions() != B.dimensions():
         raise ValueError('Matrices must have same rank and number of columns.')
-    r = A.nrows()
-    mA = A.minors(r)
-    mB = B.minors(r)
 
-    return [mA[i]*mB[i] for i in range(len(mA))]
+    return [m1 * m2 for m1, m2 in zip(A.minors(A.nrows()), B.minors(A.nrows()))]
 
 
-def compare_all(v, rel):
+def compare_all(v, relation):
     r"""
     Check whether all entries satisfy the relation.
 
-    This is an auxiliary function used by :func:`geq` and :func:`leq`.
+    This is an auxiliary function used by :func:`entries_non_negative` and :func:`entries_non_positive`.
     """
-    l = set()
+    output = set()
     for a in v:
-        if rel(a) is False:
+        if relation(a) is False:
             return False
-        elif rel(a) is not True:  # if variables occur, we will return the expression
-            l.add(rel(a))
-    if len(l) == 0:
+        if relation(a) is not True:  # if variables occur, we will return the expression
+            output.add(relation(a))
+    if len(output) == 0:
         return True
-    else:
-        return l
+    return output
 
 
-def geq(v):
+def entries_non_negative(v):
     r"""
     Check whether all entries are non-negative.
 
@@ -302,27 +298,27 @@ def geq(v):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.uniqueness import geq
-        sage: geq([0, 5, 1])
+        sage: from sign_vector_conditions.uniqueness import entries_non_negative
+        sage: entries_non_negative([0, 5, 1])
         True
-        sage: geq([0, 0])
+        sage: entries_non_negative([0, 0])
         True
-        sage: geq([0, -5])
+        sage: entries_non_negative([0, -5])
         False
-        sage: geq([x, x^2 + 1, -1, 5])
+        sage: entries_non_negative([x, x^2 + 1, -1, 5])
         False
-        sage: geq([x, x^2 + 1]) # random
+        sage: entries_non_negative([x, x^2 + 1]) # random
         {x^2 + 1 >= 0, x >= 0}
     """
-    def rel(a):
+    def relation(value):
         try:
-            return RR(a) >= 0
+            return RR(value) >= 0
         except TypeError:
-            return a >= 0
-    return compare_all(v, rel)
+            return value >= 0
+    return compare_all(v, relation)
 
 
-def leq(v):
+def entries_non_positive(v):
     r"""
     Check whether all entries are non-positive.
 
@@ -335,27 +331,27 @@ def leq(v):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.uniqueness import leq
-        sage: leq([0, 5, 1])
+        sage: from sign_vector_conditions.uniqueness import entries_non_positive
+        sage: entries_non_positive([0, 5, 1])
         False
-        sage: leq([0, 0])
+        sage: entries_non_positive([0, 0])
         True
-        sage: leq([0, -5])
+        sage: entries_non_positive([0, -5])
         True
-        sage: leq([x, x^2 + 1, -1, 5])
+        sage: entries_non_positive([x, x^2 + 1, -1, 5])
         False
-        sage: leq([x, x^2 + 1])
+        sage: entries_non_positive([x, x^2 + 1])
         {x^2 + 1 <= 0, x <= 0}
     """
-    def rel(a):
+    def relation(value):
         try:
-            return RR(a) <= 0
+            return RR(value) <= 0
         except TypeError:
-            return a <= 0
-    return compare_all(v, rel)
+            return value <= 0
+    return compare_all(v, relation)
 
 
-def geq_leq(v):
+def entries_non_negative_or_non_positive(v):
     r"""
     Return whether each component of a given vector is non-negative or non-positive.
 
@@ -388,31 +384,30 @@ def geq_leq(v):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.uniqueness import geq_leq
-        sage: geq_leq([0, 5, 1])
+        sage: from sign_vector_conditions.uniqueness import entries_non_negative_or_non_positive
+        sage: entries_non_negative_or_non_positive([0, 5, 1])
         True
-        sage: geq_leq([0, 0])
+        sage: entries_non_negative_or_non_positive([0, 0])
         False
-        sage: geq_leq([0, -5])
+        sage: entries_non_negative_or_non_positive([0, -5])
         True
-        sage: geq_leq([x, x^2 + 1, -1, 5])
+        sage: entries_non_negative_or_non_positive([x, x^2 + 1, -1, 5])
         False
-        sage: geq_leq([x, x^2 + 1]) # random
+        sage: entries_non_negative_or_non_positive([x, x^2 + 1]) # random
         [{x^2 + 1 >= 0, x >= 0}, {x^2 + 1 <= 0, x <= 0}]
     """
-    ge = geq(v)
-    le = leq(v)
+    ge = entries_non_negative(v)
+    le = entries_non_positive(v)
 
     if ge is True and le is True:  # all entries are zero
         return False
-    elif ge is False and le is False:  # mixed signs
+    if ge is False and le is False:  # mixed signs
         return False
-    elif ge is False:
+    if ge is False:
         return True if le is True else le
-    elif le is False:
+    if le is False:
         return True if ge is True else ge
-    else:
-        return [ge, le]
+    return [ge, le]
 
 
 def condition_uniqueness_minors(W, Wt):
@@ -467,5 +462,4 @@ def condition_uniqueness_minors(W, Wt):
         sage: condition_uniqueness_minors(W, Wt)
         {-b >= 0, -a >= 0}
     """
-    m = max_minors_prod(W, Wt)
-    return geq_leq(m)
+    return entries_non_negative_or_non_positive(max_minors_prod(W, Wt))

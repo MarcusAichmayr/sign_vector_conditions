@@ -116,7 +116,7 @@ For ``c < 0``, we are left with a condition on ``a``::
     sage: condition_closure_minors(W(c=-1), Wt(b=2))
     [a < 0]
 
-Analogously, we can assume that ``b < 0`` and we will obtain similar conditions on the other variables.
+Analogously, we can assume ``b < 0`` and we obtain similar conditions on the other variables.
 """
 
 #############################################################################
@@ -152,8 +152,8 @@ def condition_closure_sign_vectors(W, Wt):
     """
     tW = topes_from_matrix(W, kernel=True)
     tWt = topes_from_matrix(Wt, kernel=True)
-    tWn = normalize(tW)  # 0++0
-    # +--+ Do not normalize second list of topes.
+    tWn = normalize(tW)
+    # Do not normalize second list of topes: 0++0, +--+
     for X in tWn:
         val = True
         for Y in tWt:
@@ -184,11 +184,10 @@ def condition_closure_minors(W, Wt):
     """
     if W.dimensions() != Wt.dimensions():
         raise ValueError('Matrices must have same dimensions.')
-    d = W.nrows()
-    m = W.minors(d)
-    mt = Wt.minors(d)
+    m = W.minors(W.nrows())
+    mt = Wt.minors(W.nrows())
 
-    def eq(a):
+    def equals_zero(value):
         r"""
         Compare an expression with ``0``.
 
@@ -205,95 +204,92 @@ def condition_closure_minors(W, Wt):
         - ``None``  -- The number ``a`` is a symbolic expression.
         """
         try:
-            if RR(a) == 0:
+            if RR(value) == 0:
                 return True  # equal to zero
-            else:
-                return False  # non-zero real number
+            return False  # non-zero real number
         except TypeError:
             return None  # symbolic expression
 
-    s = 0  # will be set to the sign (1 or -1) of m[i] mt[i]
-    L = []  # will be set to a list of symbolic entries. Depending on s, each entry is ``> 0`` or ``< 0``.
-    L_eq = []  # will be set to a list of equalities.
-    # L_left, L_right will be the ``or`` pairs
-    L_left = []  # will be set to a list of equalities.
-    L_right = []  # will be set list of symbolic entries. Depending on s, each entry is ``> 0`` or ``< 0``.
+    sign_product_minors = 0
+    symbolic_entries = []  # Depending on s, each entry is ``> 0`` or ``< 0``.
+    equalities = []
+    # equalities_left, equalities_right will be the ``or`` pairs
+    equalities_left = []
+    equalities_right = []
 
-    for i in range(len(m)):
-        if eq(m[i]) is None:  # mi symbolic
-            if eq(mt[i]) is True:  # mti zero, hence, product zero and cannot be > or < 0
-                L_eq.append(m[i] == 0)
+    for m_i, mt_i in zip(m, mt):
+        if equals_zero(m_i) is None:  # mi symbolic
+            if equals_zero(mt_i) is True:  # mti zero, hence, product zero and cannot be > or < 0
+                equalities.append(m_i == 0)
             else:
-                L_left.append(m[i] == 0)
-                L_right.append(m[i]*mt[i])
-        # if eq(m[i]) != None:
-        elif eq(m[i]) is False:  # mi non-zero, not symbolic
-            if eq(mt[i]) is None:  # mti symbolic
-                L.append(m[i]*mt[i])  # needs > or < later
-            elif eq(mt[i]) is True:  # mti zero
+                equalities_left.append(m_i == 0)
+                equalities_right.append(m_i * mt_i)
+        elif equals_zero(m_i) is False:  # mi non-zero, not symbolic
+            if equals_zero(mt_i) is None:  # mti symbolic
+                symbolic_entries.append(m_i * mt_i)  # needs > or < later
+            elif equals_zero(mt_i) is True:  # mti zero
                 return False
-            elif s == 0:  # mti non-zero, not symbolic
-                s = ZZ(sign(m[i]*mt[i]))
+            elif sign_product_minors == 0:  # mti non-zero, not symbolic
+                sign_product_minors = ZZ(sign(m_i * mt_i))
             else:
-                if (s*m[i]*mt[i]) <= 0:  # cast
+                if (sign_product_minors * m_i * mt_i) <= 0:  # cast
                     return False
 
     # construction of the output list
-    if L == [] and L_eq == [] and L_left == []:  # hence, L_right is also []
+    if not symbolic_entries and not equalities and not equalities_left:  # hence, equalities_right is also []
         return True
-    if L == [] and L_left == []:
-        return L_eq
-    if s == 0:
-        if L != []:
-            E_eq_left = []
-            E_eq_right = []
-            for l in L:
-                E_eq_left.append(l > 0)
-                E_eq_right.append(l < 0)
+    if not symbolic_entries and not equalities_left:
+        return equalities
+    if sign_product_minors == 0:
+        if symbolic_entries:
+            output_equalities_left = []
+            output_equalities_right = []
+            for l in symbolic_entries:
+                output_equalities_left.append(l > 0)
+                output_equalities_right.append(l < 0)
 
-        if L_left != []:
-            E_or_left = []
-            E_or_right = []
-            for i in range(len(L_left)):
-                E_or_left.append([L_left[i], 'or', L_right[i] > 0])
-                E_or_right.append([L_left[i], 'or', L_right[i] < 0])
+        if equalities_left:
+            output_disjunction_left = []
+            output_disjunction_right = []
+            for equalities_left_i, equalities_right_i in zip(equalities_left, equalities_right):
+                output_disjunction_left.append([equalities_left_i, 'or', equalities_right_i > 0])
+                output_disjunction_right.append([equalities_left_i, 'or', equalities_right_i < 0])
 
-        if L == []:
-            if len(E_or_left) == 1:  # hence, also len(E_or_right) == 1
-                out = [flatten(E_or_left), 'or', flatten(E_or_right)]
+        if not symbolic_entries:
+            if len(output_disjunction_left) == 1:  # hence, also len(output_disjunction_right) == 1
+                out = [flatten(output_disjunction_left), 'or', flatten(output_disjunction_right)]
             else:
-                out = [E_or_left, 'or', E_or_right]
-        elif L_left == []:
-            out = [E_eq_left, 'or', E_eq_right]
+                out = [output_disjunction_left, 'or', output_disjunction_right]
+        elif not equalities_left:
+            out = [output_equalities_left, 'or', output_equalities_right]
         else:
-            out = [E_eq_left + E_or_left, 'or', E_eq_right + E_or_right]
+            out = [output_equalities_left + output_disjunction_left, 'or', output_equalities_right + output_disjunction_right]
     else:
-        if s > 0:
-            def rel(a):
-                return a > 0
+        if sign_product_minors > 0:
+            def rel(value):
+                return value > 0
         else:
-            def rel(a):
-                return a < 0
+            def rel(value):
+                return value < 0
 
-        if L != []:
-            E_eq = []
-            for l in L:
-                E_eq.append(rel(l))
-        if L_left != []:
-            E_or = []
-            for i in range(len(L_left)):
-                E_or.append([L_left[i], 'or', rel(L_right[i])])
-        if L == []:
-            if len(E_or) == 1:
-                out = flatten(E_or)
+        if symbolic_entries:
+            output_equalities = []
+            for l in symbolic_entries:
+                output_equalities.append(rel(l))
+        if equalities_left:
+            output_disjunctions = []
+            for equalities_left_i, equalities_right_i in zip(equalities_left, equalities_right):
+                output_disjunctions.append([equalities_left_i, 'or', rel(equalities_right_i)])
+        if not symbolic_entries:
+            if len(output_disjunctions) == 1:
+                out = flatten(output_disjunctions)
             else:
-                out = E_or
-        elif L_left == []:
-            out = E_eq
+                out = output_disjunctions
+        elif not equalities_left:
+            out = output_equalities
         else:
-            out = E_eq + E_or
+            out = output_equalities + output_disjunctions
 
-    if L_eq == []:
+    if not equalities:
         return out
-    else:
-        return L_eq + [out]
+    return equalities + [out]

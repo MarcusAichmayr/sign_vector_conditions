@@ -98,14 +98,19 @@ def f_exp_pol(W, Wt, c=None, mode="exp"):
     (d, n) = W.dimensions()
 
     if mode == "exp":
-        def f(*x):
-            return sum([c[i] * exp(Wt.column(i).dot_product(vector(x))) * W.column(i) for i in range(n)])
+        def function(*x):
+            return sum(
+                    c_i * exp(Wt_i.dot_product(vector(x))) * W_i
+                    for c_i, W_i, Wt_i in zip(c, W.columns(), Wt.columns())
+            )
     elif mode == "pol":
-        def f(*x):
-            return vector([sum([W[i, j] * c[j] * prod([x[k]**Wt[k, j] for k in range(d)]) for j in range(n)]) for i in range(d)])
+        def function(*x):
+            return vector(sum(W[i, j] * c[j] * prod([x[k]**Wt[k, j] for k in range(d)])
+                    for j in range(n)) for i in range(d)
+            )
     else:
         raise ValueError("Mode '" + mode + "' is not available. Try 'exp' or 'pol'.")
-    return f
+    return function
 
 
 def f_exp(W, Wt, c=None):
