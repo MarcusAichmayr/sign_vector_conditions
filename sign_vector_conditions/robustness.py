@@ -86,37 +86,17 @@ First, we compute the minors of the matrices::
 The function from the package supports symbolic matrices as input.
 In this case, we obtain the following equations on the variables::
 
-    sage: condition_closure_minors(W, Wt)
-    [[-b > 0, [c == 0, 'or', c > 0], [c == 0, 'or', -a*c > 0]], 'or', [-b < 0, [c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]]
+    sage: condition_closure_minors(W, Wt) # random
+    [{-b > 0, c == 0},
+     {-b < 0, c == 0},
+     {-b > 0, c > 0, -a*c > 0},
+     {-b < 0, c < 0, -a*c < 0}]
 
-From this system of equations, we can induce that ``b``  must be non-zero.
-Indeed, if ``b = 0``, we obtain::
-
-    sage: condition_closure_minors(W, Wt(b=0))
-    False
-
-Therefore, assume for instance ``b = 2``::
-
-    sage: condition_closure_minors(W, Wt(b=2))
-    [[c == 0, 'or', c < 0], [c == 0, 'or', -a*c < 0]]
-
-From the output, we see that either ``c = 0`` or ``c < 0``.
-Otherwise, we obtain::
-
-    sage: condition_closure_minors(W(c=1), Wt(b=2))
-    False
-
-If ``c = 0``, then the result will be ``True``::
-
-    sage: condition_closure_minors(W(c=0), Wt(b=2))
-    True
-
-For ``c < 0``, we are left with a condition on ``a``::
-
-    sage: condition_closure_minors(W(c=-1), Wt(b=2))
-    [a < 0]
-
-Analogously, we can assume ``b < 0`` and we obtain similar conditions on the other variables.
+Thus, there are four possibilities to set the variables:
+From the first two sets of conditions, we see that the closure condition is satisfied
+if ``c`` is zero and ``b`` is non-zero.
+The closure condition is also satisfied if ``a`` and ``b`` are negative and ``c`` is positive
+or if ``a`` and ``b`` are positive and ``c`` is negative.
 """
 
 #############################################################################
@@ -131,9 +111,8 @@ Analogously, we can assume ``b < 0`` and we obtain similar conditions on the oth
 
 from .utility import normalize
 from sign_vectors.oriented_matroids import topes_from_matrix
-from sage.functions.generalized import sign
-from sage.rings.real_mpfr import RR  # used for casting
-from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.misc.flatten import flatten
 
 
 def condition_closure_sign_vectors(W, Wt):
@@ -176,120 +155,137 @@ def condition_closure_minors(W, Wt):
     - ``Wt`` -- a matrix with the same dimensions as ``W``
 
     OUTPUT:
-    Returns whether for each non-zero maximal minor ``m`` of ``W``, we have
-    either ``m mt > 0`` for each corresponding maximal minor ``mt`` of ``Wt``
-    or ``m mt < 0`` for each corresponding maximal minor ``mt`` of ``Wt``.
-
-    Returns a boolean or a symbolic expression if variables occur.
+    Returns either a boolean or sets of conditions on variables occurring in the input.
     """
     if W.dimensions() != Wt.dimensions():
         raise ValueError('Matrices must have same dimensions.')
-    m = W.minors(W.nrows())
-    mt = Wt.minors(W.nrows())
 
-    def equals_zero(value):
-        r"""
-        Compare an expression with ``0``.
+    return conditions_on_products(W.minors(W.nrows()), Wt.minors(W.nrows()))
 
-        INPUT:
 
-        - ``a`` -- a real number or symbolic expression
+def conditions_on_products(list1, list2):
+    r"""
+    Return whether all products of components are positive (or negative) if first element is non-zero
+    
+    INPUT:
+    Two lists of the same length.
+    
+    OUTPUT:
+    Returns either a boolean or sets of conditions on variables occurring in the input.
+    If the conditions of one of these sets are satisfied,
+    then for all non-zero elements of the first list,
+    the product with the corresponding element of the second list is positive.
+    (Or all products are negative.)
+    
+    .. SEEALSO::
 
-        OUTPUT:
+        :func:`~condition_closure_minors`
+    
+    TESTS::
+    
+        sage: from sign_vector_conditions.robustness import conditions_on_products
+        sage: var('a,b,c')
+        (a, b, c)
+        sage: conditions_on_products([0, a], [1, 1])
+        [{a == 0}, {a > 0}, {a < 0}]
+        sage: len(_)
+        3
+        sage: conditions_on_products([c, -1, c], [1, b, -a]) # random
+        [{-b > 0, c == 0},
+         {-b < 0, c == 0},
+         {-b > 0, c > 0, -a*c > 0},
+         {-b < 0, c < 0, -a*c < 0}]
+        sage: len(_)
+        4
+        sage: conditions_on_products([c, -1, a], [1, b, -c]) # random
+        [{-b > 0, a == 0, c == 0},
+         {-b < 0, a == 0, c == 0},
+         {-b > 0, a == 0, c > 0},
+         {-b < 0, a == 0, c < 0},
+         {-b > 0, a != 0, c > 0, -a*c > 0},
+         {-b < 0, a != 0, c < 0, -a*c < 0}]
+        sage: len(_[4])
+        4
+        sage: conditions_on_products([-1, -1], [1, 1])
+        True
+        sage: conditions_on_products([-1, 1], [1, 1])
+        False
+        sage: conditions_on_products([0, 1], [1, 1])
+        True
+        sage: conditions_on_products([1], [0])
+        False
+    """
+    def rec(list1, list2, zero_expressions, non_zero_expressions):
+        r"""Recursive call"""
+        pairs = [
+            (elem1, elem2) for elem1, elem2 in zip(list1, list2)
+            if not elem1.is_zero() and not elem1 in zero_expressions
+        ]
 
-        - ``True``  -- The number ``a`` is equal to zero.
+        for elem1, _ in pairs:
+            if is_symbolic(elem1) and not elem1 in non_zero_expressions:
+                return [
+                    rec(list1, list2, zero_expressions.union([elem1]), non_zero_expressions),
+                    rec(list1, list2, zero_expressions, non_zero_expressions.union([elem1]))
+                ]
 
-        - ``False`` -- The number ``a`` is a non-zero real number.
+        products = set(
+            substitute_and_simplify(elem1 * elem2, [value == 0 for value in zero_expressions])
+        for elem1, elem2 in pairs)
 
-        - ``None``  -- The number ``a`` is a symbolic expression.
-        """
-        try:
-            if RR(value) == 0:
-                return True  # equal to zero
-            return False  # non-zero real number
-        except TypeError:
-            return None  # symbolic expression
+        equalities = set(value == 0 for value in zero_expressions)
+        non_equalities = set(value != 0 for value in non_zero_expressions if not value in products)
 
-    sign_product_minors = 0
-    symbolic_entries = []  # Depending on s, each entry is ``> 0`` or ``< 0``.
-    equalities = []
-    # equalities_left, equalities_right will be the ``or`` pairs
-    equalities_left = []
-    equalities_right = []
+        positive_inequalities = set(value > 0 for value in products)
+        negative_inequalities = set(value < 0 for value in products)
 
-    for m_i, mt_i in zip(m, mt):
-        if equals_zero(m_i) is None:  # mi symbolic
-            if equals_zero(mt_i) is True:  # mti zero, hence, product zero and cannot be > or < 0
-                equalities.append(m_i == 0)
-            else:
-                equalities_left.append(m_i == 0)
-                equalities_right.append(m_i * mt_i)
-        elif equals_zero(m_i) is False:  # mi non-zero, not symbolic
-            if equals_zero(mt_i) is None:  # mti symbolic
-                symbolic_entries.append(m_i * mt_i)  # needs > or < later
-            elif equals_zero(mt_i) is True:  # mti zero
-                return False
-            elif sign_product_minors == 0:  # mti non-zero, not symbolic
-                sign_product_minors = ZZ(sign(m_i * mt_i))
-            else:
-                if (sign_product_minors * m_i * mt_i) <= 0:  # cast
-                    return False
+        if True in positive_inequalities:
+            positive_inequalities.remove(True)
+        if True in negative_inequalities:
+            negative_inequalities.remove(True)
 
-    # construction of the output list
-    if not symbolic_entries and not equalities and not equalities_left:  # hence, equalities_right is also []
+        return [
+            positive_inequalities.union(equalities).union(non_equalities),
+            negative_inequalities.union(equalities).union(non_equalities)
+        ]
+
+    output = flatten(rec(list1, list2, set(), set()))
+    for conditions in output.copy():
+        if False in conditions:
+            output.remove(conditions)
+    if not output: # e.g. [1, -1], [1, 1]
+        return False
+    output = remove_duplicates(output)
+    if output == [set()]: # e.g. [1], [1] or [0], [1]
         return True
-    if not symbolic_entries and not equalities_left:
-        return equalities
-    if sign_product_minors == 0:
-        if symbolic_entries:
-            output_equalities_left = []
-            output_equalities_right = []
-            for l in symbolic_entries:
-                output_equalities_left.append(l > 0)
-                output_equalities_right.append(l < 0)
+    return output
 
-        if equalities_left:
-            output_disjunction_left = []
-            output_disjunction_right = []
-            for equalities_left_i, equalities_right_i in zip(equalities_left, equalities_right):
-                output_disjunction_left.append([equalities_left_i, 'or', equalities_right_i > 0])
-                output_disjunction_right.append([equalities_left_i, 'or', equalities_right_i < 0])
 
-        if not symbolic_entries:
-            if len(output_disjunction_left) == 1:  # hence, also len(output_disjunction_right) == 1
-                out = [flatten(output_disjunction_left), 'or', flatten(output_disjunction_right)]
-            else:
-                out = [output_disjunction_left, 'or', output_disjunction_right]
-        elif not equalities_left:
-            out = [output_equalities_left, 'or', output_equalities_right]
-        else:
-            out = [output_equalities_left + output_disjunction_left, 'or', output_equalities_right + output_disjunction_right]
-    else:
-        if sign_product_minors > 0:
-            def rel(value):
-                return value > 0
-        else:
-            def rel(value):
-                return value < 0
+def is_symbolic(value):
+    r"""Return whether this element is symbolic"""
+    try:
+        return value.is_symbol()
+    except AttributeError:
+        return False
 
-        if symbolic_entries:
-            output_equalities = []
-            for l in symbolic_entries:
-                output_equalities.append(rel(l))
-        if equalities_left:
-            output_disjunctions = []
-            for equalities_left_i, equalities_right_i in zip(equalities_left, equalities_right):
-                output_disjunctions.append([equalities_left_i, 'or', rel(equalities_right_i)])
-        if not symbolic_entries:
-            if len(output_disjunctions) == 1:
-                out = flatten(output_disjunctions)
-            else:
-                out = output_disjunctions
-        elif not equalities_left:
-            out = output_equalities
-        else:
-            out = output_equalities + output_disjunctions
 
-    if not equalities:
-        return out
-    return equalities + [out]
+def substitute_and_simplify(expression, *args):
+    r"""Substitute arguments and make result a real number if possible"""
+    value = expression.substitute(*args)
+    try:
+        return RR(value)
+    except TypeError:
+        return value
+
+
+def remove_duplicates(iterable):
+    r"""Remove duplicates from a list of iterables"""
+    seen = set()
+    result = []
+    for item in iterable:
+        marker = frozenset(item) # only works if item is an iterable
+        if marker in seen:
+            continue
+        seen.add(marker)
+        result.append(item)
+    return result
