@@ -268,30 +268,30 @@ def max_minors_prod(A, B):
     return [m1 * m2 for m1, m2 in zip(A.minors(A.nrows()), B.minors(A.nrows()))]
 
 
-def compare_all(v, relation):
+def compare_all(iterable, relation):
     r"""
     Check whether all entries satisfy the relation.
 
     This is an auxiliary function used by :func:`entries_non_negative` and :func:`entries_non_positive`.
     """
     output = set()
-    for a in v:
-        if relation(a) is False:
+    for value in iterable:
+        if relation(value) is False:
             return False
-        if relation(a) is not True:  # if variables occur, we will return the expression
-            output.add(relation(a))
+        if relation(value) is not True:  # if variables occur, we will return the expression
+            output.add(relation(value))
     if len(output) == 0:
         return True
     return output
 
 
-def entries_non_negative(v):
+def entries_non_negative(iterable):
     r"""
     Check whether all entries are non-negative.
 
     INPUT:
 
-    - ``v`` -- an iterable
+    - ``iterable`` -- an iterable
 
     OUTPUT:
     a boolean or symbolic expression
@@ -315,16 +315,16 @@ def entries_non_negative(v):
             return RR(value) >= 0
         except TypeError:
             return value >= 0
-    return compare_all(v, relation)
+    return compare_all(iterable, relation)
 
 
-def entries_non_positive(v):
+def entries_non_positive(iterable):
     r"""
     Check whether all entries are non-positive.
 
     INPUT:
 
-    - ``v`` -- an iterable
+    - ``iterable`` -- an iterable
 
     OUTPUT:
     a boolean or symbolic expression
@@ -348,26 +348,26 @@ def entries_non_positive(v):
             return RR(value) <= 0
         except TypeError:
             return value <= 0
-    return compare_all(v, relation)
+    return compare_all(iterable, relation)
 
 
-def entries_non_negative_or_non_positive(v):
+def entries_non_negative_or_non_positive(iterable):
     r"""
     Return whether each component of a given vector is non-negative or non-positive.
 
     INPUT:
 
-    - ``v`` -- an iterable of numbers or symbolic expressions.
+    - ``iterable`` -- an iterable of numbers or symbolic expressions.
 
     OUTPUT:
-    Returns true if either each element of ``v`` is greater than or equal to zero or less than or equal to zero.
+    Returns true if either each element of ``iterable`` is greater than or equal to zero or less than or equal to zero.
     Supports symbolic expressions.
 
     Depending on the input, the output can have several appearances:
 
     - a boolean
 
-        - if true, no symbolic expressions have occurred and either each entry of ``v`` is greater or equal zero
+        - if true, no symbolic expressions have occurred and either each entry of ``iterable`` is greater or equal zero
           or each entry is less or equal zero.
 
         - if false, there are entries with opposing signs or every entry is zero.
@@ -375,12 +375,12 @@ def entries_non_negative_or_non_positive(v):
     - a set of inequalities
 
         - if all inequalities are satisfied,
-          then either each element of ``v`` is greater or equal zero or less or equal zero.
+          then either each element of ``iterable`` is greater or equal zero or less or equal zero.
 
     - a list of two sets of inequalities
 
         - if the inequalities of exactly one of these sets are satisfied,
-          then either each element of ``v`` is greater or equal zero or less or equal zero.
+          then either each element of ``iterable`` is greater or equal zero or less or equal zero.
 
     EXAMPLES::
 
@@ -396,18 +396,18 @@ def entries_non_negative_or_non_positive(v):
         sage: entries_non_negative_or_non_positive([x, x^2 + 1]) # random
         [{x^2 + 1 >= 0, x >= 0}, {x^2 + 1 <= 0, x <= 0}]
     """
-    ge = entries_non_negative(v)
-    le = entries_non_positive(v)
+    entries_nn = entries_non_negative(iterable)
+    entries_np = entries_non_positive(iterable)
 
-    if ge is True and le is True:  # all entries are zero
+    if entries_nn is True and entries_np is True:  # all entries are zero
         return False
-    if ge is False and le is False:  # mixed signs
+    if entries_nn is False and entries_np is False:  # mixed signs
         return False
-    if ge is False:
-        return True if le is True else le
-    if le is False:
-        return True if ge is True else ge
-    return [ge, le]
+    if entries_nn is False:
+        return True if entries_np is True else entries_np
+    if entries_np is False:
+        return True if entries_nn is True else entries_nn
+    return [entries_nn, entries_np]
 
 
 def condition_uniqueness_minors(W, Wt):

@@ -252,12 +252,12 @@ def condition_faces(W, Wt):
     positive_cocircuits = pos_cocircuits_from_matrix(W,  kernel=False)
 
     for X in pos_cocircuits_from_matrix(Wt, kernel=False):
-        val = True
+        value = True
         for Y in positive_cocircuits:
             if Y <= X:
-                val = False
+                value = False
                 break
-        if val:
+        if value:
             return False
     return True
 
@@ -420,15 +420,15 @@ def nondeg_cond1(W, Wt, certificate=False):
     n = Wt.ncols()
     degenerate = False
 
-    left_interval_bounds = [-Infinity for i in range(n)]
-    right_interval_bounds = [0 for i in range(n)]
+    lower_bounds = [-Infinity for i in range(n)]
+    upper_bounds = [0 for i in range(n)]
     inf = [Infinity for i in range(n)]
 
     proof = []
 
     kernel_matrix = Wt.right_kernel_matrix()
 
-    def rec(positive_covectors, kernel_matrix, indices, left_interval_bounds, right_interval_bounds):
+    def rec(positive_covectors, kernel_matrix, indices, lower_bounds, upper_bounds):
         r"""
         Recursive function.
 
@@ -440,9 +440,9 @@ def nondeg_cond1(W, Wt, certificate=False):
 
         - ``indices`` -- a list of indices
 
-        - ``left_interval_bounds`` -- a list of values ``-Infinity`` and ``1``
+        - ``lower_bounds`` -- a list of values ``-Infinity`` and ``1``
 
-        - ``right_interval_bounds`` -- a list of values ``0`` and ``Infinity``
+        - ``upper_bounds`` -- a list of values ``0`` and ``Infinity``
         """
         nonlocal degenerate
         nonlocal proof
@@ -450,16 +450,16 @@ def nondeg_cond1(W, Wt, certificate=False):
         while positive_covectors:
             X = positive_covectors.pop()
             if set(flatten(indices)).issubset(X.zero_support()):  # X.positive_support() subseteq J, X must have a "+" on J
-                L_ = left_interval_bounds[:]
-                R_ = right_interval_bounds[:]
+                lower_bounds_new = lower_bounds[:]
+                upper_bounds_new = upper_bounds[:]
                 for i in X.support():
-                    L_[i] = 1
-                    R_[i] = Infinity
+                    lower_bounds_new[i] = 1
+                    upper_bounds_new[i] = Infinity
 
                 M_ = matrix_with_equal_components(kernel_matrix, X.support())
                 A = M_.right_kernel_matrix()
                 evs = elementary_vectors(A)
-                intervals = setup_intervals(L_, R_)
+                intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
 
                 if exists_vector(evs, intervals):
                     degenerate = True
@@ -468,9 +468,9 @@ def nondeg_cond1(W, Wt, certificate=False):
                         proof = [indices, construct_vector(Wt, intervals)]
                     return
                 else:
-                    intervals = setup_intervals(L_, inf)
+                    intervals = setup_intervals(lower_bounds_new, inf)
                     if exists_vector(evs, intervals):
-                        rec(positive_covectors[:], M_, indices + [X.support()], L_, R_)
+                        rec(positive_covectors[:], M_, indices + [X.support()], lower_bounds_new, upper_bounds_new)
                     else:
                         if certificate:
                             for v in evs:
@@ -482,7 +482,7 @@ def nondeg_cond1(W, Wt, certificate=False):
                 return
         return
 
-    rec(positive_covectors, kernel_matrix, [], left_interval_bounds, right_interval_bounds)
+    rec(positive_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
 
     if certificate:
         return [not degenerate, proof]
@@ -606,11 +606,11 @@ def nondeg_cond2(W, Wt):
     """
     positive_cocircuits = pos_cocircuits_from_matrix(W, kernel=False)
     for X in normalize(cocircuits_from_matrix(Wt, kernel=False)):
-        val = False
+        value = False
         for Y in positive_cocircuits:
             if set(X.zero_support()).issubset(Y.zero_support()):
-                val = True
+                value = True
                 break
-        if not val:
+        if not value:
             return False
     return True
