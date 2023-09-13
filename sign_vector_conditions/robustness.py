@@ -160,10 +160,10 @@ def condition_closure_minors(W, Wt):
     if W.dimensions() != Wt.dimensions():
         raise ValueError('Matrices must have same dimensions.')
 
-    return conditions_on_products(W.minors(W.nrows()), Wt.minors(W.nrows()))
+    return condition_on_products(W.minors(W.nrows()), Wt.minors(W.nrows()))
 
 
-def conditions_on_products(list1, list2):
+def condition_on_products(list1, list2):
     r"""
     Return whether all products of components are positive (or negative) if first element is non-zero
     
@@ -183,21 +183,21 @@ def conditions_on_products(list1, list2):
     
     TESTS::
     
-        sage: from sign_vector_conditions.robustness import conditions_on_products
+        sage: from sign_vector_conditions.robustness import condition_on_products
         sage: var('a,b,c')
         (a, b, c)
-        sage: conditions_on_products([0, a], [1, 1])
+        sage: condition_on_products([0, a], [1, 1])
         [{a == 0}, {a > 0}, {a < 0}]
         sage: len(_)
         3
-        sage: conditions_on_products([c, -1, c], [1, b, -a]) # random
+        sage: condition_on_products([c, -1, c], [1, b, -a]) # random
         [{-b > 0, c == 0},
          {-b < 0, c == 0},
          {-b > 0, c > 0, -a*c > 0},
          {-b < 0, c < 0, -a*c < 0}]
         sage: len(_)
         4
-        sage: conditions_on_products([c, -1, a], [1, b, -c]) # random
+        sage: condition_on_products([c, -1, a], [1, b, -c]) # random
         [{-b > 0, a == 0, c == 0},
          {-b < 0, a == 0, c == 0},
          {-b > 0, a == 0, c > 0},
@@ -206,13 +206,13 @@ def conditions_on_products(list1, list2):
          {-b < 0, a != 0, c < 0, -a*c < 0}]
         sage: len(_[4])
         4
-        sage: conditions_on_products([-1, -1], [1, 1])
+        sage: condition_on_products([-1, -1], [1, 1])
         True
-        sage: conditions_on_products([-1, 1], [1, 1])
+        sage: condition_on_products([-1, 1], [1, 1])
         False
-        sage: conditions_on_products([0, 1], [1, 1])
+        sage: condition_on_products([0, 1], [1, 1])
         True
-        sage: conditions_on_products([1], [0])
+        sage: condition_on_products([1], [0])
         False
     """
     def rec(list1, list2, zero_expressions, non_zero_expressions):
@@ -224,10 +224,8 @@ def conditions_on_products(list1, list2):
 
         for elem1, _ in pairs:
             if is_symbolic(elem1) and not elem1 in non_zero_expressions:
-                return [
-                    rec(list1, list2, zero_expressions.union([elem1]), non_zero_expressions),
-                    rec(list1, list2, zero_expressions, non_zero_expressions.union([elem1]))
-                ]
+                yield from rec(list1, list2, zero_expressions.union([elem1]), non_zero_expressions)
+                yield from rec(list1, list2, zero_expressions, non_zero_expressions.union([elem1]))
 
         products = set(
             substitute_and_simplify(elem1 * elem2, [value == 0 for value in zero_expressions])
@@ -244,12 +242,10 @@ def conditions_on_products(list1, list2):
         if True in negative_inequalities:
             negative_inequalities.remove(True)
 
-        return [
-            positive_inequalities.union(equalities).union(non_equalities),
-            negative_inequalities.union(equalities).union(non_equalities)
-        ]
+        yield positive_inequalities.union(equalities).union(non_equalities)
+        yield negative_inequalities.union(equalities).union(non_equalities)
 
-    output = flatten(rec(list1, list2, set(), set()))
+    output = list(rec(list1, list2, set(), set()))
     for conditions in output.copy():
         if False in conditions:
             output.remove(conditions)
