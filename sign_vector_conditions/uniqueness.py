@@ -152,8 +152,8 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
     sage: [m1[i] * m2[i] for i in range(len(m1))]
     [1, -b, -a]
 
-Therefore, the corresponding exponential map is injective if and only if
-:math:`a \entries_non_positive 0` and :math:`b \entries_non_positive 0`.
+Therefore, there is at most one equilibrium if and only if
+:math:`a \leq 0` and :math:`b \leq 0`.
 The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
@@ -226,8 +226,8 @@ def condition_uniqueness_signvectors(W, Wt):
         raise ValueError('Matrices have different number of columns.')
 
     return len(
-        set(normalize(covectors_from_matrix(W, kernel=False))).intersection(
-            set(normalize(covectors_from_matrix(Wt, kernel=True)))
+        normalize(covectors_from_matrix(W, kernel=False)).intersection(
+            normalize(covectors_from_matrix(Wt, kernel=True))
         )
     ) == 1
 
