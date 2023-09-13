@@ -207,13 +207,14 @@ that are represented by the sets ``{2}`` and ``{0, 1}``.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
-from .utility import pos_cocircuits_from_matrix, pos_covectors_from_matrix, matrix_with_equal_components
+from sage.misc.flatten import flatten
+from sage.rings.infinity import Infinity
+
 from elementary_vectors import elementary_vectors
 from elementary_vectors import setup_intervals, exists_vector, exists_orthogonal_vector, construct_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
-from sage.rings.infinity import Infinity
-from sage.misc.flatten import flatten
+from .utility import pos_cocircuits_from_matrix, pos_covectors_from_matrix, matrix_with_equal_components
 
 
 def condition_faces(W, Wt):

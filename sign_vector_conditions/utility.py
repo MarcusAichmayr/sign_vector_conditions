@@ -15,6 +15,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
+
 from sign_vectors import zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 

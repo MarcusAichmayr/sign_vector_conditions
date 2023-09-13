@@ -109,8 +109,8 @@ or if ``a`` and ``b`` are positive and ``c`` is negative.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
-from .utility import condition_on_products
 from sign_vectors.oriented_matroids import topes_from_matrix
+from .utility import condition_on_products
 
 
 def condition_closure_sign_vectors(W, Wt):
