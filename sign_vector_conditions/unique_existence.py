@@ -251,10 +251,10 @@ def condition_faces(W, Wt):
     """
     positive_cocircuits = pos_cocircuits_from_matrix(W,  kernel=False)
 
-    for X in pos_cocircuits_from_matrix(Wt, kernel=False):
+    for cocircuit1 in pos_cocircuits_from_matrix(Wt, kernel=False):
         value = True
-        for Y in positive_cocircuits:
-            if Y <= X:
+        for cocircuit2 in positive_cocircuits:
+            if cocircuit2 <= cocircuit1:
                 value = False
                 break
         if value:
@@ -353,27 +353,27 @@ def nondeg_cond1(W, Wt, certificate=False):
     EXAMPLES::
 
         sage: from sign_vector_conditions.unique_existence import nondeg_cond1
-        sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
+        sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
-        sage: Wt = matrix([[-5,-1,2,2],[1,0,2,21],[-2,0,0,2]]).right_kernel_matrix()
+        sage: Wt = matrix([[-5, -1, 2, 2], [1, 0, 2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
         sage: Wt
         [  1 -25 -11   1]
         sage: nondeg_cond1(W, Wt)
         False
-        sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
+        sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
-        sage: Wt = matrix([[-5,1,-2,2],[1,0,-2,21],[-2,0,0,2]]).right_kernel_matrix()
+        sage: Wt = matrix([[-5, 1, -2, 2], [1, 0, -2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
         sage: Wt
         [ 1 25 11  1]
         sage: nondeg_cond1(W, Wt)
         True
-        sage: W = matrix(2,4,[1,2,0,0,0,0,5,1]).right_kernel_matrix()
+        sage: W = matrix(2, 4, [1, 2, 0, 0, 0, 0, 5, 1]).right_kernel_matrix()
         sage: W
         [ 2 -1  0  0]
         [ 0  0  1 -5]
-        sage: A = matrix([[1,1,2,2],[1,0,1,-1]]).right_kernel_matrix()
+        sage: A = matrix([[1, 1, 2, 2], [1, 0, 1, -1]]).right_kernel_matrix()
         sage: A
         [ 1  1 -1  0]
         [ 0  4 -1 -1]
@@ -383,11 +383,11 @@ def nondeg_cond1(W, Wt, certificate=False):
         [ 0  1  1  3]
         sage: nondeg_cond1(W, Wt)
         False
-        sage: W = matrix(3,5,[1,2,0,0,0,0,0,5,1,0,0,0,0,0,1]).right_kernel_matrix()
+        sage: W = matrix(3, 5, [1, 2, 0, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 1]).right_kernel_matrix()
         sage: W
         [ 2 -1  0  0  0]
         [ 0  0  1 -5  0]
-        sage: A = matrix([[1,1,-2,-2,2],[1,0,1,-1,2]]).right_kernel_matrix()
+        sage: A = matrix([[1, 1, -2, -2, 2], [1, 0, 1, -1, 2]]).right_kernel_matrix()
         sage: A
         [ 1  1  0  1  0]
         [ 0  2  0  2  1]
@@ -402,7 +402,7 @@ def nondeg_cond1(W, Wt, certificate=False):
         sage: A
         [ 1  0 -1 -1]
         [ 0  1 -1  0]
-        sage: B = matrix([[1,1,0,0],[0,0,1,1]])
+        sage: B = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
         sage: B
         [1 1 0 0]
         [0 0 1 1]
@@ -417,12 +417,12 @@ def nondeg_cond1(W, Wt, certificate=False):
     if not positive_covectors:
         return True
 
-    n = Wt.ncols()
+    length = Wt.ncols()
     degenerate = False
 
-    lower_bounds = [-Infinity for i in range(n)]
-    upper_bounds = [0 for i in range(n)]
-    inf = [Infinity for i in range(n)]
+    lower_bounds = [-Infinity for i in range(length)]
+    upper_bounds = [0 for i in range(length)]
+    inf = [Infinity for i in range(length)]
 
     proof = []
 
@@ -448,35 +448,34 @@ def nondeg_cond1(W, Wt, certificate=False):
         nonlocal proof
 
         while positive_covectors:
-            X = positive_covectors.pop()
-            if set(flatten(indices)).issubset(X.zero_support()):  # X.positive_support() subseteq J, X must have a "+" on J
+            covector = positive_covectors.pop()
+            if set(flatten(indices)).issubset(covector.zero_support()):
+                # covector must have a "+" on zero support
                 lower_bounds_new = lower_bounds[:]
                 upper_bounds_new = upper_bounds[:]
-                for i in X.support():
+                for i in covector.support():
                     lower_bounds_new[i] = 1
                     upper_bounds_new[i] = Infinity
 
-                M_ = matrix_with_equal_components(kernel_matrix, X.support())
-                A = M_.right_kernel_matrix()
-                evs = elementary_vectors(A)
+                matrix_equal_components = matrix_with_equal_components(kernel_matrix, covector.support())
+                evs = elementary_vectors(matrix_equal_components.right_kernel_matrix())
                 intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
 
                 if exists_vector(evs, intervals):
                     degenerate = True
-                    indices += [X.support()]
+                    indices += [covector.support()]
                     if certificate:
                         proof = [indices, construct_vector(Wt, intervals)]
                     return
+                intervals = setup_intervals(lower_bounds_new, inf)
+                if exists_vector(evs, intervals):
+                    rec(positive_covectors[:], matrix_equal_components, indices + [covector.support()], lower_bounds_new, upper_bounds_new)
                 else:
-                    intervals = setup_intervals(lower_bounds_new, inf)
-                    if exists_vector(evs, intervals):
-                        rec(positive_covectors[:], M_, indices + [X.support()], lower_bounds_new, upper_bounds_new)
-                    else:
-                        if certificate:
-                            for v in evs:
-                                if exists_orthogonal_vector(v, intervals):
-                                    proof.append([v, indices + [X.support()]])
-                                    break
+                    if certificate:
+                        for element in evs:
+                            if exists_orthogonal_vector(element, intervals):
+                                proof.append([element, indices + [covector.support()]])
+                                break
 
             if degenerate:
                 return
@@ -523,16 +522,16 @@ def matrix_with_equal_components(M, indices):
         sage: _.right_kernel_matrix()
         []
     """
-    n = M.ncols()
+    length = M.ncols()
 
     if len(indices) >= 2:
         i = indices[0]
-        v = zero_vector(n)
-        v[i] = 1
+        element = zero_vector(length)
+        element[i] = 1
         for j in indices[1:]:
-            w = v[:]
-            w[j] = -1
-            M = matrix(list(M) + [w])
+            row = element[:]
+            row[j] = -1
+            M = matrix(list(M) + [row])
     return M
 
 
@@ -605,10 +604,10 @@ def nondeg_cond2(W, Wt):
         False
     """
     positive_cocircuits = pos_cocircuits_from_matrix(W, kernel=False)
-    for X in normalize(cocircuits_from_matrix(Wt, kernel=False)):
+    for cocircuit1 in normalize(cocircuits_from_matrix(Wt, kernel=False)):
         value = False
-        for Y in positive_cocircuits:
-            if set(X.zero_support()).issubset(Y.zero_support()):
+        for cocircuit2 in positive_cocircuits:
+            if set(cocircuit1.zero_support()).issubset(cocircuit2.zero_support()):
                 value = True
                 break
         if not value:
