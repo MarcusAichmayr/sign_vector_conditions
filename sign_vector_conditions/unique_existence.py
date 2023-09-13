@@ -181,7 +181,7 @@ In this case, the exponential map is injective but not surjective::
 
 We consider some final example::
 
-    sage: from sign_vector_conditions.existence_and_uniqueness import nondeg_cond1
+    sage: from sign_vector_conditions.unique_existence import nondeg_cond1
     sage: W = matrix([[1,1,0,0],[0,0,1,0]]).right_kernel_matrix()
     sage: Wt = matrix([[1,0,2,0],[0,1,0,-1]])
 
@@ -237,7 +237,7 @@ def condition_faces(W, Wt):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.existence_and_uniqueness import condition_faces
+        sage: from sign_vector_conditions.unique_existence import condition_faces
         sage: W = matrix([[1,0,-1,0],[0,1,0,-1]]).right_kernel_matrix()
         sage: W
         [1 0 1 0]
@@ -352,7 +352,7 @@ def nondeg_cond1(W, Wt, certificate=False):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.existence_and_uniqueness import nondeg_cond1
+        sage: from sign_vector_conditions.unique_existence import nondeg_cond1
         sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
@@ -508,7 +508,7 @@ def matrix_with_equal_components(M, indices):
         sage: M
         [ 1  0  1  0]
         [ 0  0 -1  2]
-        sage: from sign_vector_conditions.existence_and_uniqueness import matrix_with_equal_components
+        sage: from sign_vector_conditions.unique_existence import matrix_with_equal_components
         sage: matrix_with_equal_components(M, [0, 1])
         [ 1  0  1  0]
         [ 0  0 -1  2]
@@ -547,7 +547,7 @@ def nondeg_cond2(W, Wt):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.existence_and_uniqueness import nondeg_cond2
+        sage: from sign_vector_conditions.unique_existence import nondeg_cond2
         sage: W = matrix([[-4,2,-7,1],[-9,-1,-1,-1],[-1,0,-1,1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]

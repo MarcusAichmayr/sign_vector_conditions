@@ -11,7 +11,7 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
 
     sign_vector_conditions.functions
     sign_vector_conditions.uniqueness
-    sign_vector_conditions.existence_and_uniqueness
+    sign_vector_conditions.unique_existence
     sign_vector_conditions.robustness
     sign_vector_conditions.utility
 """
@@ -29,7 +29,7 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
 from __future__ import absolute_import
 
 from .uniqueness import condition_uniqueness_signvectors, condition_uniqueness_minors
-from .existence_and_uniqueness import condition_faces, condition_nondegenerate, nondegenerate
+from .unique_existence import condition_faces, condition_nondegenerate, nondegenerate
 from .robustness import condition_closure_sign_vectors, condition_closure_minors
 
 from .functions import f_pol, f_exp
