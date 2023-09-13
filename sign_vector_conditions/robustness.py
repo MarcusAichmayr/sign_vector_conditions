@@ -7,11 +7,11 @@ EXAMPLES::
 
 Let us consider the following matrices::
 
-    sage: W = matrix([[1,0,-1,0],[0,1,0,0]])
+    sage: W = matrix([[1, 0, -1, 0], [0, 1, 0, 0]])
     sage: W
     [ 1  0 -1  0]
     [ 0  1  0  0]
-    sage: Wt = matrix([[1,0,-1,0],[0,1,-1,1]])
+    sage: Wt = matrix([[1, 0, -1, 0], [0, 1, -1, 1]])
     sage: Wt
     [ 1  0 -1  0]
     [ 0  1 -1  1]
@@ -64,11 +64,11 @@ Now, we consider matrices with variables::
 
     sage: var('a,b,c')
     (a, b, c)
-    sage: W = matrix([[1,0,-1],[0,c,-1]])
+    sage: W = matrix([[1, 0, -1], [0, c, -1]])
     sage: W
     [ 1  0 -1]
     [ 0  c -1]
-    sage: Wt = matrix([[1,0,a],[0,1,b]])
+    sage: Wt = matrix([[1, 0, a], [0, 1, b]])
     sage: Wt
     [1 0 a]
     [0 1 b]
@@ -109,10 +109,9 @@ or if ``a`` and ``b`` are positive and ``c`` is negative.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
-from .utility import normalize
+from .utility import normalize, condition_on_products
 from sign_vectors.oriented_matroids import topes_from_matrix
-from sage.rings.integer_ring import ZZ
-from sage.functions.generalized import sign
+
 
 def condition_closure_sign_vectors(W, Wt):
     r"""
@@ -160,126 +159,3 @@ def condition_closure_minors(W, Wt):
         raise ValueError('Matrices must have same dimensions.')
 
     return condition_on_products(W.minors(W.nrows()), Wt.minors(W.nrows()))
-
-
-def condition_on_products(list1, list2):
-    r"""
-    Return whether all products of components are positive (or negative) if first element is non-zero
-    
-    INPUT:
-    Two lists of the same length.
-    
-    OUTPUT:
-    Returns either a boolean or sets of conditions on variables occurring in the input.
-    If the conditions of one of these sets are satisfied,
-    then for all non-zero elements of the first list,
-    the product with the corresponding element of the second list is positive.
-    (Or all products are negative.)
-    
-    .. SEEALSO::
-
-        :func:`~condition_closure_minors`
-    
-    TESTS::
-    
-        sage: from sign_vector_conditions.robustness import condition_on_products
-        sage: var('a,b,c')
-        (a, b, c)
-        sage: condition_on_products([0, a], [1, 1])
-        [{a == 0}, {a > 0}, {a < 0}]
-        sage: len(_)
-        3
-        sage: condition_on_products([c, -1, c], [1, b, -a]) # random
-        [{-b > 0, c == 0},
-         {-b < 0, c == 0},
-         {-b > 0, c > 0, -a*c > 0},
-         {-b < 0, c < 0, -a*c < 0}]
-        sage: len(_)
-        4
-        sage: condition_on_products([c, -1, a], [1, b, -c]) # random
-        [{-b > 0, a == 0, c == 0},
-         {-b < 0, a == 0, c == 0},
-         {-b > 0, a == 0, c > 0},
-         {-b < 0, a == 0, c < 0},
-         {-b > 0, a != 0, c > 0, -a*c > 0},
-         {-b < 0, a != 0, c < 0, -a*c < 0}]
-        sage: len(_[4])
-        4
-        sage: condition_on_products([-1, -1], [1, 1])
-        True
-        sage: condition_on_products([-1, 1], [1, 1])
-        False
-        sage: condition_on_products([0, 1], [1, 1])
-        True
-        sage: condition_on_products([1], [0])
-        False
-    """
-    def rec(list1, list2, zero_expressions, non_zero_expressions):
-        r"""Recursive call"""
-        pairs = [
-            (elem1, elem2) for elem1, elem2 in zip(list1, list2)
-            if not elem1.is_zero() and not elem1 in zero_expressions
-        ]
-
-        for elem1, _ in pairs:
-            if is_symbolic(elem1) and not elem1 in non_zero_expressions:
-                yield from rec(list1, list2, zero_expressions.union([elem1]), non_zero_expressions)
-                yield from rec(list1, list2, zero_expressions, non_zero_expressions.union([elem1]))
-
-        products = set(
-            sign_or_symbolic((elem1 * elem2).substitute([value == 0 for value in zero_expressions]))
-        for elem1, elem2 in pairs)
-
-        equalities = set(value == 0 for value in zero_expressions)
-        non_equalities = set(value != 0 for value in non_zero_expressions if not value in products)
-
-        positive_inequalities = set(value > 0 for value in products)
-        negative_inequalities = set(value < 0 for value in products)
-
-        if True in positive_inequalities:
-            positive_inequalities.remove(True)
-        if True in negative_inequalities:
-            negative_inequalities.remove(True)
-
-        yield positive_inequalities.union(equalities).union(non_equalities)
-        yield negative_inequalities.union(equalities).union(non_equalities)
-
-    output = list(rec(list1, list2, set(), set()))
-    for conditions in output.copy():
-        if False in conditions:
-            output.remove(conditions)
-    if not output: # e.g. [1, -1], [1, 1]
-        return False
-    output = remove_duplicates(output)
-    if output == [set()]: # e.g. [1], [1] or [0], [1]
-        return True
-    return output
-
-
-def is_symbolic(value):
-    r"""Return whether this element is symbolic"""
-    try:
-        return value.is_symbol()
-    except AttributeError:
-        return False
-
-
-def sign_or_symbolic(expression):
-    r"""Return the sign if defined"""
-    try:
-        return ZZ(sign(expression))
-    except TypeError:
-        return expression
-
-
-def remove_duplicates(iterable):
-    r"""Remove duplicates from a list of iterables"""
-    seen = set()
-    result = []
-    for item in iterable:
-        marker = frozenset(item) # only works if item is an iterable
-        if marker in seen:
-            continue
-        seen.add(marker)
-        result.append(item)
-    return result
