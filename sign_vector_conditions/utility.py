@@ -10,8 +10,7 @@ r"""This module offers utility functions that are used by the other functions of
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
-from elementary_vectors import elementary_vectors
-from sign_vectors import sign_vector, zero_sign_vector
+from sign_vectors import zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 
