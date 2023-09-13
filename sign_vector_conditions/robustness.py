@@ -109,7 +109,7 @@ or if ``a`` and ``b`` are positive and ``c`` is negative.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
-from .utility import normalize, condition_on_products
+from .utility import condition_on_products
 from sign_vectors.oriented_matroids import topes_from_matrix
 
 
@@ -127,14 +127,12 @@ def condition_closure_sign_vectors(W, Wt):
     Return whether the oriented matroid corresponding to ``W`` is a subset of the closure
     of the oriented matroid corresponding to ``Wt``.
     """
-    tW = topes_from_matrix(W, kernel=True)
-    tWt = topes_from_matrix(Wt, kernel=True)
-    tWn = normalize(tW)
-    # Do not normalize second list of topes: 0++0, +--+
-    for X in tWn:
+    topes1 = topes_from_matrix(W, kernel=True)
+    topes2 = topes_from_matrix(Wt, kernel=True)
+    for covector1 in topes1:
         val = True
-        for Y in tWt:
-            if X <= Y:
+        for covector2 in topes2:
+            if covector1 <= covector2:
                 val = False
                 break
         if val:

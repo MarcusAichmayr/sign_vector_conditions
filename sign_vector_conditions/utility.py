@@ -19,50 +19,6 @@ from sign_vectors import zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 
-def normalize(L):
-    r"""
-    Compute a normalized set of sign vectors.
-
-    INPUT:
-
-    - ``L`` -- an iterable of sign vectors
-
-    OUTPUT:
-    a set of sign vectors consisting only of those sign vectors of ``L``
-    that are normalized
-
-    .. NOTE::
-
-        A sign vector is normalized if it is the zero sign vector
-        or the first non-zero entry is positive.
-
-    EXAMPLES::
-
-        sage: from sign_vectors import sign_vector
-        sage: L = [
-        ....:     sign_vector('++0'), sign_vector('--0'), sign_vector('-0+'),
-        ....:     sign_vector('+0-'), sign_vector('0++'), sign_vector('0--')
-        ....: ]
-        sage: L
-        [(++0), (--0), (-0+), (+0-), (0++), (0--)]
-        sage: from sign_vector_conditions.utility import normalize
-        sage: normalize(L)
-        {(0++), (++0), (+0-)}
-        sage: L = [sign_vector('000'), sign_vector('-++')]
-        sage: normalize(L)
-        {(000)}
-    """
-    def is_normalized(X):
-        for Xi in X:
-            if Xi > 0:
-                return True
-            if Xi < 0:
-                return False
-        return True
-
-    return set(X for X in L if is_normalized(X))
-
-
 def pos_cocircuits_from_matrix(M, kernel=True):
     r"""
     Compute the positive cocircuits determined by a given matrix.

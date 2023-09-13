@@ -207,7 +207,7 @@ that are represented by the sets ``{2}`` and ``{0, 1}``.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
-from .utility import normalize, pos_cocircuits_from_matrix, pos_covectors_from_matrix, matrix_with_equal_components
+from .utility import pos_cocircuits_from_matrix, pos_covectors_from_matrix, matrix_with_equal_components
 from elementary_vectors import elementary_vectors
 from elementary_vectors import setup_intervals, exists_vector, exists_orthogonal_vector, construct_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
@@ -555,7 +555,7 @@ def nondeg_cond2(W, Wt):
         False
     """
     positive_cocircuits = pos_cocircuits_from_matrix(W, kernel=False)
-    for cocircuit1 in normalize(cocircuits_from_matrix(Wt, kernel=False)):
+    for cocircuit1 in cocircuits_from_matrix(Wt, kernel=False):
         value = False
         for cocircuit2 in positive_cocircuits:
             if set(cocircuit1.zero_support()).issubset(cocircuit2.zero_support()):
