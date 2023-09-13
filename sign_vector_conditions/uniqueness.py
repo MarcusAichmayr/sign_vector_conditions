@@ -171,7 +171,6 @@ In this case, it returns a system of inequalities::
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
-from .utility import normalize
 from sign_vectors.oriented_matroids import covectors_from_matrix
 from sage.rings.real_mpfr import RR
 
@@ -226,9 +225,7 @@ def condition_uniqueness_signvectors(W, Wt):
         raise ValueError('Matrices have different number of columns.')
 
     return len(
-        normalize(covectors_from_matrix(W, kernel=False)).intersection(
-            normalize(covectors_from_matrix(Wt, kernel=True))
-        )
+        covectors_from_matrix(W, kernel=False).intersection(covectors_from_matrix(Wt, kernel=True))
     ) == 1
 
 
