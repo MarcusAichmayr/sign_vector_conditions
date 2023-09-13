@@ -111,9 +111,8 @@ or if ``a`` and ``b`` are positive and ``c`` is negative.
 
 from .utility import normalize
 from sign_vectors.oriented_matroids import topes_from_matrix
-from sage.rings.real_mpfr import RR
-from sage.misc.flatten import flatten
-
+from sage.rings.integer_ring import ZZ
+from sage.functions.generalized import sign
 
 def condition_closure_sign_vectors(W, Wt):
     r"""
@@ -228,7 +227,7 @@ def condition_on_products(list1, list2):
                 yield from rec(list1, list2, zero_expressions, non_zero_expressions.union([elem1]))
 
         products = set(
-            substitute_and_simplify(elem1 * elem2, [value == 0 for value in zero_expressions])
+            sign_or_symbolic((elem1 * elem2).substitute([value == 0 for value in zero_expressions]))
         for elem1, elem2 in pairs)
 
         equalities = set(value == 0 for value in zero_expressions)
@@ -265,13 +264,12 @@ def is_symbolic(value):
         return False
 
 
-def substitute_and_simplify(expression, *args):
-    r"""Substitute arguments and make result a real number if possible"""
-    value = expression.substitute(*args)
+def sign_or_symbolic(expression):
+    r"""Return the sign if defined"""
     try:
-        return RR(value)
+        return ZZ(sign(expression))
     except TypeError:
-        return value
+        return expression
 
 
 def remove_duplicates(iterable):
