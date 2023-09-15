@@ -187,7 +187,7 @@ We consider some final example::
 
 Now, we check whether the non-degeneracy condition is satisfied::
 
-    sage: nondeg_cond1(W, Wt, certificate=True)
+    sage: nondeg_cond1(W, Wt, certify=True)
     [False, [[[2], [0, 1]], (1, 1, 2, -1)]]
 
 From the output, we see that the condition is violated.
@@ -261,7 +261,7 @@ def condition_faces(W, Wt):
     return True
 
 
-def condition_nondegenerate(W, Wt, certificate=False):
+def condition_nondegenerate(W, Wt, certify=False):
     r"""
     Non-degeneracy condition for existence and uniqueness of equilibria
 
@@ -271,7 +271,7 @@ def condition_nondegenerate(W, Wt, certificate=False):
 
     - ``Wt`` -- a matrix with ``n`` columns
 
-    - ``certificate`` -- a boolean (default: ``False``)
+    - ``certify`` -- a boolean (default: ``False``)
 
     OUTPUT:
     Let ``S``, ``St`` be the subspaces corresponding to the matrices ``W``,
@@ -279,19 +279,19 @@ def condition_nondegenerate(W, Wt, certificate=False):
 
     Returns a boolean.
 
-    - If ``certificate`` is true:
+    - If ``certify`` is true:
 
-      - If the result is true, returns a vector as a certificate.
+      - If the result is true, returns a vector as a certify.
 
     .. SEEALSO::
 
         :func:`~nondeg_cond1`
         :func:`~nondeg_cond2`
     """
-    return nondegenerate(W, Wt, certificate=certificate)
+    return nondegenerate(W, Wt, certify=certify)
 
 
-def nondegenerate(W, Wt, certificate=False):
+def nondegenerate(W, Wt, certify=False):
     r"""
     Check whether the pair of given matrices is non-degenerate.
 
@@ -301,7 +301,7 @@ def nondegenerate(W, Wt, certificate=False):
 
     - ``Wt`` -- a matrix with ``n`` columns
 
-    - ``certificate`` -- a boolean (default: ``False``)
+    - ``certify`` -- a boolean (default: ``False``)
 
     OUTPUT:
     Let ``S``, ``St`` be the subspaces corresponding to the matrices ``W``,
@@ -309,9 +309,9 @@ def nondegenerate(W, Wt, certificate=False):
 
     Returns a boolean.
 
-    - If ``certificate`` is true:
+    - If ``certify`` is true:
 
-      - If the result is true, returns a vector as a certificate.
+      - If the result is true, returns a vector as a certify.
 
     .. SEEALSO::
 
@@ -322,10 +322,10 @@ def nondegenerate(W, Wt, certificate=False):
     if nondeg_cond2(W, Wt):
         return True
 
-    return nondeg_cond1(W, Wt, certificate=certificate)
+    return nondeg_cond1(W, Wt, certify=certify)
 
 
-def nondeg_cond1(W, Wt, certificate=False):
+def nondeg_cond1(W, Wt, certify=False):
     r"""
     Return whether the first condition of ``condition_nondegenerate`` is satisfied.
 
@@ -335,14 +335,14 @@ def nondeg_cond1(W, Wt, certificate=False):
 
     - ``Wt`` -- a matrix with ``n`` columns
 
-    - ``certificate`` -- a boolean (default: ``False``)
+    - ``certify`` -- a boolean (default: ``False``)
 
     OUTPUT:
     a boolean
 
-    - If ``certificate`` is true:
+    - If ``certify`` is true:
 
-      - If the result is true, returns a vector as a certificate.
+      - If the result is true, returns a vector as a certify.
 
     .. SEEALSO::
 
@@ -423,7 +423,7 @@ def nondeg_cond1(W, Wt, certificate=False):
     upper_bounds = [0 for i in range(length)]
     inf = [Infinity for i in range(length)]
 
-    proof = []
+    certificate = []
 
     kernel_matrix = Wt.right_kernel_matrix()
 
@@ -444,7 +444,7 @@ def nondeg_cond1(W, Wt, certificate=False):
         - ``upper_bounds`` -- a list of values ``0`` and ``Infinity``
         """
         nonlocal degenerate
-        nonlocal proof
+        nonlocal certificate
 
         while positive_covectors:
             covector = positive_covectors.pop()
@@ -463,18 +463,17 @@ def nondeg_cond1(W, Wt, certificate=False):
                 if exists_vector(evs, intervals):
                     degenerate = True
                     indices += [covector.support()]
-                    if certificate:
-                        proof = [indices, construct_vector(Wt, intervals)]
+                    if certify:
+                        certificate = [indices, construct_vector(Wt, intervals)]
                     return
                 intervals = setup_intervals(lower_bounds_new, inf)
                 if exists_vector(evs, intervals):
                     rec(positive_covectors[:], matrix_equal_components, indices + [covector.support()], lower_bounds_new, upper_bounds_new)
-                else:
-                    if certificate:
-                        for element in evs:
-                            if exists_orthogonal_vector(element, intervals):
-                                proof.append([element, indices + [covector.support()]])
-                                break
+                elif certify:
+                    for element in evs:
+                        if exists_orthogonal_vector(element, intervals):
+                            certificate.append([element, indices + [covector.support()]])
+                            break
 
             if degenerate:
                 return
@@ -482,14 +481,14 @@ def nondeg_cond1(W, Wt, certificate=False):
 
     rec(positive_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
 
-    if certificate:
-        return [not degenerate, proof]
+    if certify:
+        return [not degenerate, certificate]
     return not degenerate
 
 
 def nondeg_cond2(W, Wt):
     r"""
-    Check a condition an matrices.
+    Check a condition on matrices.
 
     .. SEEALSO::
 
