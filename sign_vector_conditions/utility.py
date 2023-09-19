@@ -20,7 +20,7 @@ from sign_vectors import zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 
-def pos_cocircuits_from_matrix(M, kernel=True):
+def positive_cocircuits_from_matrix(M, kernel=True):
     r"""
     Compute the positive cocircuits determined by a given matrix.
 
@@ -44,14 +44,14 @@ def pos_cocircuits_from_matrix(M, kernel=True):
         sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
         sage: cocircuits_from_matrix(M)
         {(--00), (000-), (0-+0), (+0+0), (++00), (-0-0), (000+), (0+-0)}
-        sage: from sign_vector_conditions.utility import pos_cocircuits_from_matrix
-        sage: pos_cocircuits_from_matrix(M)
+        sage: from sign_vector_conditions.utility import positive_cocircuits_from_matrix
+        sage: positive_cocircuits_from_matrix(M)
         {(+0+0), (++00), (000+)}
     """
     return set(X for X in cocircuits_from_matrix(M, kernel=kernel) if X > 0)
 
 
-def pos_covectors_from_matrix(M, kernel=True):
+def positive_covectors_from_matrix(M, kernel=True):
     r"""
     Use a list of cocircuits to compute all covectors of the corresponding oriented matroid.
 
@@ -88,8 +88,8 @@ def pos_covectors_from_matrix(M, kernel=True):
          ...
          (-+-0),
          (--0-)}
-        sage: from sign_vector_conditions.utility import pos_covectors_from_matrix
-        sage: pos_covectors_from_matrix(M)
+        sage: from sign_vector_conditions.utility import positive_covectors_from_matrix
+        sage: positive_covectors_from_matrix(M)
         [(+0++), (+++0), (++++), (+0+0), (++00), (++0+), (000+)]
     """
     cocircuits = [X for X in cocircuits_from_matrix(M, kernel=kernel) if not X < 0]
@@ -410,48 +410,36 @@ def remove_duplicates(iterable):
     return result
 
 
-def matrix_with_equal_components(M, indices):
+def equal_entries_lists(length, indices):
     r"""
-    Insert additional rows to a matrix, such that given components of the kernel matrix are equal.
-
+    Return a list of lists such that the corresponding kernel matrix has equal entries.
+    
     INPUT:
-
-    - ``M`` -- a matrix
-
-    - ``indices`` -- a list of indices
-
+    
+    - ``length`` -- an integer
+    
+    - ``indices`` -- a list of integers
+    
     OUTPUT:
-    a matrix with additional rows.
-
+    a list of lists
+    
     EXAMPLES::
-
-        sage: M = matrix([[1, 0, 1, 0], [0, 0 ,-1, 2]])
-        sage: M
-        [ 1  0  1  0]
-        [ 0  0 -1  2]
-        sage: from sign_vector_conditions.utility import matrix_with_equal_components
-        sage: matrix_with_equal_components(M, [0, 1])
-        [ 1  0  1  0]
-        [ 0  0 -1  2]
-        [ 1 -1  0  0]
-        sage: _.right_kernel_matrix()
-        [ 2  2 -2 -1]
-        sage: matrix_with_equal_components(M, [0, 1, 2])
-        [ 1  0  1  0]
-        [ 0  0 -1  2]
-        [ 1 -1  0  0]
-        [ 1  0 -1  0]
-        sage: _.right_kernel_matrix()
+    
+        sage: from sign_vector_conditions.utility import equal_entries_lists
+        sage: equal_entries_lists(5, [1, 2, 3])
+        [[0, 1, -1, 0, 0], [0, 1, 0, -1, 0]]
+        sage: equal_entries_lists(3, [0])
         []
+        sage: equal_entries_lists(3, [0, 1])
+        [[1, -1, 0]]
     """
-    length = M.ncols()
+    if len(indices) < 2:
+        return []
 
-    if len(indices) >= 2:
-        i = indices[0]
-        element = zero_vector(length)
-        element[i] = 1
-        for j in indices[1:]:
-            row = element[:]
-            row[j] = -1
-            M = matrix(list(M) + [row])
-    return M
+    one_position = indices[0]
+    return [
+        [1 if i == one_position else
+            (-1 if i == minus_one_position else 0)
+            for i in range(length)
+        ] for minus_one_position in indices[1:]
+    ]

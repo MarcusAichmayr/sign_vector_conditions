@@ -207,6 +207,7 @@ that are represented by the sets ``{2}`` and ``{0, 1}``.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
+from sage.matrix.constructor import matrix
 from sage.misc.flatten import flatten
 from sage.rings.infinity import Infinity
 
@@ -214,7 +215,7 @@ from elementary_vectors import elementary_vectors
 from elementary_vectors import setup_intervals, exists_vector, exists_orthogonal_vector, construct_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
-from .utility import pos_cocircuits_from_matrix, pos_covectors_from_matrix, matrix_with_equal_components
+from .utility import positive_cocircuits_from_matrix, positive_covectors_from_matrix, equal_entries_lists
 
 
 def condition_faces(W, Wt):
@@ -248,9 +249,9 @@ def condition_faces(W, Wt):
         sage: condition_faces(W, Wt)
         True
     """
-    positive_cocircuits = pos_cocircuits_from_matrix(W, kernel=False)
+    positive_cocircuits = positive_cocircuits_from_matrix(W, kernel=False)
 
-    for cocircuit1 in pos_cocircuits_from_matrix(Wt, kernel=False):
+    for cocircuit1 in positive_cocircuits_from_matrix(Wt, kernel=False):
         value = True
         for cocircuit2 in positive_cocircuits:
             if cocircuit2 <= cocircuit1:
@@ -411,17 +412,17 @@ def nondeg_cond1(W, Wt, certify=False):
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
     # TODO: consider disjoint support: If we have "+0" and "0+", then we do not need to consider "++".
-    positive_covectors = pos_covectors_from_matrix(W, kernel=True)
+    positive_covectors = positive_covectors_from_matrix(W, kernel=True)
 
     if not positive_covectors:
         return True
 
     length = Wt.ncols()
-    degenerate = False
+    is_degenerate = False
 
-    lower_bounds = [-Infinity for i in range(length)]
-    upper_bounds = [0 for i in range(length)]
-    inf = [Infinity for i in range(length)]
+    lower_bounds = [-Infinity] * length
+    upper_bounds = [0] * length
+    inf = [Infinity] * length
 
     certificate = []
 
@@ -443,7 +444,7 @@ def nondeg_cond1(W, Wt, certify=False):
 
         - ``upper_bounds`` -- a list of values ``0`` and ``Infinity``
         """
-        nonlocal degenerate
+        nonlocal is_degenerate
         nonlocal certificate
 
         while positive_covectors:
@@ -456,34 +457,39 @@ def nondeg_cond1(W, Wt, certify=False):
                     lower_bounds_new[i] = 1
                     upper_bounds_new[i] = Infinity
 
-                matrix_equal_components = matrix_with_equal_components(kernel_matrix, covector.support())
+                matrix_equal_components = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
                 evs = elementary_vectors(matrix_equal_components.right_kernel_matrix())
                 intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
 
                 if exists_vector(evs, intervals):
-                    degenerate = True
+                    is_degenerate = True
                     indices += [covector.support()]
                     if certify:
                         certificate = [indices, construct_vector(Wt, intervals)]
                     return
                 intervals = setup_intervals(lower_bounds_new, inf)
                 if exists_vector(evs, intervals):
-                    rec(positive_covectors[:], matrix_equal_components, indices + [covector.support()], lower_bounds_new, upper_bounds_new)
+                    rec(positive_covectors[:],
+                            matrix_equal_components,
+                            indices + [covector.support()],
+                            lower_bounds_new,
+                            upper_bounds_new
+                    )
                 elif certify:
                     for element in evs:
                         if exists_orthogonal_vector(element, intervals):
                             certificate.append([element, indices + [covector.support()]])
                             break
 
-            if degenerate:
+            if is_degenerate:
                 return
         return
 
     rec(positive_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
 
     if certify:
-        return [not degenerate, certificate]
-    return not degenerate
+        return [not is_degenerate, certificate]
+    return not is_degenerate
 
 
 def nondeg_cond2(W, Wt):
@@ -554,7 +560,7 @@ def nondeg_cond2(W, Wt):
         sage: nondeg_cond2(B, A)
         False
     """
-    positive_cocircuits = pos_cocircuits_from_matrix(W, kernel=False)
+    positive_cocircuits = positive_cocircuits_from_matrix(W, kernel=False)
     for cocircuit1 in cocircuits_from_matrix(Wt, kernel=False):
         value = False
         for cocircuit2 in positive_cocircuits:
