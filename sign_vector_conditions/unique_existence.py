@@ -81,7 +81,7 @@ Since there is no positive covector,
 the exponential map is surjective.
 The package offers a function to check this condition condition::
 
-    sage: condition_nondegenerate(W, Wt)
+    sage: condition_subspaces_nondegenerate(W, Wt)
     True
 
 Hence, the exponential map is bijective.
@@ -163,38 +163,30 @@ For specific values of ``wt``, the pair of subspaces
 determined by kernels of the matrices is non-degenerate.
 This is the case for :math:`wt \in (0, 1) \cup (1, 2)`::
 
-    sage: condition_nondegenerate(W, Wt(wt=1/2))
+    sage: condition_subspaces_nondegenerate(W, Wt(wt=1/2))
     True
-    sage: condition_nondegenerate(W, Wt(wt=3/2))
+    sage: condition_subspaces_nondegenerate(W, Wt(wt=3/2))
     True
 
 On the other hand, this condition does not hold if
-:math:`wt \in {1} \cup [2, \infty)`.
-In this case, the exponential map is injective but not surjective::
+:math:`wt \in {1} \cup [2, \infty)`::
 
-    sage: condition_nondegenerate(W, Wt(wt=1))
-    False
-    sage: condition_nondegenerate(W, Wt(wt=2))
-    False
-    sage: condition_nondegenerate(W, Wt(wt=3))
+    sage: condition_subspaces_nondegenerate(W, Wt(wt=1))
     False
 
-We consider some final example::
+To certify the result, we call::
 
-    sage: from sign_vector_conditions.unique_existence import nondeg_cond1
-    sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, 0]]).right_kernel_matrix()
-    sage: Wt = matrix([[1, 0, 2, 0], [0, 1, 0, -1]])
+    sage: condition_subspaces_degenerate(W, Wt(wt=1), certify=True)
+    [True, [[[0, 1, 5]], (1, 1, 0, 0, -1, 1)]]
 
-Now, we check whether the non-degeneracy condition is satisfied::
+Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``Wt``
+can be covered by a sign vector ``(++000+)`` corresponding to ``ker(W)``.
+Further, ``v`` does not satisfy the support condition.
 
-    sage: nondeg_cond1(W, Wt, certify=True)
-    [False, [[[2], [0, 1]], (1, 1, 2, -1)]]
-
-From the output, we see that the condition is violated.
-The vector ``(1, 1, 2, -1)`` lies in the row space
-of ``Wt`` and corresponds to the positive sign vectors
-``(00+0)`` and ``(++00)``
-that are represented by the sets ``{2}`` and ``{0, 1}``.
+    sage: condition_subspaces_nondegenerate(W, Wt(wt=2))
+    False
+    sage: condition_subspaces_nondegenerate(W, Wt(wt=3))
+    False
 """
 
 #############################################################################
@@ -207,15 +199,16 @@ that are represented by the sets ``{2}`` and ``{0, 1}``.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
+from copy import copy
+
 from sage.matrix.constructor import matrix
 from sage.misc.flatten import flatten
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
 from elementary_vectors import setup_intervals, exists_vector, exists_orthogonal_vector, construct_vector
-from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
-from .utility import positive_cocircuits_from_matrix, positive_covectors_from_matrix, equal_entries_lists
+from .utility import positive_cocircuits_from_matrix, positive_covectors_from_matrix, equal_entries_lists, degenerate_condition_support
 
 
 def condition_faces(W, Wt):
@@ -262,9 +255,9 @@ def condition_faces(W, Wt):
     return True
 
 
-def condition_nondegenerate(W, Wt, certify=False):
+def condition_subspaces_nondegenerate(W, Wt):
     r"""
-    Non-degeneracy condition for existence and uniqueness of equilibria
+    Return whether the subspaces given by to matrices are non-degenerate
 
     INPUT:
 
@@ -272,63 +265,19 @@ def condition_nondegenerate(W, Wt, certify=False):
 
     - ``Wt`` -- a matrix with ``n`` columns
 
-    - ``certify`` -- a boolean (default: ``False``)
-
     OUTPUT:
-    Let ``S``, ``St`` be the subspaces corresponding to the matrices ``W``,
-    ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
-
-    Returns a boolean.
-
-    - If ``certify`` is true:
-
-      - If the result is true, returns a vector as a certify.
-
+    a boolean
+    
     .. SEEALSO::
-
-        :func:`~nondeg_cond1`
-        :func:`~nondeg_cond2`
+    
+        :func:`~condition_subspaces_degenerate`
     """
-    return nondegenerate(W, Wt, certify=certify)
+    return not condition_subspaces_degenerate(W, Wt)
 
 
-def nondegenerate(W, Wt, certify=False):
+def condition_subspaces_degenerate(W, Wt, certify=False):
     r"""
-    Check whether the pair of given matrices is non-degenerate.
-
-    INPUT:
-
-    - ``W`` -- a matrix with ``n`` columns
-
-    - ``Wt`` -- a matrix with ``n`` columns
-
-    - ``certify`` -- a boolean (default: ``False``)
-
-    OUTPUT:
-    Let ``S``, ``St`` be the subspaces corresponding to the matrices ``W``,
-    ``Wt``. Returns whether the pair ``(S, St)`` is non-degenerate.
-
-    Returns a boolean.
-
-    - If ``certify`` is true:
-
-      - If the result is true, returns a vector as a certify.
-
-    .. SEEALSO::
-
-        :func:`~condition_nondegenerate`
-        :func:`~nondeg_cond1`
-        :func:`~nondeg_cond2`
-    """
-    if nondeg_cond2(W, Wt):
-        return True
-
-    return nondeg_cond1(W, Wt, certify=certify)
-
-
-def nondeg_cond1(W, Wt, certify=False):
-    r"""
-    Return whether the first condition of ``condition_nondegenerate`` is satisfied.
+    Return whether the subspaces given by to matrices are degenerate
 
     INPUT:
 
@@ -341,34 +290,27 @@ def nondeg_cond1(W, Wt, certify=False):
     OUTPUT:
     a boolean
 
-    - If ``certify`` is true:
-
-      - If the result is true, returns a vector as a certify.
-
-    .. SEEALSO::
-
-        :func:`~condition_nondegenerate`
-        :func:`~nondeg_cond2`
+    If ``certify`` is true, the result will be certified.
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.unique_existence import nondeg_cond1
+        sage: from sign_vector_conditions.unique_existence import *
         sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
         sage: Wt = matrix([[-5, -1, 2, 2], [1, 0, 2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
         sage: Wt
         [  1 -25 -11   1]
-        sage: nondeg_cond1(W, Wt)
-        False
+        sage: condition_subspaces_degenerate(W, Wt)
+        True
         sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
         sage: W
         [ 10 -54 -23 -13]
         sage: Wt = matrix([[-5, 1, -2, 2], [1, 0, -2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
         sage: Wt
         [ 1 25 11  1]
-        sage: nondeg_cond1(W, Wt)
-        True
+        sage: condition_subspaces_degenerate(W, Wt)
+        False
         sage: W = matrix(2, 4, [1, 2, 0, 0, 0, 0, 5, 1]).right_kernel_matrix()
         sage: W
         [ 2 -1  0  0]
@@ -381,8 +323,8 @@ def nondeg_cond1(W, Wt, certify=False):
         sage: Wt
         [ 1  0  1 -1]
         [ 0  1  1  3]
-        sage: nondeg_cond1(W, Wt)
-        False
+        sage: condition_subspaces_degenerate(W, Wt)
+        True
         sage: W = matrix(3, 5, [1, 2, 0, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 1]).right_kernel_matrix()
         sage: W
         [ 2 -1  0  0  0]
@@ -396,8 +338,8 @@ def nondeg_cond1(W, Wt, certify=False):
         sage: Wt
         [ 1  0  1 -1  2]
         [ 0  1 -3 -1  0]
-        sage: nondeg_cond1(W, Wt)
-        False
+        sage: condition_subspaces_degenerate(W, Wt)
+        True
         sage: A = matrix([[1, 0, 0, 1], [0, 1, 1, -1]]).right_kernel_matrix()
         sage: A
         [ 1  0 -1 -1]
@@ -406,8 +348,8 @@ def nondeg_cond1(W, Wt, certify=False):
         sage: B
         [1 1 0 0]
         [0 0 1 1]
-        sage: nondeg_cond1(B, A)
-        True
+        sage: condition_subspaces_degenerate(B, A)
+        False
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
@@ -415,10 +357,12 @@ def nondeg_cond1(W, Wt, certify=False):
     positive_covectors = positive_covectors_from_matrix(W, kernel=True)
 
     if not positive_covectors:
-        return True
+        if certify:
+            return [False, "no positive covectors"]
+        return False
 
     length = Wt.ncols()
-    is_degenerate = False
+    degenerate = False
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
@@ -427,6 +371,8 @@ def nondeg_cond1(W, Wt, certify=False):
     certificate = []
 
     kernel_matrix = Wt.right_kernel_matrix()
+    
+    covectors_support_condition = positive_cocircuits_from_matrix(W, kernel=False)
 
     def rec(positive_covectors, kernel_matrix, indices, lower_bounds, upper_bounds):
         r"""
@@ -444,15 +390,14 @@ def nondeg_cond1(W, Wt, certify=False):
 
         - ``upper_bounds`` -- a list of values ``0`` and ``Infinity``
         """
-        nonlocal is_degenerate
+        nonlocal degenerate
         nonlocal certificate
 
         while positive_covectors:
             covector = positive_covectors.pop()
             if set(flatten(indices)).issubset(covector.zero_support()):
-                # covector must have a "+" on zero support
-                lower_bounds_new = lower_bounds[:]
-                upper_bounds_new = upper_bounds[:]
+                lower_bounds_new = copy(lower_bounds)
+                upper_bounds_new = copy(upper_bounds)
                 for i in covector.support():
                     lower_bounds_new[i] = 1
                     upper_bounds_new[i] = Infinity
@@ -462,14 +407,15 @@ def nondeg_cond1(W, Wt, certify=False):
                 intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
 
                 if exists_vector(evs, intervals):
-                    is_degenerate = True
-                    indices += [covector.support()]
-                    if certify:
-                        certificate = [indices, construct_vector(Wt, intervals)]
-                    return
+                    if degenerate_condition_support(matrix_equal_components, intervals, covectors_support_condition):
+                        degenerate = True
+                        indices += [covector.support()]
+                        if certify:
+                            certificate = [indices, construct_vector(Wt, intervals)]
+                        return
                 intervals = setup_intervals(lower_bounds_new, inf)
                 if exists_vector(evs, intervals):
-                    rec(positive_covectors[:],
+                    rec(copy(positive_covectors),
                             matrix_equal_components,
                             indices + [covector.support()],
                             lower_bounds_new,
@@ -481,92 +427,12 @@ def nondeg_cond1(W, Wt, certify=False):
                             certificate.append([element, indices + [covector.support()]])
                             break
 
-            if is_degenerate:
+            if degenerate:
                 return
         return
 
     rec(positive_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
 
     if certify:
-        return [not is_degenerate, certificate]
-    return not is_degenerate
-
-
-def nondeg_cond2(W, Wt):
-    r"""
-    Check a condition on matrices.
-
-    .. SEEALSO::
-
-        :func:`~condition_nondegenerate`
-        :func:`~nondeg_cond1`
-
-    EXAMPLES::
-
-        sage: from sign_vector_conditions.unique_existence import nondeg_cond2
-        sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
-        sage: W
-        [ 10 -54 -23 -13]
-        sage: Wt = matrix([[-5, -1, 2, 2], [1, 0, 2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
-        sage: Wt
-        [  1 -25 -11   1]
-        sage: nondeg_cond2(W, Wt)
-        False
-        sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
-        sage: W
-        [ 10 -54 -23 -13]
-        sage: Wt = matrix([[-5, 1, -2, 2], [1, 0, -2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
-        sage: Wt
-        [ 1 25 11  1]
-        sage: nondeg_cond2(W, Wt)
-        False
-        sage: W = matrix(2, 4, [1, 2, 0, 0, 0, 0, 5, 1]).right_kernel_matrix()
-        sage: W
-        [ 2 -1  0  0]
-        [ 0  0  1 -5]
-        sage: A = matrix([[1, 1, 2, 2], [1, 0, 1, -1]]).right_kernel_matrix()
-        sage: A
-        [ 1  1 -1  0]
-        [ 0  4 -1 -1]
-        sage: Wt = A.right_kernel_matrix()
-        sage: Wt
-        [ 1  0  1 -1]
-        [ 0  1  1  3]
-        sage: nondeg_cond2(W, Wt)
-        False
-        sage: W = matrix(3, 5, [1, 2, 0, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 1]).right_kernel_matrix()
-        sage: W
-        [ 2 -1  0  0  0]
-        [ 0  0  1 -5  0]
-        sage: A = matrix([[1, 1, -2, -2, 2], [1, 0, 1, -1, 2]]).right_kernel_matrix()
-        sage: A
-        [ 1  1  0  1  0]
-        [ 0  2  0  2  1]
-        [ 0  0  1 -3 -2]
-        sage: Wt = A.right_kernel_matrix()
-        sage: Wt
-        [ 1  0  1 -1  2]
-        [ 0  1 -3 -1  0]
-        sage: nondeg_cond2(W, Wt)
-        False
-        sage: A = matrix([[1, 0, 0, 1], [0, 1, 1, -1]]).right_kernel_matrix()
-        sage: A
-        [ 1  0 -1 -1]
-        [ 0  1 -1  0]
-        sage: B = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
-        sage: B
-        [1 1 0 0]
-        [0 0 1 1]
-        sage: nondeg_cond2(B, A)
-        False
-    """
-    positive_cocircuits = positive_cocircuits_from_matrix(W, kernel=False)
-    for cocircuit1 in cocircuits_from_matrix(Wt, kernel=False):
-        value = False
-        for cocircuit2 in positive_cocircuits:
-            if set(cocircuit1.zero_support()).issubset(cocircuit2.zero_support()):
-                value = True
-                break
-        if not value:
-            return False
-    return True
+        return [degenerate, certificate]
+    return degenerate

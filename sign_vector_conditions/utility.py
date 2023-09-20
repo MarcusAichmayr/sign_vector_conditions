@@ -11,13 +11,13 @@ r"""This module offers utility functions that are used by the other functions of
 #############################################################################
 
 from sage.functions.generalized import sign
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import zero_vector
+from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 
+from elementary_vectors import lies_in_intervals
 from sign_vectors import zero_sign_vector
-from sign_vectors.oriented_matroids import cocircuits_from_matrix
+from sign_vectors.oriented_matroids import cocircuits_from_matrix, covectors_from_matrix
 
 
 def positive_cocircuits_from_matrix(M, kernel=True):
@@ -443,3 +443,14 @@ def equal_entries_lists(length, indices):
             for i in range(length)
         ] for minus_one_position in indices[1:]
     ]
+
+
+def degenerate_condition_support(matrix_equal_components, intervals, positive_cocircuits):
+    r"""Check if an element of a subspace given by a matrix satisfies the support condition for degenerate"""
+    for covector in covectors_from_matrix(matrix_equal_components):
+        if not lies_in_intervals(vector(covector), intervals):
+            continue
+        for cocircuit in positive_cocircuits:
+            if set(cocircuit.support()).issubset(covector.support()):
+                return False
+    return True
