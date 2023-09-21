@@ -245,12 +245,7 @@ def condition_faces(W, Wt):
     positive_cocircuits = positive_cocircuits_from_matrix(W, kernel=False)
 
     for cocircuit1 in positive_cocircuits_from_matrix(Wt, kernel=False):
-        value = True
-        for cocircuit2 in positive_cocircuits:
-            if cocircuit2 <= cocircuit1:
-                value = False
-                break
-        if value:
+        if not any(cocircuit2 <= cocircuit1 for cocircuit2 in positive_cocircuits):
             return False
     return True
 

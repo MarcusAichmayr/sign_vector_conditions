@@ -127,15 +127,9 @@ def condition_closure_sign_vectors(W, Wt):
     Return whether the oriented matroid corresponding to ``W`` is a subset of the closure
     of the oriented matroid corresponding to ``Wt``.
     """
-    topes1 = topes_from_matrix(W, kernel=True)
-    topes2 = topes_from_matrix(Wt, kernel=True)
-    for covector1 in topes1:
-        val = True
-        for covector2 in topes2:
-            if covector1 <= covector2:
-                val = False
-                break
-        if val:
+    topes = topes_from_matrix(Wt, kernel=True)
+    for covector1 in topes_from_matrix(W, kernel=True):
+        if not any(covector1 <= covector2 for covector2 in topes):
             return False
     return True
 
