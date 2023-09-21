@@ -177,7 +177,7 @@ On the other hand, this condition does not hold if
 To certify the result, we call::
 
     sage: condition_subspaces_degenerate(W, Wt(wt=1), certify=True)
-    [True, [[[0, 1, 5]], (1, 1, 0, 0, -1, 1)]]
+    [True, [(1, 1, 0, 0, -1, 1), [[0, 1, 5]]]]
 
 Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``Wt``
 can be covered by a sign vector ``(++000+)`` corresponding to ``ker(W)``.
@@ -411,7 +411,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                         degenerate = True
                         indices += [covector.support()]
                         if certify:
-                            certificate = [indices, construct_vector(Wt, intervals)]
+                            certificate = [construct_vector(Wt, intervals), indices]
                         return
                 intervals = setup_intervals(lower_bounds_new, inf)
                 if exists_vector(evs, intervals):
