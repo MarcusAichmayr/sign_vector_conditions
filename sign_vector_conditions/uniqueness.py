@@ -16,16 +16,8 @@ We define some matrices::
     [ 1  0 -1]
     [ 0  1  0]
 
-Therefore, we obtain the following exponential map::
-
-    sage: var('x1, x2, c1, c2, c3')
-    (x1, x2, c1, c2, c3)
-    sage: c = [c1, c2, c3]
-    sage: Fc = f_exp(W, Wt, c)
-    sage: Fc(x1, x2)
-    (-c3*e^(-x1) + c1*e^x1, -c3*e^(-x1) + c2*e^x2)
-
-We want to check whether this map is injective for each vector ``c > 0``.
+We want to check whether the corresponding chemical reaction network
+has at most one equilibrium for all rate constants.
 For this purpose, we compute the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
@@ -54,14 +46,13 @@ We can compute the intersection directly by applying the built in method interse
     sage: set(cvW).intersection(cvWt)
     {(000)}
 
-Therefore, the corresponding exponential map is injective.
-This means that the chemical reaction network has at most one solution.
+Therefore, there is at most one equilibrium.
 We can also check this condition in the following way::
 
     sage: condition_uniqueness_signvectors(W, Wt)
     True
 
-There is another way to check injectivity for exponential maps
+There is another way to check this condition
 that involves the computation of maximal minors of the corresponding matrices::
 
     sage: m1 = W.minors(2)
@@ -76,9 +67,8 @@ We multiply those minors component-wise::
     sage: [m1[i]*m2[i] for i in range(len(m1))]
     [1, 0, 1]
 
-Since all arguments are greater or equal zero, the map is injective.
-We can also check this condition by applying the following function
-from this package::
+Since all arguments are greater or equal zero, there is at most one equilibrium.
+We can also check this condition by applying the following function from this package::
 
     sage: condition_uniqueness_minors(W, Wt)
     True
@@ -121,7 +111,7 @@ Furthermore, we obtain the following minors::
     [1, -1, 1]
 
 There are positive and negative elements in the resulting list.
-Hence, this condition also states that the map is not injective::
+Hence, this condition also states that there is no unique equilibrium::
 
     sage: condition_uniqueness_minors(W, Wt)
     False
@@ -152,8 +142,7 @@ On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is:
     sage: [m1[i] * m2[i] for i in range(len(m1))]
     [1, -b, -a]
 
-Therefore, there is at most one equilibrium if and only if
-:math:`a \leq 0` and :math:`b \leq 0`.
+Therefore, there is at most one equilibrium if and only if :math:`a, b \leq 0`.
 The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 

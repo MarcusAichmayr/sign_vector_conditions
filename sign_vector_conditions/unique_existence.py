@@ -15,15 +15,6 @@ Let us consider the following matrices::
     sage: Wt
     [ 1  0  0 -1]
     [ 0  1  1  1]
-    sage: var('x1, x2, c1, c2, c3, c4')
-    (x1, x2, c1, c2, c3, c4)
-    sage: c = [c1, c2, c3, c4]
-
-Therefore, we obtain the following exponential map::
-
-    sage: Fc = f_exp(W, Wt, c)
-    sage: Fc(x1, x2)
-    (c1*e^x1 + c3*e^x2, c4*e^(-x1 + x2) + c2*e^x2)
 
 Hence, we obtain the oriented matroids::
 
@@ -41,8 +32,8 @@ We can check injectivity by using the function :func:`~condition_uniqueness_sign
     sage: condition_uniqueness_signvectors(W, Wt)
     True
 
-Therefore, the corresponding exponential map is injective for all vectors ``c > 0``.
-To check surjectivity, we need to verify two conditions.
+Therefore, the corresponding chemical reaction network has at most one equilibrium.
+Next, we verify whether an equilibrium exists.
 First, we check the face condition.
 For this purpose, we compute the cocircuits of the oriented matroids
 corresponding to the matrices::
@@ -77,14 +68,13 @@ For this purpose, we consider again the oriented matroid determined by ``W``::
     sage: covectors_from_matrix(W, kernel=True)
     {(0000), (+--+), (++--), (-0+0), (0-0+), (--++), (0+0-), (-++-), (+0-0)}
 
-Since there is no positive covector,
-the exponential map is surjective.
+Since there are no positive covectors, the chemical reaction network has at least one equilibrium.
 The package offers a function to check this condition condition::
 
     sage: condition_subspaces_nondegenerate(W, Wt)
     True
 
-Hence, the exponential map is bijective.
+Hence, the chemical reaction network has a unique equilibrium.
 
 Let us consider another example.
 We swap the two matrices from before::
@@ -127,11 +117,11 @@ We also apply the corresponding function from the package::
     sage: condition_faces(W, Wt)
     False
 
-Consequently, this map is not bijective.
+Consequently, there exists no unique equilibrium.
 
 Now, we consider Example 20 from [MHR19]_.
 Here, we have a parameter ``wt > 0``.
-Depending on this parameter, the resulting exponential map will be bijective::
+Depending on this parameter, the corresponding chemical reaction network has a unique equilibrium::
 
     sage: var('wt')
     wt
@@ -222,11 +212,11 @@ def condition_faces(W, Wt):
     - ``Wt`` -- a matrix with ``n`` columns
 
     OUTPUT:
-    Returns whether every positive sign vector ``X`` corresponding to the rows of
+    Return whether every positive sign vector ``X`` corresponding to the rows of
     ``Wt`` has a positive sign vector ``Y`` corresponding to the rows of ``W``
     such that ``Y <= X``.
 
-    Returns a boolean.
+    Return a boolean.
 
     EXAMPLES::
 
@@ -348,7 +338,6 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
-    # TODO: consider disjoint support: If we have "+0" and "0+", then we do not need to consider "++".
     positive_covectors = positive_covectors_from_matrix(W, kernel=True)
 
     if not positive_covectors:
@@ -358,15 +347,13 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
     length = Wt.ncols()
     degenerate = False
+    certificate = []
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
-    inf = [Infinity] * length
-
-    certificate = []
+    upper_bounds_inf = [Infinity] * length
 
     kernel_matrix = Wt.right_kernel_matrix()
-    
     covectors_support_condition = positive_cocircuits_from_matrix(W, kernel=False)
 
     def rec(positive_covectors, kernel_matrix, indices, lower_bounds, upper_bounds):
@@ -390,37 +377,40 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
         while positive_covectors:
             covector = positive_covectors.pop()
-            if set(flatten(indices)).issubset(covector.zero_support()):
-                lower_bounds_new = copy(lower_bounds)
-                upper_bounds_new = copy(upper_bounds)
-                for i in covector.support():
-                    lower_bounds_new[i] = 1
-                    upper_bounds_new[i] = Infinity
+            if not set(flatten(indices)).issubset(covector.zero_support()):
+                continue
 
-                matrix_equal_components = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
-                evs = elementary_vectors(matrix_equal_components.right_kernel_matrix())
-                intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
+            lower_bounds_new = copy(lower_bounds)
+            upper_bounds_new = copy(upper_bounds)
+            for i in covector.support():
+                lower_bounds_new[i] = 1
+                upper_bounds_new[i] = Infinity
 
-                if exists_vector(evs, intervals):
-                    if degenerate_condition_support(matrix_equal_components, intervals, covectors_support_condition):
-                        degenerate = True
-                        indices += [covector.support()]
-                        if certify:
-                            certificate = [construct_vector(Wt, intervals), indices]
-                        return
-                intervals = setup_intervals(lower_bounds_new, inf)
-                if exists_vector(evs, intervals):
-                    rec(copy(positive_covectors),
-                            matrix_equal_components,
-                            indices + [covector.support()],
-                            lower_bounds_new,
-                            upper_bounds_new
-                    )
-                elif certify:
-                    for element in evs:
-                        if exists_orthogonal_vector(element, intervals):
-                            certificate.append([element, indices + [covector.support()]])
-                            break
+            matrix_equal_components = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
+            evs = elementary_vectors(matrix_equal_components.right_kernel_matrix())
+            intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
+
+            if exists_vector(evs, intervals):
+                if degenerate_condition_support(matrix_equal_components, intervals, covectors_support_condition):
+                    degenerate = True
+                    indices += [covector.support()]
+                    if certify:
+                        certificate = [construct_vector(Wt, intervals), indices]
+                    return
+
+            intervals = setup_intervals(lower_bounds_new, upper_bounds_inf)
+            if exists_vector(evs, intervals):
+                rec(copy(positive_covectors),
+                        matrix_equal_components,
+                        indices + [covector.support()],
+                        lower_bounds_new,
+                        upper_bounds_new
+                )
+            elif certify:
+                for element in evs:
+                    if exists_orthogonal_vector(element, intervals):
+                        certificate.append([element, indices + [covector.support()]])
+                        break
 
             if degenerate:
                 return

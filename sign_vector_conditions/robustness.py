@@ -16,17 +16,8 @@ Let us consider the following matrices::
     [ 1  0 -1  0]
     [ 0  1 -1  1]
 
-Therefore, we consider the following exponential map::
-
-    sage: var('x1, x2, c1, c2, c3, c4')
-    (x1, x2, c1, c2, c3, c4)
-    sage: c = [c1, c2, c3, c4]
-    sage: Fc = f_exp(W, Wt, c)
-    sage: Fc(x1, x2)
-    (c1*e^x1 - c3*e^(-x1 - x2), c2*e^x2)
-
-To check, whether this map is a diffeomorphism for all ``c > 0``
-and all small perturbations of ``Wt``,
+To check, whether the correspondin chemical reaction network
+has a unique equilibrium for all rate constants and all small perturbations of ``Wt``,
 we consider the topes of the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
