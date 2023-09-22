@@ -90,23 +90,26 @@ def positive_covectors_from_matrix(M, kernel=True):
          (--0-)}
         sage: from sign_vector_conditions.utility import positive_covectors_from_matrix
         sage: positive_covectors_from_matrix(M)
-        [(+0++), (+++0), (++++), (+0+0), (++00), (++0+), (000+)]
+        {(+0+0), (+0++), (++00), (+++0), (000+), (++0+), (++++)}
     """
-    cocircuits = [X for X in cocircuits_from_matrix(M, kernel=kernel) if not X < 0]
+    cocircuits = [cocircuit for cocircuit in cocircuits_from_matrix(M, kernel=kernel) if not cocircuit < 0]
 
     if not cocircuits:
         raise ValueError('List of cocircuits is empty.')
     output = set()
     new_elements = {zero_sign_vector(M.ncols())}
     while new_elements:
-        Y = new_elements.pop()
-        for X in cocircuits:
-            if X >= 0 and not X <= Y: # otherwise Z = X.compose(Y) = Y in F
-                Z = X.compose(Y)
-                if Z not in output and Z >= 0:
-                    output.add(Z)
-                    new_elements.add(Z)
-    return list(output)
+        covector1 = new_elements.pop()
+        for covector2 in cocircuits:
+            if not covector2 >= 0:
+                continue
+            if covector2 <= covector1:
+                continue
+            composition = covector2.compose(covector1)
+            if composition not in output and composition >= 0:
+                output.add(composition)
+                new_elements.add(composition)
+    return output
 
 
 def max_minors_prod(A, B):
