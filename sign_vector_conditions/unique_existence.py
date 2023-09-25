@@ -167,7 +167,7 @@ On the other hand, this condition does not hold if
 To certify the result, we call::
 
     sage: condition_subspaces_degenerate(W, Wt(wt=1), certify=True)
-    [True, [(1, 1, 0, 0, -1, 1), [[0, 1, 5]]]]
+    [True, [(1, 1, 0, 0, -1, 1), [[0, 5], [0, 1]]]]
 
 Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``Wt``
 can be covered by a sign vector ``(++000+)`` corresponding to ``ker(W)``.
@@ -338,7 +338,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
-    positive_covectors = positive_covectors_from_matrix(W, kernel=True)
+    positive_covectors = positive_cocircuits_from_matrix(W, kernel=True)
 
     if not positive_covectors:
         if certify:
@@ -377,8 +377,9 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
         while positive_covectors:
             covector = positive_covectors.pop()
-            if not set(flatten(indices)).issubset(covector.zero_support()):
-                continue
+            # TODO remove statement, use cocircuits instead
+            # if not set(flatten(indices)).issubset(covector.zero_support()):
+            #     continue
 
             lower_bounds_new = copy(lower_bounds)
             upper_bounds_new = copy(upper_bounds)
@@ -388,6 +389,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
             matrix_equal_components = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
             evs = elementary_vectors(matrix_equal_components.right_kernel_matrix())
+            # TODO if matrix_equal_components.right_kernel_matrix() is zero space
             intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
 
             if exists_vector(evs, intervals):
@@ -395,8 +397,10 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                     degenerate = True
                     indices += [covector.support()]
                     if certify:
+                        # TODO use conformal sum of elementary vectors instead
                         certificate = [construct_vector(Wt, intervals), indices]
                     return
+            # TODO if certify, add indices to output
 
             intervals = setup_intervals(lower_bounds_new, upper_bounds_inf)
             if exists_vector(evs, intervals):
@@ -409,6 +413,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             elif certify:
                 for element in evs:
                     if exists_orthogonal_vector(element, intervals):
+#                        print(matrix_equal_components.right_kernel_matrix())
                         certificate.append([element, indices + [covector.support()]])
                         break
 
