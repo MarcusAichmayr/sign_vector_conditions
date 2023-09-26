@@ -345,9 +345,12 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             return [False, "no positive covectors"]
         return False
 
+    positive_covectors = sorted(positive_covectors, key=lambda covector: len(covector.support()))
     length = Wt.ncols()
     degenerate = False
     certificate = []
+    certificates_zero_equal_components = []
+    certificates_partial_cover = []
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
@@ -377,9 +380,6 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
         while positive_covectors:
             covector = positive_covectors.pop()
-            # TODO remove statement, use cocircuits instead
-            # if not set(flatten(indices)).issubset(covector.zero_support()):
-            #     continue
 
             lower_bounds_new = copy(lower_bounds)
             upper_bounds_new = copy(upper_bounds)
@@ -395,26 +395,24 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             if exists_vector(evs, intervals):
                 if degenerate_condition_support(matrix_equal_components, intervals, covectors_support_condition):
                     degenerate = True
-                    indices += [covector.support()]
+#                    indices += [covector.support()]
                     if certify:
                         # TODO use conformal sum of elementary vectors instead
                         certificate = construct_vector(Wt, intervals)
                     return
-            # TODO if certify, add indices to output
+                # TODO add something to certificate
 
             intervals = setup_intervals(lower_bounds_new, upper_bounds_inf)
             if exists_vector(evs, intervals):
+                certificates_partial_cover.append(indices + [covector.support()])
                 rec(copy(positive_covectors),
                         matrix_equal_components,
                         indices + [covector.support()],
                         lower_bounds_new,
                         upper_bounds_new
                 )
-            elif certify:
-                for element in evs:
-                    if exists_orthogonal_vector(element, intervals):
-                        certificate.append([indices + [covector.support()]])
-                        break
+            else:
+                certificates_zero_equal_components.append(indices + [covector.support()])
 
             if degenerate:
                 return
@@ -423,5 +421,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     rec(positive_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
 
     if certify:
-        return degenerate, certificate
+        if degenerate:
+            return degenerate, certificate
+        return degenerate, (certificates_zero_equal_components, certificates_partial_cover)
     return degenerate
