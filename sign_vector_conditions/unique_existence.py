@@ -389,30 +389,28 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
             matrix_equal_components = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
             evs = elementary_vectors(matrix_equal_components.right_kernel_matrix())
-            # TODO if matrix_equal_components.right_kernel_matrix() is zero space
             intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
 
             if exists_vector(evs, intervals):
                 if degenerate_condition_support(matrix_equal_components, intervals, covectors_support_condition):
                     degenerate = True
-#                    indices += [covector.support()]
                     if certify:
                         # TODO use conformal sum of elementary vectors instead
                         certificate = construct_vector(Wt, intervals)
                     return
                 # TODO add something to certificate
 
-            intervals = setup_intervals(lower_bounds_new, upper_bounds_inf)
-            if exists_vector(evs, intervals):
-                certificates_partial_cover.append(indices + [covector.support()])
+            new_indices = indices + [covector.support()]
+            if exists_vector(evs, setup_intervals(lower_bounds_new, upper_bounds_inf)):
+                certificates_partial_cover.append(new_indices)
                 rec(copy(positive_covectors),
                         matrix_equal_components,
-                        indices + [covector.support()],
+                        new_indices,
                         lower_bounds_new,
                         upper_bounds_new
                 )
             else:
-                certificates_zero_equal_components.append(indices + [covector.support()])
+                certificates_zero_equal_components.append(new_indices)
 
             if degenerate:
                 return

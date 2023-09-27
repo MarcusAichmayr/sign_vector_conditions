@@ -147,7 +147,7 @@ The function :func:`~condition_uniqueness_minors` also works for matrices with s
 In this case, it returns a system of inequalities::
 
     sage: condition_uniqueness_minors(W, Wt)
-    {-b >= 0, -a >= 0}
+    {-a >= 0, -b >= 0}
 """
 
 #############################################################################
@@ -268,6 +268,6 @@ def condition_uniqueness_minors(W, Wt):
         [1 0 a]
         [0 1 b]
         sage: condition_uniqueness_minors(W, Wt)
-        {-b >= 0, -a >= 0}
+        {-a >= 0, -b >= 0}
     """
     return entries_non_negative_or_non_positive(max_minors_prod(W, Wt))
