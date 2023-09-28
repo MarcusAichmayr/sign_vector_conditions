@@ -1,5 +1,5 @@
 __pycache__/
-sign_vector_conditions.egg-info/
+*.egg-info/
 build/
 generated/
 

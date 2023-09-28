@@ -15,7 +15,7 @@ LICENSE file), either version 3 or (at your option) any later version
 
 Sage 9.0 or later is recommended. Some features should work with older versions.
 
-The package [sign_vectors](https://github.com/MarcusAichmayr/sign_vectors) is necessary for this package to work.
+The package [elementary_vectors](https://github.com/MarcusAichmayr/elementary_vectors) is necessary for this package to work.
 
 ## Installation
 
