@@ -244,7 +244,7 @@ def condition_faces(W, Wt):
 
 def condition_subspaces_nondegenerate(W, Wt):
     r"""
-    Return whether the subspaces given by to matrices are non-degenerate
+    Return whether a pair of subspaces given by matrices is non-degenerate.
 
     INPUT:
 
@@ -264,7 +264,10 @@ def condition_subspaces_nondegenerate(W, Wt):
 
 def condition_subspaces_degenerate(W, Wt, certify=False):
     r"""
-    Return whether the subspaces given by to matrices are degenerate
+    Return whether a pair of subspaces given by matrices is degenerate.
+
+    This condition is about whether all positive equal components of a vector in ``Wt``
+    can be covered by covectors corresponding to the kernel of ``W``.
 
     INPUT:
 
@@ -277,66 +280,56 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     OUTPUT:
     a boolean
 
-    If ``certify`` is true, the result will be certified.
+    If ``certify`` is true, the result will be certified. In that case, a list is returned.
+    (see the examples)
 
     EXAMPLES::
 
         sage: from sign_vector_conditions.unique_existence import *
-        sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
-        sage: W
-        [ 10 -54 -23 -13]
-        sage: Wt = matrix([[-5, -1, 2, 2], [1, 0, 2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
-        sage: Wt
-        [  1 -25 -11   1]
-        sage: condition_subspaces_degenerate(W, Wt)
-        True
-        sage: W = matrix([[-4, 2, -7, 1], [-9, -1, -1, -1], [-1, 0, -1, 1]]).right_kernel_matrix()
-        sage: W
-        [ 10 -54 -23 -13]
-        sage: Wt = matrix([[-5, 1, -2, 2], [1, 0, -2, 21], [-2, 0, 0, 2]]).right_kernel_matrix()
-        sage: Wt
-        [ 1 25 11  1]
-        sage: condition_subspaces_degenerate(W, Wt)
-        False
-        sage: W = matrix(2, 4, [1, 2, 0, 0, 0, 0, 5, 1]).right_kernel_matrix()
-        sage: W
-        [ 2 -1  0  0]
-        [ 0  0  1 -5]
-        sage: A = matrix([[1, 1, 2, 2], [1, 0, 1, -1]]).right_kernel_matrix()
-        sage: A
-        [ 1  1 -1  0]
-        [ 0  4 -1 -1]
-        sage: Wt = A.right_kernel_matrix()
-        sage: Wt
-        [ 1  0  1 -1]
-        [ 0  1  1  3]
-        sage: condition_subspaces_degenerate(W, Wt)
-        True
-        sage: W = matrix(3, 5, [1, 2, 0, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 1]).right_kernel_matrix()
-        sage: W
-        [ 2 -1  0  0  0]
-        [ 0  0  1 -5  0]
-        sage: A = matrix([[1, 1, -2, -2, 2], [1, 0, 1, -1, 2]]).right_kernel_matrix()
-        sage: A
-        [ 1  1  0  1  0]
-        [ 0  2  0  2  1]
-        [ 0  0  1 -3 -2]
-        sage: Wt = A.right_kernel_matrix()
-        sage: Wt
-        [ 1  0  1 -1  2]
-        [ 0  1 -3 -1  0]
-        sage: condition_subspaces_degenerate(W, Wt)
-        True
-        sage: A = matrix([[1, 0, 0, 1], [0, 1, 1, -1]]).right_kernel_matrix()
-        sage: A
-        [ 1  0 -1 -1]
-        [ 0  1 -1  0]
-        sage: B = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
-        sage: B
-        [1 1 0 0]
-        [0 0 1 1]
-        sage: condition_subspaces_degenerate(B, A)
-        False
+
+    Next, we certify our results. In the first examples, the subspaces are trivially non-degenerate
+    since there are no positive covectors in the kernel of ``W``::
+
+        sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
+        sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
+        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        [False, 'no positive covectors']
+
+    Here, we have a pair of degenerate subspaces::
+
+        sage: W = matrix([[1, -1, 0], [0, 0, 1]])
+        sage: Wt = matrix([[1, 0, 0], [0, 1, 0]])
+        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        (True, (1, 1, 0))
+    
+    The resulting vector lies in the row space of ``Wt``.
+    The first two equal components can be covered by the positive covector ``(++0)``
+    which corresponds to the kernel of ``W``.
+
+    In the following, we have another example for non-degenerate subspaces::
+
+        sage: W = matrix([[1, 1, 0, -1, 0], [0, 0, 1, -1, -1]])
+        sage: Wt = matrix([[1, 1, 0, -1, 0], [0, 0, 1, 1, 1]])
+        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        (False, ([[[0, 2, 3]], [[1, 2, 3]]], [[[2, 4]]], []))
+
+    The certificate tells us that there is no vector in the rowspace of ``Wt``
+    with positive support on the components ``0, 2, 3`` and ``1, 2, 3``.
+    Positive equal components can partially be covered by a covector ``(00+0+)``
+    which corresponds to ``[[2, 4]]``.
+    However, it is not possible to fully cover the positive support.
+    
+    In the next example, there exists a partial cover::
+
+        sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, -1]])
+        sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
+        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        (False, ([], [[[2, 3]]], [[[[2, 3]], [(--++)]]]))
+
+    In fact, there is a vector in ``Wt``
+    with equal positive components on ``[2, 3]``
+    that corresponds to the covector ``(--++)`` that can be fully covered by covectors.
+    However, this vector would not satisfy the support condition.
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
