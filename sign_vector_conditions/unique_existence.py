@@ -192,13 +192,15 @@ Further, ``v`` does not satisfy the support condition.
 from copy import copy
 
 from sage.matrix.constructor import matrix
-from sage.misc.flatten import flatten
+from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
-from elementary_vectors import setup_intervals, exists_vector, exists_orthogonal_vector, construct_vector
+from elementary_vectors import setup_intervals, exists_vector, lies_in_intervals, vector_from_sign_vector
 
-from .utility import positive_cocircuits_from_matrix, positive_covectors_from_matrix, equal_entries_lists, degenerate_condition_support
+from sign_vectors.oriented_matroids import covectors_from_matrix
+
+from .utility import positive_cocircuits_from_matrix, equal_entries_lists
 
 
 def condition_faces(W, Wt):
@@ -351,6 +353,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     certificate = []
     certificates_zero_equal_components = []
     certificates_partial_cover = []
+    certificate_support_condition = []
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
@@ -387,28 +390,27 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                 lower_bounds_new[i] = 1
                 upper_bounds_new[i] = Infinity
 
-            matrix_equal_components = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
-            evs = elementary_vectors(matrix_equal_components.right_kernel_matrix())
+            new_kernel_matrix = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
+            evs = elementary_vectors(new_kernel_matrix.right_kernel_matrix())
+            new_indices = indices + [covector.support()]
             intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
 
             if exists_vector(evs, intervals):
-                if degenerate_condition_support(matrix_equal_components, intervals, covectors_support_condition):
-                    degenerate = True
-                    if certify:
-                        # TODO use conformal sum of elementary vectors instead
-                        certificate = construct_vector(Wt, intervals)
-                    return
-                # TODO add something to certificate
+                covectors_certificate_support_condition = []
+                for covector in covectors_from_matrix(new_kernel_matrix, kernel=True):
+                    if not lies_in_intervals(vector(covector), intervals):
+                        continue
+                    if not any(set(cocircuit.support()).issubset(covector.support()) for cocircuit in covectors_support_condition):
+                        degenerate = True
+                        if certify:
+                            certificate = vector_from_sign_vector(covector, new_kernel_matrix.right_kernel_matrix())
+                        return
+                    covectors_certificate_support_condition.append(covector)
+                certificate_support_condition.append([new_indices, covectors_certificate_support_condition])
 
-            new_indices = indices + [covector.support()]
             if exists_vector(evs, setup_intervals(lower_bounds_new, upper_bounds_inf)):
                 certificates_partial_cover.append(new_indices)
-                rec(copy(positive_covectors),
-                        matrix_equal_components,
-                        new_indices,
-                        lower_bounds_new,
-                        upper_bounds_new
-                )
+                rec(copy(positive_covectors), new_kernel_matrix, new_indices, lower_bounds_new, upper_bounds_new)
             else:
                 certificates_zero_equal_components.append(new_indices)
 
@@ -421,5 +423,5 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     if certify:
         if degenerate:
             return degenerate, certificate
-        return degenerate, (certificates_zero_equal_components, certificates_partial_cover)
+        return degenerate, (certificates_zero_equal_components, certificates_partial_cover, certificate_support_condition)
     return degenerate

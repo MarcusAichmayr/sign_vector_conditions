@@ -446,14 +446,3 @@ def equal_entries_lists(length, indices):
             for i in range(length)
         ] for minus_one_position in indices[1:]
     ]
-
-
-def degenerate_condition_support(matrix_equal_components, intervals, positive_cocircuits):
-    r"""Check if an element of a subspace given by a matrix satisfies the support condition for degenerate"""
-    for covector in covectors_from_matrix(matrix_equal_components):
-        if not lies_in_intervals(vector(covector), intervals):
-            continue
-        for cocircuit in positive_cocircuits:
-            if set(cocircuit.support()).issubset(covector.support()):
-                return False
-    return True
