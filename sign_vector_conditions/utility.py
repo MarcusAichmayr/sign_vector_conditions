@@ -302,10 +302,6 @@ def condition_on_products(list1, list2):
     the product with the corresponding element of the second list is positive.
     (Or all products are negative.)
     
-    .. SEEALSO::
-
-        :func:`~condition_closure_minors`
-    
     TESTS::
     
         sage: from sign_vector_conditions.utility import condition_on_products
