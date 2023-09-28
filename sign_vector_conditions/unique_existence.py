@@ -196,7 +196,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
-from elementary_vectors import setup_intervals, exists_vector, lies_in_intervals, vector_from_sign_vector
+from elementary_vectors import intervals_from_bounds, exists_vector, lies_in_intervals, vector_from_sign_vector
 
 from sign_vectors.oriented_matroids import covectors_from_matrix
 
@@ -386,7 +386,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             new_kernel_matrix = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
             evs = elementary_vectors(new_kernel_matrix.right_kernel_matrix())
             new_indices = indices + [covector.support()]
-            intervals = setup_intervals(lower_bounds_new, upper_bounds_new)
+            intervals = intervals_from_bounds(lower_bounds_new, upper_bounds_new)
 
             if exists_vector(evs, intervals):
                 covectors_certificate_support_condition = []
@@ -401,7 +401,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                     covectors_certificate_support_condition.append(covector)
                 certificate_support_condition.append([new_indices, covectors_certificate_support_condition])
 
-            if exists_vector(evs, setup_intervals(lower_bounds_new, upper_bounds_inf)):
+            if exists_vector(evs, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
                 certificates_partial_cover.append(new_indices)
                 rec(copy(positive_covectors), new_kernel_matrix, new_indices, lower_bounds_new, upper_bounds_new)
             else:
