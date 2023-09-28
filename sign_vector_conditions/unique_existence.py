@@ -196,7 +196,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
-from elementary_vectors import intervals_from_bounds, exists_vector, lies_in_intervals, vector_from_sign_vector
+from vectors_in_intervals import intervals_from_bounds, exists_vector, lies_in_intervals, vector_from_sign_vector
 
 from sign_vectors.oriented_matroids import covectors_from_matrix
 

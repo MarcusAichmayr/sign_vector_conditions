@@ -11,11 +11,9 @@ r"""This module offers utility functions that are used by the other functions of
 #############################################################################
 
 from sage.functions.generalized import sign
-from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 
-from elementary_vectors import lies_in_intervals
 from sign_vectors import zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix, covectors_from_matrix
 
