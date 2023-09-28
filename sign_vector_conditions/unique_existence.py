@@ -196,7 +196,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
-from vectors_in_intervals import intervals_from_bounds, exists_vector, lies_in_intervals, vector_from_sign_vector
+from vectors_in_intervals import intervals_from_bounds, exists_vector, is_vector_in_intervals, vector_from_sign_vector
 
 from sign_vectors.oriented_matroids import covectors_from_matrix
 
@@ -391,7 +391,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             if exists_vector(evs, intervals):
                 covectors_certificate_support_condition = []
                 for covector in covectors_from_matrix(new_kernel_matrix, kernel=True):
-                    if not lies_in_intervals(vector(covector), intervals):
+                    if not is_vector_in_intervals(vector(covector), intervals):
                         continue
                     if not any(set(cocircuit.support()).issubset(covector.support()) for cocircuit in covectors_support_condition):
                         degenerate = True
