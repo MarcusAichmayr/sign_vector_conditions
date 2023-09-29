@@ -196,9 +196,8 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
-from vectors_in_intervals import intervals_from_bounds, exists_vector, is_vector_in_intervals, vector_from_sign_vector
-
-from sign_vectors.oriented_matroids import covectors_from_matrix
+from sign_vectors.oriented_matroids import covectors_from_elementary_vectors
+from vectors_in_intervals import intervals_from_bounds, is_vector_in_intervals, exists_vector, vector_from_sign_vector
 
 from .utility import positive_cocircuits_from_matrix, equal_entries_lists
 
@@ -383,25 +382,26 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                 lower_bounds_new[i] = 1
                 upper_bounds_new[i] = Infinity
 
-            new_kernel_matrix = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support()))
-            evs = elementary_vectors(new_kernel_matrix.right_kernel_matrix())
+            new_kernel_matrix = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support())).echelon_form()
+            evs = elementary_vectors(new_kernel_matrix)
+            evs_kernel = elementary_vectors(new_kernel_matrix.right_kernel_matrix())
             new_indices = indices + [covector.support()]
             intervals = intervals_from_bounds(lower_bounds_new, upper_bounds_new)
 
-            if exists_vector(evs, intervals):
+            if exists_vector(evs_kernel, intervals):
                 covectors_certificate_support_condition = []
-                for covector in covectors_from_matrix(new_kernel_matrix, kernel=True):
+                for covector in covectors_from_elementary_vectors(evs):
                     if not is_vector_in_intervals(vector(covector), intervals):
                         continue
                     if not any(set(cocircuit.support()).issubset(covector.support()) for cocircuit in covectors_support_condition):
                         degenerate = True
                         if certify:
-                            certificate = vector_from_sign_vector(covector, new_kernel_matrix.right_kernel_matrix())
+                            certificate = vector_from_sign_vector(covector, evs)
                         return
                     covectors_certificate_support_condition.append(covector)
                 certificate_support_condition.append([new_indices, covectors_certificate_support_condition])
 
-            if exists_vector(evs, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
+            if exists_vector(evs_kernel, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
                 certificates_partial_cover.append(new_indices)
                 rec(copy(positive_covectors), new_kernel_matrix, new_indices, lower_bounds_new, upper_bounds_new)
             else:
