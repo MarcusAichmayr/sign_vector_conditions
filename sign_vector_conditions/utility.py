@@ -18,7 +18,7 @@ from sign_vectors import zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix, covectors_from_matrix
 
 
-def positive_cocircuits_from_matrix(M, kernel=True):
+def non_negative_cocircuits_from_matrix(M, kernel=True):
     r"""
     Compute the positive cocircuits determined by a given matrix.
 
@@ -42,14 +42,14 @@ def positive_cocircuits_from_matrix(M, kernel=True):
         sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
         sage: cocircuits_from_matrix(M)
         {(--00), (000-), (0-+0), (+0+0), (++00), (-0-0), (000+), (0+-0)}
-        sage: from sign_vector_conditions.utility import positive_cocircuits_from_matrix
-        sage: positive_cocircuits_from_matrix(M)
+        sage: from sign_vector_conditions.utility import non_negative_cocircuits_from_matrix
+        sage: non_negative_cocircuits_from_matrix(M)
         {(+0+0), (++00), (000+)}
     """
     return set(X for X in cocircuits_from_matrix(M, kernel=kernel) if X > 0)
 
 
-def positive_covectors_from_matrix(M, kernel=True):
+def non_negative_covectors_from_matrix(M, kernel=True):
     r"""
     Use a list of cocircuits to compute all covectors of the corresponding oriented matroid.
 
@@ -86,8 +86,8 @@ def positive_covectors_from_matrix(M, kernel=True):
          ...
          (-+-0),
          (--0-)}
-        sage: from sign_vector_conditions.utility import positive_covectors_from_matrix
-        sage: positive_covectors_from_matrix(M)
+        sage: from sign_vector_conditions.utility import non_negative_covectors_from_matrix
+        sage: non_negative_covectors_from_matrix(M)
         {(+0+0), (+0++), (++00), (+++0), (000+), (++0+), (++++)}
     """
     cocircuits = [cocircuit for cocircuit in cocircuits_from_matrix(M, kernel=kernel) if not cocircuit < 0]

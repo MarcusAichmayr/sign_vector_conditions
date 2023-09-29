@@ -199,7 +199,7 @@ from elementary_vectors import elementary_vectors
 from sign_vectors.oriented_matroids import covectors_from_elementary_vectors
 from vectors_in_intervals import intervals_from_bounds, is_vector_in_intervals, exists_vector, vector_from_sign_vector
 
-from .utility import positive_cocircuits_from_matrix, equal_entries_lists
+from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
 
 def condition_faces(W, Wt):
@@ -233,10 +233,10 @@ def condition_faces(W, Wt):
         sage: condition_faces(W, Wt)
         True
     """
-    positive_cocircuits = positive_cocircuits_from_matrix(W, kernel=False)
+    non_negative_cocircuits = non_negative_cocircuits_from_matrix(W, kernel=False)
 
-    for cocircuit1 in positive_cocircuits_from_matrix(Wt, kernel=False):
-        if not any(cocircuit2 <= cocircuit1 for cocircuit2 in positive_cocircuits):
+    for cocircuit1 in non_negative_cocircuits_from_matrix(Wt, kernel=False):
+        if not any(cocircuit2 <= cocircuit1 for cocircuit2 in non_negative_cocircuits):
             return False
     return True
 
@@ -332,14 +332,14 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
-    positive_covectors = positive_cocircuits_from_matrix(W, kernel=True)
+    non_negative_covectors = non_negative_cocircuits_from_matrix(W, kernel=True)
 
-    if not positive_covectors:
+    if not non_negative_covectors:
         if certify:
             return False, "no positive covectors"
         return False
 
-    positive_covectors = sorted(positive_covectors, key=lambda covector: len(covector.support()))
+    non_negative_covectors = sorted(non_negative_covectors, key=lambda covector: len(covector.support()))
     length = Wt.ncols()
     degenerate = False
 
@@ -348,7 +348,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     upper_bounds_inf = [Infinity] * length
 
     kernel_matrix = Wt.right_kernel_matrix()
-    covectors_support_condition = positive_cocircuits_from_matrix(W, kernel=False)
+    covectors_support_condition = non_negative_cocircuits_from_matrix(W, kernel=False)
 
     if certify:
         certificate = []
@@ -356,13 +356,13 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         certificates_partial_cover = []
         certificate_support_condition = []
 
-    def rec(positive_covectors, kernel_matrix, indices, lower_bounds, upper_bounds):
+    def rec(non_negative_covectors, kernel_matrix, indices, lower_bounds, upper_bounds):
         r"""
         Recursive function.
 
         INPUT:
 
-        - ``positive_covectors`` -- a list of positive sign vectors
+        - ``non_negative_covectors`` -- a list of positive sign vectors
 
         - ``kernel_matrix`` -- a matrix
 
@@ -375,8 +375,8 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         nonlocal degenerate
         nonlocal certificate
 
-        while positive_covectors:
-            covector = positive_covectors.pop()
+        while non_negative_covectors:
+            covector = non_negative_covectors.pop()
             lower_bounds_new = copy(lower_bounds)
             upper_bounds_new = copy(upper_bounds)
             for i in covector.support():
@@ -403,7 +403,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
             if exists_vector(evs_kernel, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
                 if certify: certificates_partial_cover.append(indices_new)
-                rec(copy(positive_covectors), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
+                rec(copy(non_negative_covectors), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
             elif certify:
                 certificates_zero_equal_components.append(indices_new)
 
@@ -411,7 +411,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                 return
         return
 
-    rec(positive_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
+    rec(non_negative_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
 
     if certify:
         if degenerate:
