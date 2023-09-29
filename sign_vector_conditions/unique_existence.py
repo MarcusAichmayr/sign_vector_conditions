@@ -292,7 +292,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
         sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
         sage: condition_subspaces_degenerate(W, Wt, certify=True)
-        [False, 'no positive covectors']
+        (False, 'no positive covectors')
 
     Here, we have a pair of degenerate subspaces::
 
@@ -336,16 +336,12 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
     if not positive_covectors:
         if certify:
-            return [False, "no positive covectors"]
+            return False, "no positive covectors"
         return False
 
     positive_covectors = sorted(positive_covectors, key=lambda covector: len(covector.support()))
     length = Wt.ncols()
     degenerate = False
-    certificate = []
-    certificates_zero_equal_components = []
-    certificates_partial_cover = []
-    certificate_support_condition = []
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
@@ -353,6 +349,12 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
     kernel_matrix = Wt.right_kernel_matrix()
     covectors_support_condition = positive_cocircuits_from_matrix(W, kernel=False)
+
+    if certify:
+        certificate = []
+        certificates_zero_equal_components = []
+        certificates_partial_cover = []
+        certificate_support_condition = []
 
     def rec(positive_covectors, kernel_matrix, indices, lower_bounds, upper_bounds):
         r"""
@@ -375,37 +377,35 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
         while positive_covectors:
             covector = positive_covectors.pop()
-
             lower_bounds_new = copy(lower_bounds)
             upper_bounds_new = copy(upper_bounds)
             for i in covector.support():
                 lower_bounds_new[i] = 1
                 upper_bounds_new[i] = Infinity
 
-            new_kernel_matrix = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support())).echelon_form()
-            evs = elementary_vectors(new_kernel_matrix)
-            evs_kernel = elementary_vectors(new_kernel_matrix.right_kernel_matrix())
-            new_indices = indices + [covector.support()]
             intervals = intervals_from_bounds(lower_bounds_new, upper_bounds_new)
+            indices_new = indices + [covector.support()]
+            kernel_matrix_new = matrix(kernel_matrix.rows() + equal_entries_lists(length, covector.support())).echelon_form()
+            evs_kernel = elementary_vectors(kernel_matrix_new.right_kernel_matrix())
 
             if exists_vector(evs_kernel, intervals):
-                covectors_certificate_support_condition = []
+                evs = elementary_vectors(kernel_matrix_new)
+                if certify: covectors_certificate_support_condition = []
                 for covector in covectors_from_elementary_vectors(evs):
                     if not is_vector_in_intervals(vector(covector), intervals):
                         continue
                     if not any(set(cocircuit.support()).issubset(covector.support()) for cocircuit in covectors_support_condition):
                         degenerate = True
-                        if certify:
-                            certificate = vector_from_sign_vector(covector, evs)
+                        if certify: certificate = vector_from_sign_vector(covector, evs)
                         return
-                    covectors_certificate_support_condition.append(covector)
-                certificate_support_condition.append([new_indices, covectors_certificate_support_condition])
+                    if certify: covectors_certificate_support_condition.append(covector)
+                if certify: certificate_support_condition.append([indices_new, covectors_certificate_support_condition])
 
             if exists_vector(evs_kernel, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
-                certificates_partial_cover.append(new_indices)
-                rec(copy(positive_covectors), new_kernel_matrix, new_indices, lower_bounds_new, upper_bounds_new)
-            else:
-                certificates_zero_equal_components.append(new_indices)
+                if certify: certificates_partial_cover.append(indices_new)
+                rec(copy(positive_covectors), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
+            elif certify:
+                certificates_zero_equal_components.append(indices_new)
 
             if degenerate:
                 return
