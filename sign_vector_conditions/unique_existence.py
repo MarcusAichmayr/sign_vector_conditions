@@ -312,7 +312,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         sage: condition_subspaces_degenerate(W, Wt, certify=True)
         (False, ([[[0, 2, 3]], [[1, 2, 3]]], [[[2, 4]]], []))
 
-    The certificate tells us that there is no vector in the rowspace of ``Wt``
+    The certificate tells us that there is no vector in the row space of ``Wt``
     with positive support on the components ``0, 2, 3`` and ``1, 2, 3``.
     Positive equal components can partially be covered by a covector ``(00+0+)``
     which corresponds to ``[[2, 4]]``.
