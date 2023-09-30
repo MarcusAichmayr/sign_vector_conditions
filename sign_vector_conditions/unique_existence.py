@@ -27,9 +27,9 @@ Hence, we obtain the oriented matroids::
      {(-+++), (----), (---+), (+---), (++++), (+++-)}]
 
 
-We can check injectivity by using the function :func:`~condition_uniqueness_signvectors`::
+We can check injectivity by using the function :func:`~condition_uniqueness_sign_vectors`::
 
-    sage: condition_uniqueness_signvectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(W, Wt)
     True
 
 Therefore, the corresponding chemical reaction network has at most one equilibrium.
@@ -90,7 +90,7 @@ We swap the two matrices from before::
 
 Because of symmetry, the corresponding exponential map is injective::
 
-    sage: condition_uniqueness_signvectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(W, Wt)
     True
 
 Now, we attempt to check the face condition::
@@ -140,7 +140,7 @@ The first two conditions depend on the sign vectors of the corresponding oriente
 Consequently, the choice of the positive parameter ``wt`` does not affect the result.
 In order to compute the sign vectors, we set ``wt`` to ``1``::
 
-    sage: condition_uniqueness_signvectors(W, Wt(wt=1))
+    sage: condition_uniqueness_sign_vectors(W, Wt(wt=1))
     True
 
 Hence, the map is injective.

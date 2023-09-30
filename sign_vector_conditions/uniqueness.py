@@ -49,7 +49,7 @@ We can compute the intersection directly by applying the built in method interse
 Therefore, there is at most one equilibrium.
 We can also check this condition in the following way::
 
-    sage: condition_uniqueness_signvectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(W, Wt)
     True
 
 There is another way to check this condition
@@ -95,7 +95,7 @@ Next, we compute the corresponding oriented matroids::
 
 Now, we check the condition from before::
 
-    sage: condition_uniqueness_signvectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(W, Wt)
     False
 
 Therefore, the corresponding exponential map is not injective.
@@ -164,7 +164,7 @@ from sign_vectors.oriented_matroids import covectors_from_matrix
 from .utility import entries_non_negative_or_non_positive, max_minors_prod
 
 
-def condition_uniqueness_signvectors(W, Wt):
+def condition_uniqueness_sign_vectors(W, Wt):
     r"""
     Use sign vectors to verify that the chemical reaction network has at most one equilibrium.
 
@@ -189,7 +189,7 @@ def condition_uniqueness_signvectors(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  0]
-        sage: condition_uniqueness_signvectors(W, Wt)
+        sage: condition_uniqueness_sign_vectors(W, Wt)
         True
         sage: W = matrix([[1, 0, -1], [0, 1, -1]])
         sage: W
@@ -199,15 +199,15 @@ def condition_uniqueness_signvectors(W, Wt):
         sage: Wt
         [ 1  0 -1]
         [ 0  1  1]
-        sage: condition_uniqueness_signvectors(W, Wt)
+        sage: condition_uniqueness_sign_vectors(W, Wt)
         False
 
     TESTS::
 
-        sage: from sign_vector_conditions.uniqueness import condition_uniqueness_signvectors
+        sage: from sign_vector_conditions.uniqueness import condition_uniqueness_sign_vectors
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
-        sage: condition_uniqueness_signvectors(A, B)
+        sage: condition_uniqueness_sign_vectors(A, B)
         True
     """
     if W.ncols() != Wt.ncols():
