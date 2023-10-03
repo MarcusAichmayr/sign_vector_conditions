@@ -1,7 +1,5 @@
 # TODO
 
-* [ ] remove random tests
-
 ## functions (f_pol, f_exp)
 
 * These functions should return something like a polynomial.
