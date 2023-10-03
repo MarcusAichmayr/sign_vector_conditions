@@ -195,7 +195,7 @@ from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
-from vectors_in_intervals import intervals_from_bounds, exists_vector, vector_from_sign_vector, sign_vectors_in_intervals
+from vectors_in_intervals import intervals_from_bounds, exists_vector, vector_from_sign_vector, sign_vectors_in_intervals, intervals_from_sign_vector
 
 from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
@@ -387,20 +387,18 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             evs_kernel = elementary_vectors(kernel_matrix_new.right_kernel_matrix())
 
             if exists_vector(evs_kernel, intervals):
-                evs = elementary_vectors(kernel_matrix_new)
                 if certify:
                     covectors_certificate_support_condition = []
                 for sign_pattern in sign_vectors_in_intervals(intervals):
-                    try:
-                        # sign pattern might not belong to a covector
-                        certificate = vector_from_sign_vector(sign_pattern, evs)
-                        if not any(set(cocircuit.support()).issubset(sign_pattern.support()) for cocircuit in covectors_support_condition):
-                            degenerate = True
-                            return
-                        if certify:
-                            covectors_certificate_support_condition.append(sign_pattern)
-                    except ValueError:
+                    if not exists_vector(evs_kernel, intervals_from_sign_vector(sign_pattern)):
                         continue
+                    if not any(set(cocircuit.support()).issubset(sign_pattern.support()) for cocircuit in covectors_support_condition):
+                        degenerate = True
+                        if certify:
+                            certificate = vector_from_sign_vector(sign_pattern, elementary_vectors(kernel_matrix_new))
+                        return
+                    if certify:
+                        covectors_certificate_support_condition.append(sign_pattern)
                 if certify:
                     certificate_support_condition.append([indices_new, covectors_certificate_support_condition])
 
