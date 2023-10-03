@@ -192,12 +192,10 @@ Further, ``v`` does not satisfy the support condition.
 from copy import copy
 
 from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
-from sign_vectors.oriented_matroids import covectors_from_elementary_vectors
-from vectors_in_intervals import intervals_from_bounds, is_vector_in_intervals, exists_vector, vector_from_sign_vector, sign_vectors_in_intervals
+from vectors_in_intervals import intervals_from_bounds, exists_vector, vector_from_sign_vector, sign_vectors_in_intervals
 
 from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
@@ -390,20 +388,25 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
             if exists_vector(evs_kernel, intervals):
                 evs = elementary_vectors(kernel_matrix_new)
-                if certify: covectors_certificate_support_condition = []
-                # TODO: use combinatorics instead of computing all covectors
-                for covector in covectors_from_elementary_vectors(evs):
-                    if not is_vector_in_intervals(vector(covector), intervals):
+                if certify:
+                    covectors_certificate_support_condition = []
+                for sign_pattern in sign_vectors_in_intervals(intervals):
+                    try:
+                        # sign pattern might not belong to a covector
+                        certificate = vector_from_sign_vector(sign_pattern, evs)
+                        if not any(set(cocircuit.support()).issubset(sign_pattern.support()) for cocircuit in covectors_support_condition):
+                            degenerate = True
+                            return
+                        if certify:
+                            covectors_certificate_support_condition.append(sign_pattern)
+                    except ValueError:
                         continue
-                    if not any(set(cocircuit.support()).issubset(covector.support()) for cocircuit in covectors_support_condition):
-                        degenerate = True
-                        if certify: certificate = vector_from_sign_vector(covector, evs)
-                        return
-                    if certify: covectors_certificate_support_condition.append(covector)
-                if certify: certificate_support_condition.append([indices_new, covectors_certificate_support_condition])
+                if certify:
+                    certificate_support_condition.append([indices_new, covectors_certificate_support_condition])
 
             if exists_vector(evs_kernel, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
-                if certify: certificates_partial_cover.append(indices_new)
+                if certify:
+                    certificates_partial_cover.append(indices_new)
                 rec(copy(non_negative_covectors), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
             elif certify:
                 certificates_zero_equal_components.append(indices_new)
