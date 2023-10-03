@@ -68,7 +68,7 @@ For this purpose, we consider again the oriented matroid determined by ``W``::
     sage: covectors_from_matrix(W, kernel=True)
     {(0000), (+--+), (++--), (-0+0), (0-0+), (--++), (0+0-), (-++-), (+0-0)}
 
-Since there are no positive covectors, the chemical reaction network has at least one equilibrium.
+Since there are no non-negative covectors, the chemical reaction network has at least one equilibrium.
 The package offers a function to check this condition condition::
 
     sage: condition_subspaces_nondegenerate(W, Wt)
@@ -197,7 +197,7 @@ from sage.rings.infinity import Infinity
 
 from elementary_vectors import elementary_vectors
 from sign_vectors.oriented_matroids import covectors_from_elementary_vectors
-from vectors_in_intervals import intervals_from_bounds, is_vector_in_intervals, exists_vector, vector_from_sign_vector
+from vectors_in_intervals import intervals_from_bounds, is_vector_in_intervals, exists_vector, vector_from_sign_vector, sign_vectors_in_intervals
 
 from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
@@ -287,12 +287,12 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         sage: from sign_vector_conditions.unique_existence import *
 
     Next, we certify our results. In the first examples, the subspaces are trivially non-degenerate
-    since there are no positive covectors in the kernel of ``W``::
+    since there are no non-negative covectors in the kernel of ``W``::
 
         sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
         sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
         sage: condition_subspaces_degenerate(W, Wt, certify=True)
-        (False, 'no positive covectors')
+        (False, 'no non-negative covectors')
 
     Here, we have a pair of degenerate subspaces::
 
@@ -302,7 +302,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         (True, (1, 1, 0))
     
     The resulting vector lies in the row space of ``Wt``.
-    The first two equal components can be covered by the positive covector ``(++0)``
+    The first two equal components can be covered by the non-negative covector ``(++0)``
     which corresponds to the kernel of ``W``.
 
     In the following, we have another example for non-degenerate subspaces::
@@ -336,7 +336,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
     if not non_negative_covectors:
         if certify:
-            return False, "no positive covectors"
+            return False, "no non-negative covectors"
         return False
 
     non_negative_covectors = sorted(non_negative_covectors, key=lambda covector: len(covector.support()))
@@ -391,6 +391,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             if exists_vector(evs_kernel, intervals):
                 evs = elementary_vectors(kernel_matrix_new)
                 if certify: covectors_certificate_support_condition = []
+                # TODO: use combinatorics instead of computing all covectors
                 for covector in covectors_from_elementary_vectors(evs):
                     if not is_vector_in_intervals(vector(covector), intervals):
                         continue
