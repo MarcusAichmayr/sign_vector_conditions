@@ -20,19 +20,18 @@ from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 def non_negative_cocircuits_from_matrix(M, kernel=True):
     r"""
-    Compute the positive cocircuits determined by a given matrix.
+    Compute non-negative cocircuits.
 
     INPUT:
 
-    - ``A`` -- a matrix with real arguments.
+    - ``M`` -- a matrix with real arguments.
 
     - ``kernel`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
-    - If ``kernel`` is true, returns a set of positive cocircuits determined by the kernel of the matrix ``A``.
-
-    - If ``kernel`` is false, returns a set of positive cocircuits determined by the rows of the matrix ``A``.
+    Return a set of non-negative cocircuits determined by the kernel of ``M``. (default)
+    If ``kernel`` is false, considers the row space of ``M``.
 
     EXAMPLES::
 
@@ -51,7 +50,7 @@ def non_negative_cocircuits_from_matrix(M, kernel=True):
 
 def non_negative_covectors_from_matrix(M, kernel=True):
     r"""
-    Use a list of cocircuits to compute all covectors of the corresponding oriented matroid.
+    Compute all non-negative covectors.
 
     INPUT:
 
@@ -61,11 +60,8 @@ def non_negative_covectors_from_matrix(M, kernel=True):
 
     OUTPUT:
 
-    - a list of all covectors of the oriented matroid.
-
-      - If ``kernel`` is true, returns a list of cocircuits determined by the kernel of the matrix ``A``.
-
-      - If ``kernel`` is false, returns a list of cocircuits determined by the rows of the matrix ``A``.
+    Return a set of non-negative covectors determined by the kernel of ``M``. (default)
+    If ``kernel`` is false, considers the row space of ``M``.
 
     EXAMPLES::
 
@@ -158,7 +154,7 @@ def compare_all(iterable, relation):
             return False
         if relation(value) is not True:  # if variables occur, we will return the expression
             output.add(relation(value))
-    if len(output) == 0:
+    if not output:
         return True
     return output
 
@@ -218,8 +214,10 @@ def entries_non_positive(iterable):
         True
         sage: entries_non_positive([x, x^2 + 1, -1, 5])
         False
-        sage: entries_non_positive([x, x^2 + 1])
+        sage: entries_non_positive([x, x^2 + 1]) # random
         {x^2 + 1 <= 0, x <= 0}
+        sage: len(_)
+        2
     """
     def relation(value):
         try:
@@ -448,7 +446,7 @@ def non_negative_vectors(vectors):
 
     INPUT:
 
-    - ``vectors`` -- a list of vectors
+    - ``vectors`` -- an iterable of vectors
 
     OUTPUT:
 
@@ -459,15 +457,12 @@ def non_negative_vectors(vectors):
 
     EXAMPLES::
 
-        sage: from elementary_vectors.functions import non_negative_vectors
+        sage: from sign_vector_conditions.utility import non_negative_vectors
         sage: l = [vector([1, 1, 0, -1]), vector([0, 0, 0, 0]), vector([1, 0, 0, 1])]
         sage: l
         [(1, 1, 0, -1), (0, 0, 0, 0), (1, 0, 0, 1)]
         sage: non_negative_vectors(l)
         [(0, 0, 0, 0), (1, 0, 0, 1)]
-
-    Now, we consider an example with a variable::
-
         sage: from elementary_vectors import elementary_vectors
         sage: from elementary_vectors.reductions import *
         sage: var('a')
@@ -478,15 +473,21 @@ def non_negative_vectors(vectors):
         [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0), (-1, -a, 0, 0, a)]
         sage: non_negative_vectors(evs)
         ...
-        UserWarning: Cannot determine sign of symbolic expression, returning 0 instead.
+        UserWarning: Cannot determine sign of symbolic expression, using 0 for sign vector instead.
         [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0), (1, a, 0, 0, -a)]
         sage: assume(a > 0)
         sage: non_negative_vectors(evs)
         [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0)]
+
+    TESTS::
+
+        sage: l = [vector([x, 0, 0])]
+        sage: non_negative_vectors(l)
+        [(x, 0, 0)]
     """
     result = []
     for element in vectors:
-        if sign_vector(element) >= 0:  # ``>=`` instead of ``>``, (0,0,x) -> (000) should be returned
+        if sign_vector(element) >= 0:
             result.append(element)
         elif sign_vector(element) < 0:
             result.append(-element)
