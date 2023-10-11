@@ -288,7 +288,7 @@ def entries_non_negative_or_non_positive(iterable):
 
 def condition_on_products(list1, list2):
     r"""
-    Return whether all products of components are positive (or negative) if first element is non-zero
+    Return whether all products of components are positive (or negative) if first element is non-zero.
     
     INPUT:
     Two lists of the same length.
@@ -377,7 +377,7 @@ def condition_on_products(list1, list2):
 
 
 def is_symbolic(value):
-    r"""Return whether this element is symbolic"""
+    r"""Return whether this element is symbolic."""
     try:
         return value.is_symbol()
     except AttributeError:
@@ -385,7 +385,7 @@ def is_symbolic(value):
 
 
 def sign_or_symbolic(expression):
-    r"""Return the sign if defined"""
+    r"""Return the sign of an expression if defined."""
     try:
         return ZZ(sign(expression))
     except TypeError:
@@ -393,7 +393,7 @@ def sign_or_symbolic(expression):
 
 
 def remove_duplicates(iterable):
-    r"""Remove duplicates from a list of iterables"""
+    r"""Remove duplicates from a list of iterables."""
     seen = set()
     result = []
     for item in iterable:
