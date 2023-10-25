@@ -1,5 +1,5 @@
 r"""
-Existence and uniqueness of equilibria
+Existence and uniqueness of equilibria.
 
 EXAMPLES::
 

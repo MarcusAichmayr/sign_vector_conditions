@@ -1,5 +1,5 @@
 r"""
-Uniqueness of equilibria
+Uniqueness of equilibria.
 
 EXAMPLES::
 

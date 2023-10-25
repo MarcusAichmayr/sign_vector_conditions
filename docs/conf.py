@@ -135,7 +135,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'sign_vector_conditions.tex', u'bijectivity\\_exponential\\_maps Documentation',
+    (master_doc, 'sign_vector_conditions.tex', u'sign\\_vector\\_conditions Documentation',
      u'Marcus Aichmayr', 'manual'),
 ]
 

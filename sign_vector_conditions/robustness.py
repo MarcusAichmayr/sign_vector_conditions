@@ -1,5 +1,5 @@
 r"""
-Robustness of existence and uniqueness of equilibria
+Robustness of existence and uniqueness of equilibria.
 
 EXAMPLES::
 

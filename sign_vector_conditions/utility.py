@@ -1,4 +1,4 @@
-r"""This module offers utility functions that are used by the other functions of this package."""
+r"""Utility functions."""
 
 #############################################################################
 #  Copyright (C) 2023                                                       #

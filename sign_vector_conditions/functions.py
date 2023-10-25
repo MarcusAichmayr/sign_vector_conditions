@@ -1,5 +1,5 @@
 r"""
-In this module, we compute polynomial and exponential maps corresponding to given matrices.
+Polynomial and exponential functions corresponding to chemical reaction networks.
 
 EXAMPLES::
 

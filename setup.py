@@ -26,7 +26,7 @@ setup(
       'License :: OSI Approved :: GNU General Public License v3',
       'Programming Language :: Python :: 3.8.5',
     ], # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    keywords = ['chemical reaction networks', 'sign-vector conditions'],
+    keywords = ['chemical reaction networks', 'sign vector conditions, oriented matroids'],
     packages = ['sign_vector_conditions'],
     setup_requires   = ['elementary_vectors'],
     install_requires   = ['elementary_vectors', 'sphinx'],
