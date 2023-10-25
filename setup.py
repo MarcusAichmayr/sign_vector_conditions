@@ -8,7 +8,7 @@ def readfile(filename):
 setup(
     name = 'sign_vector_conditions',
     version = readfile("VERSION").strip(), # the VERSION file is shared with the documentation
-    description = 'a Sage package to work with bijectivity of exponential and polynomial maps',
+    description = 'a SageMath package to work with sign vector conditions for chemical reaction networks',
     long_description = readfile("README.md"),
     long_description_content_type = 'text/markdown',
     url = 'https://github.com/MarcusAichmayr/sign_vector_conditions',
@@ -28,6 +28,6 @@ setup(
     ], # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords = ['chemical reaction networks', 'sign-vector conditions'],
     packages = ['sign_vector_conditions'],
-    setup_requires   = ['sign_vectors'],
-    install_requires   = ['sign_vectors', 'sphinx'],
+    setup_requires   = ['elementary_vectors'],
+    install_requires   = ['elementary_vectors', 'sphinx'],
 )
