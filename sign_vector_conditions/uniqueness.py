@@ -64,7 +64,7 @@ that involves the computation of maximal minors of the corresponding matrices::
 
 We multiply those minors component-wise::
 
-    sage: [m1[i]*m2[i] for i in range(len(m1))]
+    sage: [m1[i] * m2[i] for i in range(len(m1))]
     [1, 0, 1]
 
 Since all arguments are greater or equal zero, there is at most one equilibrium.
@@ -118,7 +118,7 @@ Hence, this condition also states that there is no unique equilibrium::
 
 Finally, we consider an example with variables::
 
-    sage: var('a,b')
+    sage: var('a, b')
     (a, b)
     sage: W = matrix([[1, 0, -1], [0, 1, -1]])
     sage: W
