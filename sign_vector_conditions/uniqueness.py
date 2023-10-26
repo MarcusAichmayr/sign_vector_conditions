@@ -147,7 +147,7 @@ The function :func:`~condition_uniqueness_minors` also works for matrices with s
 In this case, it returns a system of inequalities::
 
     sage: condition_uniqueness_minors(W, Wt)
-    {-a >= 0, -b >= 0}
+    [{-a >= 0, -b >= 0}]
 """
 
 #############################################################################
@@ -160,8 +160,10 @@ In this case, it returns a system of inequalities::
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
+from sage.combinat.combination import Combinations
+
 from sign_vectors.oriented_matroids import covectors_from_matrix
-from .utility import entries_non_negative_or_non_positive, max_minors_prod
+from .utility import is_symbolic
 
 
 def condition_uniqueness_sign_vectors(W, Wt):
@@ -175,9 +177,14 @@ def condition_uniqueness_sign_vectors(W, Wt):
     - ``Wt`` -- a matrix with ``n`` columns
 
     OUTPUT:
-    Returns whether the intersection of the oriented matroids corresponding to
+    Return whether the intersection of the oriented matroids corresponding to
     ``W`` and ``right_kernel(Wt)`` consists of the zero sign vector only.
 
+    .. NOTE::
+
+        This toy implementation is inefficient and should not be used for large examples.
+        Instead, use :func:`~condition_uniqueness_minors`.
+    
     EXAMPLES::
 
         sage: from sign_vector_conditions import *
@@ -226,13 +233,17 @@ def condition_uniqueness_minors(W, Wt):
 
     - ``W`` -- a matrix
 
-    - ``Wt`` -- a matrix with the same dimensions as ``W``
+    - ``Wt`` -- a matrix
 
     OUTPUT:
-    Returns whether the products of the corresponding maximal minors of the
-    matrices ``W`` and ``Wt`` have the same sign.
+    Return whether there exists at most one equilibrium using maximal minors.
+    If this depends on variables, a list of sets is returned.
+    The result is true if the conditions in exactly one of these sets are satisfied.
 
-    Returns a boolean or a symbolic expression if variables occur.
+    .. NOTE::
+
+        The matrices need to have the same rank and number of columns.
+        Otherwise, a ``ValueError`` is raised.
 
     EXAMPLES::
 
@@ -268,6 +279,55 @@ def condition_uniqueness_minors(W, Wt):
         [1 0 a]
         [0 1 b]
         sage: condition_uniqueness_minors(W, Wt)
-        {-a >= 0, -b >= 0}
+        [{-a >= 0, -b >= 0}]
+        sage: W = matrix([
+        ....:     [a, 0, 1, 0],
+        ....:     [0, 1, -1, 0],
+        ....:     [0, 0, 0, 1]
+        ....: ])
+        sage: Wt = matrix([
+        ....:     [1, 0, 0, -1],
+        ....:     [0, b, 1, 1],
+        ....:     [0, 0, a, 1]
+        ....: ])
+        sage: condition_uniqueness_minors(W, Wt) # random
+        [{(a - 1)*a >= 0, a*b >= 0}, {(a - 1)*a <= 0, a*b <= 0}]
+        sage: len(_), len(_[0]) # for testing
+        (2, 2)
     """
-    return entries_non_negative_or_non_positive(max_minors_prod(W, Wt))
+    W = W.matrix_from_rows(W.pivot_rows())
+    Wt = Wt.matrix_from_rows(Wt.pivot_rows())
+    if W.dimensions() != Wt.dimensions():
+        raise ValueError('Matrices must have same rank and number of columns.')
+
+    positive_product_found = False
+    negative_product_found = False
+    symbolic_expressions = set()
+    products = (
+        W.matrix_from_columns(indices).det() * Wt.matrix_from_columns(indices).det()
+        for indices in Combinations(W.ncols(), W.nrows())
+    )
+
+    for product in products:
+        if is_symbolic(product):
+            symbolic_expressions.add(product)
+        elif product > 0:
+            positive_product_found = True
+        elif product < 0:
+            negative_product_found = True
+        if positive_product_found and negative_product_found:
+            return False
+    if positive_product_found:
+        if symbolic_expressions:
+            return [set(expression >= 0 for expression in symbolic_expressions)]
+        return True
+    if negative_product_found:
+        if symbolic_expressions:
+            return [set(expression <= 0 for expression in symbolic_expressions)]
+        return True
+    if symbolic_expressions:
+        return [
+            set(expression >= 0 for expression in symbolic_expressions),
+            set(expression <= 0 for expression in symbolic_expressions)
+        ]
+    return False

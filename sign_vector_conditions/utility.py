@@ -106,186 +106,6 @@ def non_negative_covectors_from_matrix(M, kernel=True):
     return output
 
 
-def max_minors_prod(A, B):
-    r"""
-    Multiply the maximal minors of two matrices component-wise.
-
-    EXAMPLES::
-
-        sage: A = matrix([[1, 0, 1], [0, 1, 2]])
-        sage: B = matrix([[1, 0, -1], [0, 1, 3]])
-        sage: A.minors(2)
-        [1, 2, -1]
-        sage: B.minors(2)
-        [1, 3, 1]
-        sage: from sign_vector_conditions.utility import max_minors_prod
-        sage: max_minors_prod(A, B)
-        [1, 6, -1]
-
-    TESTS::
-
-        sage: A = matrix([[1, 0, 1], [0, 1, 2], [0, 1, 2]])
-        sage: B = matrix([[1, 0, -1], [0, 1, 3]])
-        sage: max_minors_prod(A, B)
-        [1, 6, -1]
-        sage: A = matrix([[1, 0, 1], [0, 1, 2], [0, 0, 1]])
-        sage: max_minors_prod(A, B)
-        Traceback (most recent call last):
-        ...
-        ValueError: Matrices must have same rank and number of columns.
-    """
-    A = A.matrix_from_rows(A.pivot_rows())
-    B = B.matrix_from_rows(B.pivot_rows())
-    if A.dimensions() != B.dimensions():
-        raise ValueError('Matrices must have same rank and number of columns.')
-
-    return [m1 * m2 for m1, m2 in zip(A.minors(A.nrows()), B.minors(A.nrows()))]
-
-
-def compare_all(iterable, relation):
-    r"""
-    Check whether all entries satisfy the relation.
-
-    This is an auxiliary function used by :func:`entries_non_negative` and :func:`entries_non_positive`.
-    """
-    output = set()
-    for value in iterable:
-        if relation(value) is False:
-            return False
-        if relation(value) is not True:  # if variables occur, we will return the expression
-            output.add(relation(value))
-    if not output:
-        return True
-    return output
-
-
-def entries_non_negative(iterable):
-    r"""
-    Check whether all entries are non-negative.
-
-    INPUT:
-
-    - ``iterable`` -- an iterable
-
-    OUTPUT:
-    a boolean or symbolic expression
-
-    EXAMPLES::
-
-        sage: from sign_vector_conditions.utility import entries_non_negative
-        sage: entries_non_negative([0, 5, 1])
-        True
-        sage: entries_non_negative([0, 0])
-        True
-        sage: entries_non_negative([0, -5])
-        False
-        sage: entries_non_negative([x, x^2 + 1, -1, 5])
-        False
-        sage: entries_non_negative([x, x^2 + 1]) # random
-        {x^2 + 1 >= 0, x >= 0}
-    """
-    def relation(value):
-        try:
-            return RR(value) >= 0
-        except TypeError:
-            return value >= 0
-    return compare_all(iterable, relation)
-
-
-def entries_non_positive(iterable):
-    r"""
-    Check whether all entries are non-positive.
-
-    INPUT:
-
-    - ``iterable`` -- an iterable
-
-    OUTPUT:
-    a boolean or symbolic expression
-
-    EXAMPLES::
-
-        sage: from sign_vector_conditions.utility import entries_non_positive
-        sage: entries_non_positive([0, 5, 1])
-        False
-        sage: entries_non_positive([0, 0])
-        True
-        sage: entries_non_positive([0, -5])
-        True
-        sage: entries_non_positive([x, x^2 + 1, -1, 5])
-        False
-        sage: entries_non_positive([x, x^2 + 1]) # random
-        {x^2 + 1 <= 0, x <= 0}
-        sage: len(_)
-        2
-    """
-    def relation(value):
-        try:
-            return RR(value) <= 0
-        except TypeError:
-            return value <= 0
-    return compare_all(iterable, relation)
-
-
-def entries_non_negative_or_non_positive(iterable):
-    r"""
-    Return whether each component of a given vector is non-negative or non-positive.
-
-    INPUT:
-
-    - ``iterable`` -- an iterable of numbers or symbolic expressions.
-
-    OUTPUT:
-    Returns true if either each element of ``iterable`` is greater than or equal to zero or less than or equal to zero.
-    Supports symbolic expressions.
-
-    Depending on the input, the output can have several appearances:
-
-    - a boolean
-
-        - if true, no symbolic expressions have occurred and either each entry of ``iterable`` is greater or equal zero
-          or each entry is less or equal zero.
-
-        - if false, there are entries with opposing signs or every entry is zero.
-
-    - a set of inequalities
-
-        - if all inequalities are satisfied,
-          then either each element of ``iterable`` is greater or equal zero or less or equal zero.
-
-    - a list of two sets of inequalities
-
-        - if the inequalities of exactly one of these sets are satisfied,
-          then either each element of ``iterable`` is greater or equal zero or less or equal zero.
-
-    EXAMPLES::
-
-        sage: from sign_vector_conditions.utility import entries_non_negative_or_non_positive
-        sage: entries_non_negative_or_non_positive([0, 5, 1])
-        True
-        sage: entries_non_negative_or_non_positive([0, 0])
-        False
-        sage: entries_non_negative_or_non_positive([0, -5])
-        True
-        sage: entries_non_negative_or_non_positive([x, x^2 + 1, -1, 5])
-        False
-        sage: entries_non_negative_or_non_positive([x, x^2 + 1]) # random
-        [{x^2 + 1 >= 0, x >= 0}, {x^2 + 1 <= 0, x <= 0}]
-    """
-    entries_nn = entries_non_negative(iterable)
-    entries_np = entries_non_positive(iterable)
-
-    if entries_nn is True and entries_np is True:  # all entries are zero
-        return False
-    if entries_nn is False and entries_np is False:  # mixed signs
-        return False
-    if entries_nn is False:
-        return True if entries_np is True else entries_np
-    if entries_np is False:
-        return True if entries_nn is True else entries_nn
-    return [entries_nn, entries_np]
-
-
 def condition_on_products(list1, list2):
     r"""
     Return whether all products of components are positive (or negative) if first element is non-zero.
@@ -307,14 +127,14 @@ def condition_on_products(list1, list2):
         (a, b, c)
         sage: condition_on_products([0, a], [1, 1])
         [{a == 0}, {a > 0}, {a < 0}]
-        sage: len(_)
+        sage: len(_) # for testing
         3
         sage: condition_on_products([c, -1, c], [1, b, -a]) # random
         [{-b > 0, c == 0},
          {-b < 0, c == 0},
          {-b > 0, c > 0, -a*c > 0},
          {-b < 0, c < 0, -a*c < 0}]
-        sage: len(_)
+        sage: len(_) # for testing
         4
         sage: condition_on_products([c, -1, a], [1, b, -c]) # random
         [{-b > 0, a == 0, c == 0},
@@ -323,7 +143,7 @@ def condition_on_products(list1, list2):
          {-b < 0, a == 0, c < 0},
          {-b > 0, a != 0, c > 0, -a*c > 0},
          {-b < 0, a != 0, c < 0, -a*c < 0}]
-        sage: len(_[4])
+        sage: len(_[4]) # for testing
         4
         sage: condition_on_products([-1, -1], [1, 1])
         True
