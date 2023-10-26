@@ -106,7 +106,7 @@ from .utility import condition_on_products
 
 def condition_closure_sign_vectors(W, Wt):
     r"""
-    Closure condition on sign vectors for robustness
+    Closure condition for robustness using sign vectors.
 
     INPUT:
 
@@ -115,8 +115,12 @@ def condition_closure_sign_vectors(W, Wt):
     - ``Wt`` -- a matrix with ``n`` columns
 
     OUTPUT:
-    Return whether the oriented matroid corresponding to ``W`` is a subset of the closure
-    of the oriented matroid corresponding to ``Wt``.
+    Return whether the closure condition for robustness regarding small perturbations is satisfied.
+
+    .. NOTE::
+
+        This implementation is inefficient and should not be used for large examples.
+        Instead, use :func:`~condition_closure_minors`.
     """
     topes = topes_from_matrix(Wt, kernel=True)
     for covector1 in topes_from_matrix(W, kernel=True):
@@ -127,7 +131,7 @@ def condition_closure_sign_vectors(W, Wt):
 
 def condition_closure_minors(W, Wt):
     r"""
-    Closure condition on maximal minors for robustness
+    Closure condition for robustness using maximal maximal minors.
 
     INPUT:
 
@@ -136,7 +140,14 @@ def condition_closure_minors(W, Wt):
     - ``Wt`` -- a matrix with the same dimensions as ``W``
 
     OUTPUT:
-    Returns either a boolean or sets of conditions on variables occurring in the input.
+    Return whether the closure condition for robustness regarding small perturbations is satisfied.
+    If the result depends on variables, a list of sets is returned.
+    The condition holds if the inequalities in (at least) one of these sets are satisfied.
+
+    .. NOTE::
+
+        The matrices need to have the same rank and number of columns.
+        Otherwise, a ``ValueError`` is raised.
     """
     if W.dimensions() != Wt.dimensions():
         raise ValueError('Matrices must have same dimensions.')

@@ -168,7 +168,7 @@ from .utility import is_symbolic
 
 def condition_uniqueness_sign_vectors(W, Wt):
     r"""
-    Use sign vectors to verify that the chemical reaction network has at most one equilibrium.
+    Uniqueness condition for existence of an equilibrium using sign vectors.
 
     INPUT:
 
@@ -177,14 +177,13 @@ def condition_uniqueness_sign_vectors(W, Wt):
     - ``Wt`` -- a matrix with ``n`` columns
 
     OUTPUT:
-    Return whether the intersection of the oriented matroids corresponding to
-    ``W`` and ``right_kernel(Wt)`` consists of the zero sign vector only.
+    Return whether there exists at most one equilibrium.
 
     .. NOTE::
 
-        This toy implementation is inefficient and should not be used for large examples.
+        This implementation is inefficient and should not be used for large examples.
         Instead, use :func:`~condition_uniqueness_minors`.
-    
+
     EXAMPLES::
 
         sage: from sign_vector_conditions import *
@@ -227,7 +226,7 @@ def condition_uniqueness_sign_vectors(W, Wt):
 
 def condition_uniqueness_minors(W, Wt):
     r"""
-    Use maximal minors to verify that the chemical reaction network has at most one equilibrium.
+    Uniqueness condition for existence of an equilibrium using maximal minors.
 
     INPUT:
 
@@ -236,9 +235,9 @@ def condition_uniqueness_minors(W, Wt):
     - ``Wt`` -- a matrix
 
     OUTPUT:
-    Return whether there exists at most one equilibrium using maximal minors.
-    If this depends on variables, a list of sets is returned.
-    The result is true if the conditions in exactly one of these sets are satisfied.
+    Return whether there exists at most one equilibrium.
+    If the result depends on variables, a list of sets is returned.
+    The condition holds if the inequalities in exactly one of these sets are satisfied.
 
     .. NOTE::
 
