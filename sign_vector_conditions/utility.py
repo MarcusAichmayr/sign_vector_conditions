@@ -109,21 +109,21 @@ def non_negative_covectors_from_matrix(M, kernel=True):
 def condition_on_products(list1, list2):
     r"""
     Return whether all products of components are positive (or negative) if first element is non-zero.
-    
+
     INPUT:
     Two lists of the same length.
-    
+
     OUTPUT:
     Returns either a boolean or sets of conditions on variables occurring in the input.
     If the conditions of one of these sets are satisfied,
     then for all non-zero elements of the first list,
     the product with the corresponding element of the second list is positive.
     (Or all products are negative.)
-    
+
     TESTS::
-    
+
         sage: from sign_vector_conditions.utility import condition_on_products
-        sage: var('a,b,c')
+        sage: var('a, b, c')
         (a, b, c)
         sage: condition_on_products([0, a], [1, 1])
         [{a == 0}, {a > 0}, {a < 0}]

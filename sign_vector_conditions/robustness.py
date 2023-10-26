@@ -53,7 +53,7 @@ This condition can also be checked directly with the package::
 
 Now, we consider matrices with variables::
 
-    sage: var('a,b,c')
+    sage: var('a, b, c')
     (a, b, c)
     sage: W = matrix([[1, 0, -1], [0, c, -1]])
     sage: W
@@ -149,7 +149,9 @@ def condition_closure_minors(W, Wt):
         The matrices need to have the same rank and number of columns.
         Otherwise, a ``ValueError`` is raised.
     """
+    W = W.matrix_from_rows(W.pivot_rows())
+    Wt = Wt.matrix_from_rows(Wt.pivot_rows())
     if W.dimensions() != Wt.dimensions():
-        raise ValueError('Matrices must have same dimensions.')
+        raise ValueError('Matrices must have same rank and number of columns.')
 
     return condition_on_products(W.minors(W.nrows()), Wt.minors(W.nrows()))
