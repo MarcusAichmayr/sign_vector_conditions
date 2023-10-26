@@ -377,9 +377,27 @@ def condition_on_products(list1, list2):
 
 
 def is_symbolic(value):
-    r"""Return whether this element is symbolic."""
+    r"""
+    Return whether this element is a symbolic expression.
+
+    EXAMPLES::
+
+        sage: from sign_vector_conditions.utility import is_symbolic
+        sage: is_symbolic(5)
+        False
+        sage: var('a, b')
+        (a, b)
+        sage: is_symbolic(a)
+        True
+        sage: is_symbolic(-a)
+        True
+        sage: is_symbolic(b^2 - a)
+        True
+        sage: is_symbolic(SR(5))
+        False
+    """
     try:
-        return value.is_symbol()
+        return bool(value.variables())
     except AttributeError:
         return False
 
