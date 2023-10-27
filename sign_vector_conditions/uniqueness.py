@@ -302,12 +302,12 @@ def condition_uniqueness_minors(W, Wt):
     positive_product_found = False
     negative_product_found = False
     symbolic_expressions = set()
-    products = (
-        W.matrix_from_columns(indices).det() * Wt.matrix_from_columns(indices).det()
-        for indices in Combinations(W.ncols(), W.nrows())
-    )
 
-    for product in products:
+    for indices in Combinations(W.ncols(), W.nrows()):
+        minor1 = W.matrix_from_columns(indices).det()
+        if not minor1:
+            continue
+        product = minor1 * Wt.matrix_from_columns(indices).det()
         if is_symbolic(product):
             symbolic_expressions.add(product)
         elif product > 0:
