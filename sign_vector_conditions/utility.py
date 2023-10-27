@@ -106,12 +106,17 @@ def non_negative_covectors_from_matrix(M, kernel=True):
     return output
 
 
-def condition_on_products(list1, list2):
+def condition_closure_minors_utility(pairs, positive_only=False, negative_only=False):
     r"""
     Return whether all products of components are positive (or negative) if first element is non-zero.
 
     INPUT:
-    Two lists of the same length.
+
+    - ``pairs`` -- an iterable of pairs consisting of a minor and a product
+
+    - ``positive_only`` -- a boolean, considers only positive products if true
+
+    - ``negative_only`` -- a boolean, considers only negative products if true
 
     OUTPUT:
     Returns either a boolean or sets of conditions on variables occurring in the input.
@@ -122,21 +127,21 @@ def condition_on_products(list1, list2):
 
     TESTS::
 
-        sage: from sign_vector_conditions.utility import condition_on_products
+        sage: from sign_vector_conditions.utility import condition_closure_minors_utility
         sage: var('a, b, c')
         (a, b, c)
-        sage: condition_on_products([0, a], [1, 1])
-        [{a == 0}, {a > 0}, {a < 0}]
+        sage: condition_closure_minors_utility(zip([0, a], [0, a]), positive_only=True)
+        [{a == 0}, {a > 0}]
         sage: len(_) # for testing
-        3
-        sage: condition_on_products([c, -1, c], [1, b, -a]) # random
+        2
+        sage: condition_closure_minors_utility(zip([c, -1, c], [c, -b, -a * c])) # random
         [{-b > 0, c == 0},
          {-b < 0, c == 0},
          {-b > 0, c > 0, -a*c > 0},
          {-b < 0, c < 0, -a*c < 0}]
         sage: len(_) # for testing
         4
-        sage: condition_on_products([c, -1, a], [1, b, -c]) # random
+        sage: condition_closure_minors_utility(zip([c, -1, a], [c, -b, -a * c])) # random
         [{-b > 0, a == 0, c == 0},
          {-b < 0, a == 0, c == 0},
          {-b > 0, a == 0, c > 0},
@@ -145,48 +150,48 @@ def condition_on_products(list1, list2):
          {-b < 0, a != 0, c < 0, -a*c < 0},
          {-a*c > 0, c > 0, -b > 0},
          {-a*c < 0, c < 0, -b < 0}]]
-        sage: len(_), len(_[4]) # for testing
-        (8, 4)
-        sage: condition_on_products([-1, -1], [1, 1])
+        sage: len(_) # for testing
+        8
+        sage: condition_closure_minors_utility(zip([-1, -1], [-1, -1]))
         True
-        sage: condition_on_products([-1, 1], [1, 1])
+        sage: condition_closure_minors_utility(zip([-1, 1], [-1, 1]))
         False
-        sage: condition_on_products([0, 1], [1, 1])
+        sage: condition_closure_minors_utility(zip([0, 1], [0, 1]))
         True
-        sage: condition_on_products([1], [0])
+        sage: condition_closure_minors_utility([(1, 0)])
         False
     """
-    def rec(list1, list2, zero_expressions, non_zero_expressions):
+    def rec(pairs, zero_expressions, non_zero_expressions):
         r"""Recursive call"""
         pairs = [
-            (elem1, elem2) for elem1, elem2 in zip(list1, list2)
-            if not elem1.is_zero() and not elem1 in zero_expressions
+            (minor, product) for minor, product in pairs
+            if not minor.is_zero() and not minor in zero_expressions
         ]
-
-        for elem1, _ in pairs:
-            if is_symbolic(elem1) and not elem1 in non_zero_expressions:
-                yield from rec(list1, list2, zero_expressions.union([elem1]), non_zero_expressions)
-                yield from rec(list1, list2, zero_expressions, non_zero_expressions.union([elem1]))
+        for minor, _ in pairs:
+            if is_symbolic(minor) and not minor in non_zero_expressions:
+                yield from rec(pairs, zero_expressions.union([minor]), non_zero_expressions)
+                yield from rec(pairs, zero_expressions, non_zero_expressions.union([minor]))
 
         products = set(
-            sign_or_symbolic((elem1 * elem2).substitute([value == 0 for value in zero_expressions]))
-        for elem1, elem2 in pairs)
-
+            sign_or_symbolic(product.substitute([value == 0 for value in zero_expressions]))
+            for _, product in pairs
+        )
         equalities = set(value == 0 for value in zero_expressions)
         non_equalities = set(value != 0 for value in non_zero_expressions if not value in products)
 
-        positive_inequalities = set(value > 0 for value in products)
-        negative_inequalities = set(value < 0 for value in products)
+        if not negative_only:
+            positive_inequalities = set(value > 0 for value in products)
+            if True in positive_inequalities:
+                positive_inequalities.remove(True)
+            yield positive_inequalities.union(equalities).union(non_equalities)
 
-        if True in positive_inequalities:
-            positive_inequalities.remove(True)
-        if True in negative_inequalities:
-            negative_inequalities.remove(True)
+        if not positive_only:
+            negative_inequalities = set(value < 0 for value in products)
+            if True in negative_inequalities:
+                negative_inequalities.remove(True)
+            yield negative_inequalities.union(equalities).union(non_equalities)
 
-        yield positive_inequalities.union(equalities).union(non_equalities)
-        yield negative_inequalities.union(equalities).union(non_equalities)
-
-    output = list(rec(list1, list2, set(), set()))
+    output = list(rec(pairs, set(), set()))
     for conditions in output.copy():
         if False in conditions:
             output.remove(conditions)

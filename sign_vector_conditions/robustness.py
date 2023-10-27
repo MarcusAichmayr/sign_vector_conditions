@@ -100,8 +100,10 @@ or if ``a`` and ``b`` are positive and ``c`` is negative.
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
+from sage.combinat.combination import Combinations
+
 from sign_vectors.oriented_matroids import topes_from_matrix
-from .utility import condition_on_products
+from .utility import is_symbolic, condition_closure_minors_utility
 
 
 def condition_closure_sign_vectors(W, Wt):
@@ -154,4 +156,25 @@ def condition_closure_minors(W, Wt):
     if W.dimensions() != Wt.dimensions():
         raise ValueError('Matrices must have same rank and number of columns.')
 
-    return condition_on_products(W.minors(W.nrows()), Wt.minors(W.nrows()))
+    positive_product_found = False
+    negative_product_found = False
+    symbolic_pairs = set()
+    for indices in Combinations(W.ncols(), W.nrows()):
+        minor1 = W.matrix_from_columns(indices).det()
+        if not minor1:
+            continue
+        minor2 = Wt.matrix_from_columns(indices).det()
+        if not minor2:
+            return False
+        product = minor1 * minor2
+        if is_symbolic(product):
+            symbolic_pairs.add((minor1, product))
+            continue
+        if product > 0:
+            positive_product_found = True
+        elif product < 0:
+            negative_product_found = True
+        if positive_product_found and negative_product_found:
+            return False
+
+    return condition_closure_minors_utility(symbolic_pairs, positive_product_found, negative_product_found)
