@@ -142,9 +142,11 @@ def condition_on_products(list1, list2):
          {-b > 0, a == 0, c > 0},
          {-b < 0, a == 0, c < 0},
          {-b > 0, a != 0, c > 0, -a*c > 0},
-         {-b < 0, a != 0, c < 0, -a*c < 0}]
-        sage: len(_[4]) # for testing
-        4
+         {-b < 0, a != 0, c < 0, -a*c < 0},
+         {-a*c > 0, c > 0, -b > 0},
+         {-a*c < 0, c < 0, -b < 0}]]
+        sage: len(_), len(_[4]) # for testing
+        (8, 4)
         sage: condition_on_products([-1, -1], [1, 1])
         True
         sage: condition_on_products([-1, 1], [1, 1])
