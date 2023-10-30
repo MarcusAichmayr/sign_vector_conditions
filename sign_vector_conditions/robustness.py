@@ -89,8 +89,8 @@ if ``c`` is zero and ``b`` is non-zero.
 The closure condition is also satisfied if ``a`` and ``b`` are negative and ``c`` is positive
 or if ``a`` and ``b`` are positive and ``c`` is negative.
 
-We can also apply the builtin function ``solve_ineq`` to the resulting sets of inequalities.
-For instance, the last inequality can be equivalently written as::
+We can also apply the built-in function ``solve_ineq`` to the resulting sets of inequalities.
+For instance, the last set can be equivalently written as::
 
     sage: solve_ineq(list(condition_closure_minors(W, Wt)[3])) # random
     [[c < 0, 0 < b, a < 0]]

@@ -293,6 +293,19 @@ def condition_uniqueness_minors(W, Wt):
         [{(a - 1)*a >= 0, a*b >= 0}, {(a - 1)*a <= 0, a*b <= 0}]
         sage: len(_), len(_[0]) # for testing
         (2, 2)
+
+    We can also apply the built-in function ``solve_ineq`` to the resulting sets of inequalities.
+    For instance, the first set can be equivalently written as::
+
+        sage: solve_ineq(list(condition_uniqueness_minors(W, Wt)[0]))
+        [[b == 0, a == 0],
+        [a == 0],
+        [b == 0, a == 1],
+        [a == 1, 0 < b],
+        [b == 0, 1 < a],
+        [0 < b, 1 < a],
+        [b == 0, a < 0],
+        [b < 0, a < 0]]
     """
     W = W.matrix_from_rows(W.pivot_rows())
     Wt = Wt.matrix_from_rows(Wt.pivot_rows())
