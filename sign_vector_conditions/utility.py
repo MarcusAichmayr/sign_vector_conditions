@@ -207,6 +207,8 @@ def is_symbolic(value):
     r"""
     Return whether this element is a symbolic expression.
 
+    If it belongs to the symbolic ring but doesn't contain any variables it does not count as "symbolic".
+
     EXAMPLES::
 
         sage: from sign_vector_conditions.utility import is_symbolic
@@ -223,18 +225,16 @@ def is_symbolic(value):
         sage: is_symbolic(SR(5))
         False
     """
-    try:
+    if hasattr(value, "variables"):
         return bool(value.variables())
-    except AttributeError:
-        return False
+    return False
 
 
 def sign_or_symbolic(expression):
     r"""Return the sign of an expression if defined."""
-    try:
-        return ZZ(sign(expression))
-    except TypeError:
+    if is_symbolic(expression):
         return expression
+    return ZZ(sign(expression))
 
 
 def remove_duplicates(iterable):
