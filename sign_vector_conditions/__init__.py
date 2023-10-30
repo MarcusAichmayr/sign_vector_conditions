@@ -9,10 +9,10 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
 .. autosummary::
     :toctree: generated
 
-    sign_vector_conditions.functions
     sign_vector_conditions.uniqueness
     sign_vector_conditions.unique_existence
     sign_vector_conditions.robustness
+    sign_vector_conditions.maps
     sign_vector_conditions.utility
 """
 
@@ -31,5 +31,4 @@ from __future__ import absolute_import
 from .uniqueness import condition_uniqueness_sign_vectors, condition_uniqueness_minors
 from .unique_existence import condition_faces, condition_subspaces_nondegenerate, condition_subspaces_degenerate
 from .robustness import condition_closure_sign_vectors, condition_closure_minors
-
-from .functions import f_pol, f_exp
+from .maps import f_pol, f_exp
