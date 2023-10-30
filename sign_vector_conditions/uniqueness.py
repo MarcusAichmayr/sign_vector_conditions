@@ -297,7 +297,7 @@ def condition_uniqueness_minors(W, Wt):
     We can also apply the built-in function ``solve_ineq`` to the resulting sets of inequalities.
     For instance, the first set can be equivalently written as::
 
-        sage: solve_ineq(list(condition_uniqueness_minors(W, Wt)[0]))
+        sage: solve_ineq(list(condition_uniqueness_minors(W, Wt)[0])) # random
         [[b == 0, a == 0],
         [a == 0],
         [b == 0, a == 1],
