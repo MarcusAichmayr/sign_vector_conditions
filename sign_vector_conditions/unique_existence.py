@@ -5,7 +5,7 @@ EXAMPLES::
 
     sage: from sign_vector_conditions import *
 
-Let us consider the following matrices::
+Let us consider the following matrices to describe a chemical reaction network::
 
     sage: W = matrix([[1, 0, 1, 0], [0, 1, 0, 1]])
     sage: W
@@ -16,28 +16,18 @@ Let us consider the following matrices::
     [ 1  0  0 -1]
     [ 0  1  1  1]
 
-Hence, we obtain the oriented matroids::
+To check whether a unique equilibrium exists, we apply :func:`~condition_uniqueness_minors`::
 
-    sage: from sign_vectors.oriented_matroids import *
-    sage: covectors_from_matrix(W, kernel=True, algorithm='fe', separate=True)
-    [{(0000)}, {(0-0+), (0+0-), (+0-0), (-0+0)}, {(--++), (-++-), (++--), (+--+)}]
-    sage: covectors_from_matrix(Wt, kernel=False, algorithm='fe', separate=True)
-    [{(0000)},
-     {(+++0), (0+++), (+00-), (-00+), (0---), (---0)},
-     {(-+++), (----), (---+), (+---), (++++), (+++-)}]
-
-
-We can check injectivity by using the function :func:`~condition_uniqueness_sign_vectors`::
-
-    sage: condition_uniqueness_sign_vectors(W, Wt)
+    sage: condition_uniqueness_minors(W, Wt)
     True
 
-Therefore, the corresponding chemical reaction network has at most one equilibrium.
+This means that the chemical reaction network has at most one equilibrium.
 Next, we verify whether an equilibrium exists.
 First, we check the face condition.
 For this purpose, we compute the cocircuits of the oriented matroids
 corresponding to the matrices::
 
+    sage: from sign_vectors.oriented_matroids import *
     sage: cc1 = cocircuits_from_matrix(W, kernel=False)
     sage: cc1
     {(+0+0), (0-0-), (-0-0), (0+0+)}
@@ -88,12 +78,12 @@ We swap the two matrices from before::
     [1 0 1 0]
     [0 1 0 1]
 
-Because of symmetry, the corresponding exponential map is injective::
+Because of symmetry, there is at most one equilibrium::
 
     sage: condition_uniqueness_sign_vectors(W, Wt)
     True
 
-Now, we attempt to check the face condition::
+Now, we check the face condition::
 
     sage: cc1 = cocircuits_from_matrix(W, kernel=False)
     sage: cc1
@@ -111,7 +101,7 @@ Again, we are only interested in the positive cocircuits::
     sage: cc2p
     [(+0+0), (0+0+)]
 
-Therefore, condition does not hold.
+Therefore, the condition does not hold.
 We also apply the corresponding function from the package::
 
     sage: condition_faces(W, Wt)
@@ -120,62 +110,62 @@ We also apply the corresponding function from the package::
 Consequently, there exists no unique equilibrium.
 
 Now, we consider Example 20 from [MHR19]_.
-Here, we have a parameter ``wt > 0``.
-Depending on this parameter, the corresponding chemical reaction network has a unique equilibrium::
+Here, we have a parameter ``a > 0``.
+Depending on this parameter, the chemical reaction network has a unique equilibrium::
 
-    sage: var('wt')
-    wt
+    sage: var('a')
+    a
     sage: W = matrix(3, 6, [0, 0, 1, 1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, -1, 0, 0])
     sage: W
     [ 0  0  1  1 -1  0]
     [ 1 -1  0  0  0 -1]
     [ 0  0  1 -1  0  0]
-    sage: Wt = matrix(3, 6, [1, 1, 0, 0, -1, wt, 1, -1, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])
+    sage: Wt = matrix(3, 6, [1, 1, 0, 0, -1, a, 1, -1, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])
     sage: Wt
-    [ 1  1  0  0 -1 wt]
+    [ 1  1  0  0 -1  a]
     [ 1 -1  0  0  0  0]
     [ 0  0  1 -1  0  0]
 
 The first two conditions depend on the sign vectors of the corresponding oriented matroids.
-Consequently, the choice of the positive parameter ``wt`` does not affect the result.
-In order to compute the sign vectors, we set ``wt`` to ``1``::
+Consequently, the choice of the positive parameter ``a`` does not affect the result.
+In order to compute the sign vectors, we can simply set ``a`` to ``1``::
 
-    sage: condition_uniqueness_sign_vectors(W, Wt(wt=1))
+    sage: condition_uniqueness_sign_vectors(W, Wt(a=1))
     True
 
 Hence, the map is injective.
 Also the face condition is satisfied::
 
-    sage: condition_faces(W, Wt(wt=1))
+    sage: condition_faces(W, Wt(a=1))
     True
 
-For specific values of ``wt``, the pair of subspaces
+For specific values of ``a``, the pair of subspaces
 determined by kernels of the matrices is non-degenerate.
-This is the case for :math:`wt \in (0, 1) \cup (1, 2)`::
+This is the case for :math:`a \in (0, 1) \cup (1, 2)`::
 
-    sage: condition_subspaces_nondegenerate(W, Wt(wt=1/2))
+    sage: condition_subspaces_nondegenerate(W, Wt(a=1/2))
     True
-    sage: condition_subspaces_nondegenerate(W, Wt(wt=3/2))
+    sage: condition_subspaces_nondegenerate(W, Wt(a=3/2))
     True
 
 On the other hand, this condition does not hold if
-:math:`wt \in {1} \cup [2, \infty)`::
+:math:`a \in {1} \cup [2, \infty)`::
 
-    sage: condition_subspaces_nondegenerate(W, Wt(wt=1))
+    sage: condition_subspaces_nondegenerate(W, Wt(a=1))
     False
 
 To certify the result, we call::
 
-    sage: condition_subspaces_degenerate(W, Wt(wt=1), certify=True)
+    sage: condition_subspaces_degenerate(W, Wt(a=1), certify=True)
     (True, (1, 1, 0, 0, -1, 1))
 
 Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``Wt``
 can be covered by a sign vector ``(++000+)`` corresponding to ``ker(W)``.
 Further, ``v`` does not satisfy the support condition.
 
-    sage: condition_subspaces_nondegenerate(W, Wt(wt=2))
+    sage: condition_subspaces_nondegenerate(W, Wt(a=2))
     False
-    sage: condition_subspaces_nondegenerate(W, Wt(wt=3))
+    sage: condition_subspaces_nondegenerate(W, Wt(a=3))
     False
 """
 
