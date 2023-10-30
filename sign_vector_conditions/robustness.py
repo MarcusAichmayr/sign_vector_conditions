@@ -88,6 +88,12 @@ From the first two sets of conditions, we see that the closure condition is sati
 if ``c`` is zero and ``b`` is non-zero.
 The closure condition is also satisfied if ``a`` and ``b`` are negative and ``c`` is positive
 or if ``a`` and ``b`` are positive and ``c`` is negative.
+
+We can also apply the builtin function ``solve_ineq`` to the resulting sets of inequalities.
+For instance, the last inequality can be equivalently written as::
+
+    sage: solve_ineq(list(condition_closure_minors(W, Wt)[3])) # random
+    [[c < 0, 0 < b, a < 0]]
 """
 
 #############################################################################
@@ -156,8 +162,8 @@ def condition_closure_minors(W, Wt):
     if W.dimensions() != Wt.dimensions():
         raise ValueError('Matrices must have same rank and number of columns.')
 
-    positive_product_found = False
-    negative_product_found = False
+    positive_found = False
+    negative_found = False
     symbolic_pairs = set()
     for indices in Combinations(W.ncols(), W.nrows()):
         minor1 = W.matrix_from_columns(indices).det()
@@ -171,10 +177,10 @@ def condition_closure_minors(W, Wt):
             symbolic_pairs.add((minor1, product))
             continue
         if product > 0:
-            positive_product_found = True
+            positive_found = True
         elif product < 0:
-            negative_product_found = True
-        if positive_product_found and negative_product_found:
+            negative_found = True
+        if positive_found and negative_found:
             return False
 
-    return condition_closure_minors_utility(symbolic_pairs, positive_product_found, negative_product_found)
+    return condition_closure_minors_utility(symbolic_pairs, positive_found, negative_found)

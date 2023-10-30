@@ -165,7 +165,7 @@ def condition_closure_minors_utility(pairs, positive_only=False, negative_only=F
         r"""Recursive call"""
         pairs = [
             (minor, product) for minor, product in pairs
-            if not minor.is_zero() and not minor in zero_expressions
+            if not minor in zero_expressions and not minor.is_zero()
         ]
         for minor, _ in pairs:
             if is_symbolic(minor) and not minor in non_zero_expressions:
