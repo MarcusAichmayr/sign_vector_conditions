@@ -127,16 +127,16 @@ Depending on this parameter, the chemical reaction network has a unique equilibr
     [ 0  0  1 -1  0  0]
 
 The first two conditions depend on the sign vectors of the corresponding oriented matroids.
-Consequently, the choice of the positive parameter ``a`` does not affect the result.
-In order to compute the sign vectors, we can simply set ``a`` to ``1``::
+Consequently, the choice of the positive parameter ``a`` does not affect the result::
 
-    sage: condition_uniqueness_sign_vectors(W, Wt(a=1))
+    sage: assume(a > 0)
+    sage: condition_uniqueness_sign_vectors(W, Wt)
     True
 
-Hence, the map is injective.
+Hence, there exists at most one equilibrium.
 Also the face condition is satisfied::
 
-    sage: condition_faces(W, Wt(a=1))
+    sage: condition_faces(W, Wt)
     True
 
 For specific values of ``a``, the pair of subspaces
