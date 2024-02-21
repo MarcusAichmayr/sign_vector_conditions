@@ -320,14 +320,14 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
     """
     if W.ncols() != Wt.ncols():
         raise ValueError('Matrices have different number of columns.')
-    non_negative_covectors = non_negative_cocircuits_from_matrix(W, kernel=True)
+    non_negative_cocircuits = non_negative_cocircuits_from_matrix(W, kernel=True)
 
-    if not non_negative_covectors:
+    if not non_negative_cocircuits:
         if certify:
             return False, "no non-negative covectors"
         return False
 
-    non_negative_covectors = sorted(non_negative_covectors, key=lambda covector: len(covector.support()))
+    non_negative_cocircuits = sorted(non_negative_cocircuits, key=lambda covector: len(covector.support()))
     length = Wt.ncols()
     degenerate = False
 
@@ -344,13 +344,13 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         certificates_partial_cover = []
         certificate_support_condition = []
 
-    def rec(non_negative_covectors, kernel_matrix, indices, lower_bounds, upper_bounds):
+    def rec(non_negative_cocircuits, kernel_matrix, indices, lower_bounds, upper_bounds):
         r"""
         Recursive function.
 
         INPUT:
 
-        - ``non_negative_covectors`` -- a list of positive sign vectors
+        - ``non_negative_cocircuits`` -- a list of positive sign vectors
 
         - ``kernel_matrix`` -- a matrix
 
@@ -363,8 +363,8 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         nonlocal degenerate
         nonlocal certificate
 
-        while non_negative_covectors:
-            covector = non_negative_covectors.pop()
+        while non_negative_cocircuits:
+            covector = non_negative_cocircuits.pop()
             lower_bounds_new = copy(lower_bounds)
             upper_bounds_new = copy(upper_bounds)
             for i in covector.support():
@@ -395,7 +395,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             if exists_vector(evs_kernel, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
                 if certify:
                     certificates_partial_cover.append(indices_new)
-                rec(copy(non_negative_covectors), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
+                rec(copy(non_negative_cocircuits), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
             elif certify:
                 certificates_zero_equal_components.append(indices_new)
 
@@ -403,7 +403,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                 return
         return
 
-    rec(non_negative_covectors, kernel_matrix, [], lower_bounds, upper_bounds)
+    rec(non_negative_cocircuits, kernel_matrix, [], lower_bounds, upper_bounds)
 
     if certify:
         if degenerate:
