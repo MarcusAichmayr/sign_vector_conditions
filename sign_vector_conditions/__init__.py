@@ -12,7 +12,6 @@ In this package, we check several conditons from [MHR19]_ for exponential maps.
     sign_vector_conditions.uniqueness
     sign_vector_conditions.unique_existence
     sign_vector_conditions.robustness
-    sign_vector_conditions.maps
     sign_vector_conditions.utility
 """
 
