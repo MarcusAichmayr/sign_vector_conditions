@@ -61,7 +61,7 @@ For this purpose, we consider again the oriented matroid determined by ``W``::
 Since there are no non-negative covectors, the chemical reaction network has at least one equilibrium.
 The package offers a function to check this condition condition::
 
-    sage: condition_subspaces_nondegenerate(W, Wt)
+    sage: condition_nondegenerate(W, Wt)
     True
 
 Hence, the chemical reaction network has a unique equilibrium.
@@ -143,29 +143,29 @@ For specific values of ``a``, the pair of subspaces
 determined by kernels of the matrices is non-degenerate.
 This is the case for :math:`a \in (0, 1) \cup (1, 2)`::
 
-    sage: condition_subspaces_nondegenerate(W, Wt(a=1/2))
+    sage: condition_nondegenerate(W, Wt(a=1/2))
     True
-    sage: condition_subspaces_nondegenerate(W, Wt(a=3/2))
+    sage: condition_nondegenerate(W, Wt(a=3/2))
     True
 
 On the other hand, this condition does not hold if
 :math:`a \in {1} \cup [2, \infty)`::
 
-    sage: condition_subspaces_nondegenerate(W, Wt(a=1))
+    sage: condition_nondegenerate(W, Wt(a=1))
     False
 
 To certify the result, we call::
 
-    sage: condition_subspaces_degenerate(W, Wt(a=1), certify=True)
+    sage: condition_degenerate(W, Wt(a=1), certify=True)
     (True, (1, 1, 0, 0, -1, 1))
 
 Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``Wt``
 can be covered by a sign vector ``(++000+)`` corresponding to ``ker(W)``.
 Further, ``v`` does not satisfy the support condition.
 
-    sage: condition_subspaces_nondegenerate(W, Wt(a=2))
+    sage: condition_nondegenerate(W, Wt(a=2))
     False
-    sage: condition_subspaces_nondegenerate(W, Wt(a=3))
+    sage: condition_nondegenerate(W, Wt(a=3))
     False
 """
 
@@ -229,7 +229,7 @@ def condition_faces(W, Wt):
     return True
 
 
-def condition_subspaces_nondegenerate(W, Wt):
+def condition_nondegenerate(W, Wt):
     r"""
     Return whether a pair of subspaces given by matrices is non-degenerate.
 
@@ -244,12 +244,12 @@ def condition_subspaces_nondegenerate(W, Wt):
     
     .. SEEALSO::
     
-        :func:`~condition_subspaces_degenerate`
+        :func:`~condition_degenerate`
     """
-    return not condition_subspaces_degenerate(W, Wt)
+    return not condition_degenerate(W, Wt)
 
 
-def condition_subspaces_degenerate(W, Wt, certify=False):
+def condition_degenerate(W, Wt, certify=False):
     r"""
     Return whether a pair of subspaces given by matrices is degenerate.
 
@@ -279,14 +279,14 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
         sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
         sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
-        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        sage: condition_degenerate(W, Wt, certify=True)
         (False, 'no non-negative covectors')
 
     Here, we have a pair of degenerate subspaces::
 
         sage: W = matrix([[1, -1, 0], [0, 0, 1]])
         sage: Wt = matrix([[1, 0, 0], [0, 1, 0]])
-        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        sage: condition_degenerate(W, Wt, certify=True)
         (True, (1, 1, 0))
     
     The resulting vector lies in the row space of ``Wt``.
@@ -296,7 +296,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
         sage: W = matrix([[1, 1, 0, -1, 0], [0, 0, 1, -1, -1]])
         sage: Wt = matrix([[1, 1, 0, -1, 0], [0, 0, 1, 1, 1]])
-        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        sage: condition_degenerate(W, Wt, certify=True)
         (False, ([[[0, 2, 3]], [[1, 2, 3]]], [[[2, 4]]], []))
 
     The certificate tells us that there is no vector in the row space of ``Wt``
@@ -309,7 +309,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
 
         sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, -1]])
         sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
-        sage: condition_subspaces_degenerate(W, Wt, certify=True)
+        sage: condition_degenerate(W, Wt, certify=True)
         (False, ([], [[[2, 3]]], [[[[2, 3]], [(--++)]]]))
 
     In fact, a vector in ``Wt`` with equal positive components on ``[2, 3]``
@@ -342,7 +342,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
         certificates_partial_cover = []
         certificate_support_condition = []
 
-    def degenerate_recursive(non_negative_cocircuits, kernel_matrix, indices, lower_bounds, upper_bounds):
+    def recursive_degenerate(non_negative_cocircuits, kernel_matrix, indices, lower_bounds, upper_bounds):
         r"""
         Recursive function.
 
@@ -393,7 +393,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
             if exists_vector(evs_kernel, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)):
                 if certify:
                     certificates_partial_cover.append(indices_new)
-                degenerate_recursive(copy(non_negative_cocircuits), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
+                recursive_degenerate(copy(non_negative_cocircuits), kernel_matrix_new, indices_new, lower_bounds_new, upper_bounds_new)
             elif certify:
                 certificates_zero_equal_components.append(indices_new)
 
@@ -401,7 +401,7 @@ def condition_subspaces_degenerate(W, Wt, certify=False):
                 return
         return
 
-    degenerate_recursive(non_negative_cocircuits, kernel_matrix, [], lower_bounds, upper_bounds)
+    recursive_degenerate(non_negative_cocircuits, kernel_matrix, [], lower_bounds, upper_bounds)
 
     if certify:
         if is_degenerate:

@@ -106,7 +106,7 @@ def non_negative_covectors_from_matrix(M, kernel=True):
     return output
 
 
-def condition_closure_minors_utility(pairs, positive_only=False, negative_only=False):
+def closure_minors_utility(pairs, positive_only=False, negative_only=False):
     r"""
     Return whether all products of components are positive (or negative) if first element is non-zero.
 
@@ -127,21 +127,21 @@ def condition_closure_minors_utility(pairs, positive_only=False, negative_only=F
 
     TESTS::
 
-        sage: from sign_vector_conditions.utility import condition_closure_minors_utility
+        sage: from sign_vector_conditions.utility import closure_minors_utility
         sage: var('a, b, c')
         (a, b, c)
-        sage: condition_closure_minors_utility(zip([0, a], [0, a]), positive_only=True)
+        sage: closure_minors_utility(zip([0, a], [0, a]), positive_only=True)
         [{a == 0}, {a > 0}]
         sage: len(_) # for testing
         2
-        sage: condition_closure_minors_utility(zip([c, -1, c], [c, -b, -a * c])) # random
+        sage: closure_minors_utility(zip([c, -1, c], [c, -b, -a * c])) # random
         [{-b > 0, c == 0},
          {-b < 0, c == 0},
          {-b > 0, c > 0, -a*c > 0},
          {-b < 0, c < 0, -a*c < 0}]
         sage: len(_) # for testing
         4
-        sage: condition_closure_minors_utility(zip([c, -1, a], [c, -b, -a * c])) # random
+        sage: closure_minors_utility(zip([c, -1, a], [c, -b, -a * c])) # random
         [{-b > 0, a == 0, c == 0},
          {-b < 0, a == 0, c == 0},
          {-b > 0, a == 0, c > 0},
@@ -152,16 +152,16 @@ def condition_closure_minors_utility(pairs, positive_only=False, negative_only=F
          {-a*c < 0, c < 0, -b < 0}]]
         sage: len(_) # for testing
         8
-        sage: condition_closure_minors_utility(zip([-1, -1], [-1, -1]))
+        sage: closure_minors_utility(zip([-1, -1], [-1, -1]))
         True
-        sage: condition_closure_minors_utility(zip([-1, 1], [-1, 1]))
+        sage: closure_minors_utility(zip([-1, 1], [-1, 1]))
         False
-        sage: condition_closure_minors_utility(zip([0, 1], [0, 1]))
+        sage: closure_minors_utility(zip([0, 1], [0, 1]))
         True
-        sage: condition_closure_minors_utility([(1, 0)])
+        sage: closure_minors_utility([(1, 0)])
         False
     """
-    def rec(pairs, zero_expressions, non_zero_expressions):
+    def recursive(pairs, zero_expressions, non_zero_expressions):
         r"""Recursive call"""
         pairs = [
             (minor, product) for minor, product in pairs
@@ -169,8 +169,8 @@ def condition_closure_minors_utility(pairs, positive_only=False, negative_only=F
         ]
         for minor, _ in pairs:
             if is_symbolic(minor) and not minor in non_zero_expressions:
-                yield from rec(pairs, zero_expressions.union([minor]), non_zero_expressions)
-                yield from rec(pairs, zero_expressions, non_zero_expressions.union([minor]))
+                yield from recursive(pairs, zero_expressions.union([minor]), non_zero_expressions)
+                yield from recursive(pairs, zero_expressions, non_zero_expressions.union([minor]))
 
         products = set(
             sign_or_symbolic(product.substitute([value == 0 for value in zero_expressions]))
@@ -191,7 +191,7 @@ def condition_closure_minors_utility(pairs, positive_only=False, negative_only=F
                 negative_inequalities.remove(True)
             yield negative_inequalities.union(equalities).union(non_equalities)
 
-    output = list(rec(pairs, set(), set()))
+    output = list(recursive(pairs, set(), set()))
     for conditions in output.copy():
         if False in conditions:
             output.remove(conditions)

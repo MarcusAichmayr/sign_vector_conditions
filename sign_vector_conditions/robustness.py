@@ -109,7 +109,7 @@ For instance, the last set can be equivalently written as::
 from sage.combinat.combination import Combinations
 
 from sign_vectors.oriented_matroids import topes_from_matrix
-from .utility import is_symbolic, condition_closure_minors_utility
+from .utility import is_symbolic, closure_minors_utility
 
 
 def condition_closure_sign_vectors(W, Wt):
@@ -183,4 +183,4 @@ def condition_closure_minors(W, Wt):
         if positive_found and negative_found:
             return False
 
-    return condition_closure_minors_utility(symbolic_pairs, positive_found, negative_found)
+    return closure_minors_utility(symbolic_pairs, positive_found, negative_found)
