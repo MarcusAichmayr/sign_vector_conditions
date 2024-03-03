@@ -26,11 +26,11 @@ The package [elementary_vectors](https://github.com/MarcusAichmayr/elementary_ve
 To download and install the latest development version on a system where Sage
 was built from source or installed from official packages, run
 
-    $ sage -pip install git+https://github.com/MarcusAichmayr/sign_vector_conditions.git
+    sage -pip install git+https://github.com/MarcusAichmayr/sign_vector_conditions.git
 
 or
 
-    $ sage -pip install --user git+https://github.com/MarcusAichmayr/sign_vector_conditions.git
+    sage -pip install --user git+https://github.com/MarcusAichmayr/sign_vector_conditions.git
 
 The optional `--user` flag causes the package to be installed in your `.sage` directory instead of the Sage installation tree.
 
@@ -38,15 +38,15 @@ The optional `--user` flag causes the package to be installed in your `.sage` di
 
 Download the source from the git repository:
 
-    $ git clone https://github.com/MarcusAichmayr/sign_vector_conditions.git
+    git clone https://github.com/MarcusAichmayr/sign_vector_conditions.git
 
 Change to the root directory of the repository and run:
 
-    $ sage -pip install --upgrade --no-index -v .
+    sage -pip install --upgrade --no-index -v .
 
 You can also run instead the shorthand:
 
-    $ make install
+    make install
 
 ### Documentation
 
@@ -55,11 +55,11 @@ https://marcusaichmayr.github.io/sign_vector_conditions/index.html
 
 To generate the documentation of this package, run
 
-    $ make doc
+    make doc
 
 or
 
-    $ make doc-pdf
+    make doc-pdf
 
 at the root directory of the repository.
 
@@ -67,6 +67,6 @@ at the root directory of the repository.
 
 To run the test suite, install the package and run the command
 
-    $ make test
+    make test
 
 at the root directory of the repository.
