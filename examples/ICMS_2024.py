@@ -136,7 +136,7 @@ To consider the general case, we compute the maximal minors of :math:`S` and :ma
     [    1     0     a a - c     1]
     [    0     1     b     b     0]
     sage: from sign_vector_conditions import *
-    sage: condition_closure_minors(W, Wt)
+    sage: condition_closure_minors(W, Wt) # random order
     [{a > 0, b > 0, a - c > 0}]
 
 Hence, the network has a unique positive CBE if and only if :math:`a, b > 0` and :math:`a > c`.
@@ -145,7 +145,7 @@ Uniqueness
 **********
 ::
 
-    sage: condition_uniqueness_minors(W, Wt)
+    sage: condition_uniqueness_minors(W, Wt) # random order
     [{a >= 0, b >= 0, a - c >= 0}]
 
 Hence, positive CBE are unique if and only if :math:`a, b \geq 0` and :math:`a \geq c`.
