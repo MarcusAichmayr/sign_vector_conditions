@@ -1,9 +1,6 @@
 r"""
-Robustness of existence and uniqueness of equilibria.
-
-EXAMPLES::
-
-    sage: from sign_vector_conditions import *
+Robustness of existence and uniqueness of equilibria
+====================================================
 
 Let us consider the following matrices::
 
@@ -32,6 +29,7 @@ Therefore, the exponential map is a diffeomorphism for all ``c > 0``
 and all small perturbations of ``Wt``.
 The package offers a function that checks this condition directly::
 
+    sage: from sign_vector_conditions import *
     sage: condition_closure_sign_vectors(W, Wt)
     True
 

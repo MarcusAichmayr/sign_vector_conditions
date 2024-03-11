@@ -1,9 +1,6 @@
 r"""
-Existence and uniqueness of equilibria.
-
-EXAMPLES::
-
-    sage: from sign_vector_conditions import *
+Existence and uniqueness of equilibria
+======================================
 
 Let us consider the following matrices to describe a chemical reaction network::
 
@@ -18,6 +15,7 @@ Let us consider the following matrices to describe a chemical reaction network::
 
 To check whether a unique equilibrium exists, we apply :func:`~condition_uniqueness_minors`::
 
+    sage: from sign_vector_conditions import *
     sage: condition_uniqueness_minors(W, Wt)
     True
 

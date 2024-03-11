@@ -1,9 +1,6 @@
 r"""
-Uniqueness of equilibria.
-
-EXAMPLES::
-
-    sage: from sign_vector_conditions import *
+Uniqueness of equilibria
+========================
 
 We define some matrices::
 
@@ -49,6 +46,7 @@ We can compute the intersection directly by applying the built in method interse
 Therefore, there is at most one equilibrium.
 We can also check this condition in the following way::
 
+    sage: from sign_vector_conditions import *
     sage: condition_uniqueness_sign_vectors(W, Wt)
     True
 
