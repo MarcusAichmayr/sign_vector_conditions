@@ -9,3 +9,11 @@ To install this package for SageMath, visit the `repository on GitHub <https://g
     :toctree: generated
 
     sign_vector_conditions
+
+.. rubric:: Conference examples
+
+.. autosummary::
+    :toctree: generated
+
+    examples.ICMS_2024
+

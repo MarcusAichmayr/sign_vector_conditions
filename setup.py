@@ -27,7 +27,7 @@ setup(
       'Programming Language :: Python :: 3.8.5',
     ], # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords = ['chemical reaction networks', 'sign vector conditions, oriented matroids'],
-    packages = ['sign_vector_conditions'],
+    packages = ['sign_vector_conditions', 'examples'],
     setup_requires   = ['elementary_vectors'],
     install_requires   = ['elementary_vectors', 'sphinx'],
 )
