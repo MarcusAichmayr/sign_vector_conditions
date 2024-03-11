@@ -38,14 +38,14 @@ jobs:
         run: sage -pip install git+https://github.com/MarcusAichmayr/elementary_vectors.git
       - name: Install this package
         run: make install
+      - name: Run doctests
+        run: make test
       - name: Generate documentation
         run: make doc
       - name: Move documentation
         run: mv ./docs/build/html ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
-      - name: Run doctests
-        run: make test
 
   # Deployment job
   deploy:
