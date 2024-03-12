@@ -41,7 +41,7 @@ To verify it, we compute the maximal minors of the two matrices::
     sage: Wt.minors(2)
     [1, -1, 1, 1, 0, -1]
 
-From the output, we see whenever a minor of ``W`` is non-zero,
+From the output, we see whenever a minor of ``W`` is nonzero,
 the corresponding minor of ``Wt`` has the same sign.
 Hence, this condition is fulfilled.
 This condition can also be checked directly with the package::
@@ -83,7 +83,7 @@ In this case, we obtain the following equations on the variables::
 
 Thus, there are four possibilities to set the variables:
 From the first two sets of conditions, we see that the closure condition is satisfied
-if ``c`` is zero and ``b`` is non-zero.
+if ``c`` is zero and ``b`` is nonzero.
 The closure condition is also satisfied if ``a`` and ``b`` are negative and ``c`` is positive
 or if ``a`` and ``b`` are positive and ``c`` is negative.
 

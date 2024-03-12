@@ -56,7 +56,7 @@ For this purpose, we consider again the oriented matroid determined by ``W``::
     sage: covectors_from_matrix(W, kernel=True)
     {(0000), (+--+), (++--), (-0+0), (0-0+), (--++), (0+0-), (-++-), (+0-0)}
 
-Since there are no non-negative covectors, the chemical reaction network has at least one equilibrium.
+Since there are no nonnegative covectors, the chemical reaction network has at least one equilibrium.
 The package offers a function to check this condition condition::
 
     sage: condition_nondegenerate(W, Wt)
@@ -138,7 +138,7 @@ Also the face condition is satisfied::
     True
 
 For specific values of ``a``, the pair of subspaces
-determined by kernels of the matrices is non-degenerate.
+determined by kernels of the matrices is nondegenerate.
 This is the case for :math:`a \in (0, 1) \cup (1, 2)`::
 
     sage: condition_nondegenerate(W, Wt(a=1/2))
@@ -229,7 +229,7 @@ def condition_faces(W, Wt):
 
 def condition_nondegenerate(W, Wt):
     r"""
-    Return whether a pair of subspaces given by matrices is non-degenerate.
+    Return whether a pair of subspaces given by matrices is nondegenerate.
 
     INPUT:
 
@@ -272,13 +272,13 @@ def condition_degenerate(W, Wt, certify=False):
 
         sage: from sign_vector_conditions.unique_existence import *
 
-    Next, we certify our results. In the first examples, the subspaces are trivially non-degenerate
-    since there are no non-negative covectors in the kernel of ``W``::
+    Next, we certify our results. In the first examples, the subspaces are trivially nondegenerate
+    since there are no nonnegative covectors in the kernel of ``W``::
 
         sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
         sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
         sage: condition_degenerate(W, Wt, certify=True)
-        (False, 'no non-negative covectors')
+        (False, 'no nonnegative covectors')
 
     Here, we have a pair of degenerate subspaces::
 
@@ -288,9 +288,9 @@ def condition_degenerate(W, Wt, certify=False):
         (True, (1, 1, 0))
     
     The resulting vector lies in the row space of ``Wt``.
-    The non-negative covector ``(++0)`` in the kernel of ``W`` covers the first two equal components.
+    The nonnegative covector ``(++0)`` in the kernel of ``W`` covers the first two equal components.
 
-    In the following, we have another example for non-degenerate subspaces::
+    In the following, we have another example for nondegenerate subspaces::
 
         sage: W = matrix([[1, 1, 0, -1, 0], [0, 0, 1, -1, -1]])
         sage: Wt = matrix([[1, 1, 0, -1, 0], [0, 0, 1, 1, 1]])
@@ -320,7 +320,7 @@ def condition_degenerate(W, Wt, certify=False):
 
     if not non_negative_cocircuits:
         if certify:
-            return False, "no non-negative covectors"
+            return False, "no nonnegative covectors"
         return False
 
     non_negative_cocircuits = sorted(non_negative_cocircuits, key=lambda covector: len(covector.support()))

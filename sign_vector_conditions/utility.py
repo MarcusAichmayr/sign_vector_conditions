@@ -20,7 +20,7 @@ from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 def non_negative_cocircuits_from_matrix(M, kernel=True):
     r"""
-    Compute non-negative cocircuits.
+    Compute nonnegative cocircuits.
 
     INPUT:
 
@@ -30,7 +30,7 @@ def non_negative_cocircuits_from_matrix(M, kernel=True):
 
     OUTPUT:
 
-    Return a set of non-negative cocircuits determined by the kernel of ``M``. (default)
+    Return a set of nonnegative cocircuits determined by the kernel of ``M``. (default)
     If ``kernel`` is false, considers the row space of ``M``.
 
     EXAMPLES::
@@ -50,7 +50,7 @@ def non_negative_cocircuits_from_matrix(M, kernel=True):
 
 def non_negative_covectors_from_matrix(M, kernel=True):
     r"""
-    Compute all non-negative covectors.
+    Compute all nonnegative covectors.
 
     INPUT:
 
@@ -60,7 +60,7 @@ def non_negative_covectors_from_matrix(M, kernel=True):
 
     OUTPUT:
 
-    Return a set of non-negative covectors determined by the kernel of ``M``. (default)
+    Return a set of nonnegative covectors determined by the kernel of ``M``. (default)
     If ``kernel`` is false, considers the row space of ``M``.
 
     EXAMPLES::
@@ -108,7 +108,7 @@ def non_negative_covectors_from_matrix(M, kernel=True):
 
 def closure_minors_utility(pairs, positive_only=False, negative_only=False):
     r"""
-    Return whether all products of components are positive (or negative) if first element is non-zero.
+    Return whether all products of components are positive (or negative) if first element is nonzero.
 
     INPUT:
 
@@ -121,7 +121,7 @@ def closure_minors_utility(pairs, positive_only=False, negative_only=False):
     OUTPUT:
     Returns either a boolean or sets of conditions on variables occurring in the input.
     If the conditions of one of these sets are satisfied,
-    then for all non-zero elements of the first list,
+    then for all nonzero elements of the first list,
     the product with the corresponding element of the second list is positive.
     (Or all products are negative.)
 
@@ -287,7 +287,7 @@ def equal_entries_lists(length, indices):
 
 def non_negative_vectors(vectors):
     r"""
-    Return non-negative vectors.
+    Return nonnegative vectors.
 
     INPUT:
 
