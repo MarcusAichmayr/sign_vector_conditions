@@ -24,8 +24,8 @@ import sage.all
 # -- Project information -----------------------------------------------------
 
 project = u'sign_vector_conditions'
-copyright = u'2024, Marcus Aichmayr'
-author = u'Marcus Aichmayr'
+copyright = u'2024, Marcus S. Aichmayr'
+author = u'Marcus S. Aichmayr'
 
 # The short X.Y version
 version = u'1.0'
@@ -136,7 +136,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'sign_vector_conditions.tex', u'sign\\_vector\\_conditions Documentation',
-     u'Marcus Aichmayr', 'manual'),
+     u'Marcus S. Aichmayr', 'manual'),
 ]
 
 
