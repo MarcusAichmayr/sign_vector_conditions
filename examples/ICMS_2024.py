@@ -1,15 +1,20 @@
 r"""
-Examples for `ICMS 2024 <https://icms-conference.org/2024/>`_.
+Examples for ICMS 2024.
 
 A SageMath Package for Elementary and Sign Vectors with Applications to Chemical Reaction Networks
 --------------------------------------------------------------------------------------------------
 
 Here are the up-to-date examples appearing
-in TODO (link to extended abstract).
+in TODO (link to extended abstract)
+for `ICMS 2024 <https://icms-conference.org/2024/>`_.
 
 Elementary vectors
 ~~~~~~~~~~~~~~~~~~
-::
+
+Functions dealing with elementary vectors, solvability of linear inequality systems and oriented matroids
+are implemented in the package `elementary_vectors <https://github.com/MarcusAichmayr/elementary_vectors>`_.
+
+We compute elementary vectors, using maximal minors::
 
     sage: from elementary_vectors import *
     sage: M = matrix([[1, 1, 2, 0], [0, 0, 1, 2]])
@@ -23,7 +28,9 @@ Elementary vectors
 
 Solvability of linear inequality systems
 ****************************************
-::
+
+We state linear inequality systems as intersection of a vector space and a Cartesian product of intervals.
+To represent these objects, we use a matrix and a list of intervals::
 
     sage: from vectors_in_intervals import *
     sage: M = matrix([[1, 0, 1, 0], [0, 1, 1, 1]])
@@ -69,6 +76,9 @@ For further examples on elementary vectors, solvability of linear inequality sys
 
 Chemical reaction networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Several sign vector conditions for chemical reaction networks are implemented
+in the package `sign_vector_conditions <https://github.com/MarcusAichmayr/elementary_vectors>`_.
 
 Robustness
 **********
@@ -143,7 +153,8 @@ Hence, the network has a unique positive CBE if and only if :math:`a, b > 0` and
 
 Uniqueness
 **********
-::
+
+We can also use the maximal minors to study uniqueness of CBE::
 
     sage: condition_uniqueness_minors(W, Wt) # random order
     [{a >= 0, b >= 0, a - c >= 0}]
@@ -159,6 +170,7 @@ Depending on this parameter, the network has a unique positive CBE::
 
     sage: var('a')
     a
+    sage: assume(a > 0)
     sage: W = matrix(3, 6, [0, 0, 1, 1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, -1, 0, 0])
     sage: W
     [ 0  0  1  1 -1  0]
@@ -173,7 +185,6 @@ Depending on this parameter, the network has a unique positive CBE::
 The first two conditions depend on the sign vectors corresponding
 to the rows of these matrices which are independent of the specific value for :math:`a`::
 
-    sage: assume(a > 0)
     sage: condition_uniqueness_sign_vectors(W, Wt)
     True
 
