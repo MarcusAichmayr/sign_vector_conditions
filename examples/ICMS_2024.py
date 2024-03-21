@@ -77,6 +77,96 @@ For further examples on elementary vectors, solvability of linear inequality sys
 Chemical reaction networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Here, we give further details to the chemical reaction network appearing in the extended abstract.
+The incidence and source matrix are given by::
+
+    sage: I_E = matrix(5, 6, [-1, 1, 0, 1, 0, 0, 1, -1, -1, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 1, -1])
+    sage: I_E
+    [-1  1  0  1  0  0]
+    [ 1 -1 -1  0  0  0]
+    [ 0  0  1 -1  0  0]
+    [ 0  0  0  0 -1  1]
+    [ 0  0  0  0  1 -1]
+    sage: I_S = matrix(5, 6, [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1])
+    sage: I_S
+    [1 0 0 0 0 0]
+    [0 1 1 0 0 0]
+    [0 0 0 1 0 0]
+    [0 0 0 0 1 0]
+    [0 0 0 0 0 1]
+
+By introducing reaction rates, we obtain the Laplacian matrix::
+
+    sage: var('k12, k21, k23, k31, k45, k54')
+    (k12, k21, k23, k31, k45, k54)
+    sage: k = [k12, k21, k23, k31, k45, k54]
+    sage: A_k = I_E * diagonal_matrix(k) * I_S.T
+    sage: A_k
+    [      -k12        k21        k31          0          0]
+    [       k12 -k21 - k23          0          0          0]
+    [         0        k23       -k31          0          0]
+    [         0          0          0       -k45        k54]
+    [         0          0          0        k45       -k54]
+
+We have the following matrices of stoichiometric and kinetic-order complexes::
+
+    sage: Y = matrix(5, 5, [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]).T
+    sage: Y
+    [1 0 0 1 0]
+    [1 0 0 0 0]
+    [0 1 0 0 0]
+    [0 0 1 0 0]
+    [0 0 0 0 1]
+    sage: var('a,b,c')
+    (a, b, c)
+    sage: Yt = matrix(5, 5, [a, b, 0, 0, 0, 0, 0, 1, 0, 0, c, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]).T
+    sage: Yt
+    [a 0 c 1 0]
+    [b 0 0 0 0]
+    [0 1 0 0 0]
+    [0 0 1 0 0]
+    [0 0 0 0 1]
+
+The associated ODE system for the concentrations :math:`x` is given by::
+
+    sage: var('x1, x2, x3, x4, x5')
+    (x1, x2, x3, x4, x5)
+    sage: x = vector([x1, x2, x3, x4, x5])
+    sage: x_Yt = vector(prod(xi^yi for xi, yi in zip(x, y)) for y in Yt.columns())
+    sage: x_Yt
+    (x1^a*x2^b, x3, x1^c*x4, x1, x5)
+    sage: Y * A_k * x_Yt
+    (-k12*x1^a*x2^b + k31*x1^c*x4 - k45*x1 + k21*x3 + k54*x5, -k12*x1^a*x2^b + k31*x1^c*x4 + k21*x3, k12*x1^a*x2^b - (k21 + k23)*x3, -k31*x1^c*x4 + k23*x3, k45*x1 - k54*x5)
+
+To study CBE, we consider the column spaces of the following matrices::
+
+    sage: Y * I_E
+    [-1  1  0  1 -1  1]
+    [-1  1  0  1  0  0]
+    [ 1 -1 -1  0  0  0]
+    [ 0  0  1 -1  0  0]
+    [ 0  0  0  0  1 -1]
+    sage: Yt * I_E
+    [   -a     a     c a - c    -1     1]
+    [   -b     b     0     b     0     0]
+    [    1    -1    -1     0     0     0]
+    [    0     0     1    -1     0     0]
+    [    0     0     0     0     1    -1]
+
+We write the column spaces as matrices::
+
+    sage: S = matrix([[-1, -1, 1, 0, 0], [0, 0, -1, 1, 0], [-1, 0, 0, 0, 1]])
+    sage: S
+    [-1 -1  1  0  0]
+    [ 0  0 -1  1  0]
+    [-1  0  0  0  1]
+    sage: St = matrix([[-a, -b, 1, 0, 0], [c, 0, -1, 1, 0], [-1, 0, 0, 0, 1]])
+    sage: St
+    [-a -b  1  0  0]
+    [ c  0 -1  1  0]
+    [-1  0  0  0  1]
+
+By computing the sign vectors of these matrices, we can investigate existence and uniqueness of CBE.
 Several sign vector conditions for chemical reaction networks are implemented
 in the package `sign_vector_conditions <https://github.com/MarcusAichmayr/elementary_vectors>`_.
 
