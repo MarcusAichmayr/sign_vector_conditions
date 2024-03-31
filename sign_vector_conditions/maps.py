@@ -56,7 +56,7 @@ def f_exp(W, Wt, c=None):
         (1, 2, 4)
 
     Next, we compute the corresponding exponential map corresponding::
-        
+
         sage: f = f_exp(W, Wt, c)
         sage: f(1, 2)
         (e - 4*e^(-1), 2*e^2 - 4*e^(-1))
@@ -75,18 +75,19 @@ def f_exp(W, Wt, c=None):
         (-e^(-x) + e^x, -e^(-x) + e^y)
     """
     if W.dimensions() != Wt.dimensions():
-        raise ValueError('Matrices must have same dimensions.')
+        raise ValueError("Matrices must have same dimensions.")
 
     if c is None:
         c = vector(ones_matrix(1, W.ncols()))
     elif len(c) != W.ncols():
-        raise ValueError('Number of columns and dimension of ``c`` do not match.')
+        raise ValueError("Number of columns and dimension of ``c`` do not match.")
 
     def f(*x):
         return sum(
-                c_i * exp(Wt_i.dot_product(vector(x))) * W_i
-                for c_i, W_i, Wt_i in zip(c, W.columns(), Wt.columns())
+            c_i * exp(Wt_i.dot_product(vector(x))) * W_i
+            for c_i, W_i, Wt_i in zip(c, W.columns(), Wt.columns())
         )
+
     return f
 
 
@@ -139,17 +140,22 @@ def f_pol(W, Wt, c=None):
         (x - 1/x, y - 1/x)
     """
     if W.dimensions() != Wt.dimensions():
-        raise ValueError('Matrices must have same dimensions.')
+        raise ValueError("Matrices must have same dimensions.")
 
     if c is None:
         c = vector(ones_matrix(1, W.ncols()))
     elif len(c) != W.ncols():
-        raise ValueError('Number of columns and dimension of ``c`` do not match.')
+        raise ValueError("Number of columns and dimension of ``c`` do not match.")
 
     (d, n) = W.dimensions()
 
     def f(*x):
-        return vector(sum(W[i, j] * c[j] * prod([x[k]**Wt[k, j] for k in range(d)])
-                for j in range(n)) for i in range(d)
+        return vector(
+            sum(
+                W[i, j] * c[j] * prod([x[k] ** Wt[k, j] for k in range(d)])
+                for j in range(n)
+            )
+            for i in range(d)
         )
+
     return f

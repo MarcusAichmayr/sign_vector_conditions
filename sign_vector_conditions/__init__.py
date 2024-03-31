@@ -9,6 +9,7 @@ Conditions from [MHR19]_ for chemical reaction networks.
 .. autosummary::
     :toctree: generated
 
+    sign_vector_conditions.chemical_reaction_networks
     sign_vector_conditions.uniqueness
     sign_vector_conditions.unique_existence
     sign_vector_conditions.robustness

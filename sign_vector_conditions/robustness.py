@@ -158,7 +158,7 @@ def condition_closure_minors(W, Wt):
     W = W.matrix_from_rows(W.pivot_rows())
     Wt = Wt.matrix_from_rows(Wt.pivot_rows())
     if W.dimensions() != Wt.dimensions():
-        raise ValueError('Matrices must have same rank and number of columns.')
+        raise ValueError("Matrices must have same rank and number of columns.")
 
     positive_found = False
     negative_found = False

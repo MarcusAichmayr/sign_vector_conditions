@@ -86,10 +86,14 @@ def non_negative_covectors_from_matrix(M, kernel=True):
         sage: non_negative_covectors_from_matrix(M)
         {(+0+0), (+0++), (++00), (+++0), (000+), (++0+), (++++)}
     """
-    cocircuits = [cocircuit for cocircuit in cocircuits_from_matrix(M, kernel=kernel) if not cocircuit < 0]
+    cocircuits = [
+        cocircuit
+        for cocircuit in cocircuits_from_matrix(M, kernel=kernel)
+        if not cocircuit < 0
+    ]
 
     if not cocircuits:
-        raise ValueError('List of cocircuits is empty.')
+        raise ValueError("List of cocircuits is empty.")
     output = set()
     new_elements = {zero_sign_vector(M.ncols())}
     while new_elements:
@@ -161,23 +165,33 @@ def closure_minors_utility(pairs, positive_only=False, negative_only=False):
         sage: closure_minors_utility([(1, 0)])
         False
     """
+
     def recursive(pairs, zero_expressions, non_zero_expressions):
         r"""Recursive call"""
         pairs = [
-            (minor, product) for minor, product in pairs
+            (minor, product)
+            for minor, product in pairs
             if not minor in zero_expressions and not minor.is_zero()
         ]
         for minor, _ in pairs:
             if is_symbolic(minor) and not minor in non_zero_expressions:
-                yield from recursive(pairs, zero_expressions.union([minor]), non_zero_expressions)
-                yield from recursive(pairs, zero_expressions, non_zero_expressions.union([minor]))
+                yield from recursive(
+                    pairs, zero_expressions.union([minor]), non_zero_expressions
+                )
+                yield from recursive(
+                    pairs, zero_expressions, non_zero_expressions.union([minor])
+                )
 
         products = set(
-            sign_or_symbolic(product.substitute([value == 0 for value in zero_expressions]))
+            sign_or_symbolic(
+                product.substitute([value == 0 for value in zero_expressions])
+            )
             for _, product in pairs
         )
         equalities = set(value == 0 for value in zero_expressions)
-        non_equalities = set(value != 0 for value in non_zero_expressions if not value in products)
+        non_equalities = set(
+            value != 0 for value in non_zero_expressions if not value in products
+        )
 
         if not negative_only:
             positive_inequalities = set(value > 0 for value in products)
@@ -195,10 +209,10 @@ def closure_minors_utility(pairs, positive_only=False, negative_only=False):
     for conditions in output.copy():
         if False in conditions:
             output.remove(conditions)
-    if not output: # e.g. [1, -1], [1, 1]
+    if not output:  # e.g. [1, -1], [1, 1]
         return False
     output = remove_duplicates(output)
-    if output == [set()]: # e.g. [1], [1] or [0], [1]
+    if output == [set()]:  # e.g. [1], [1] or [0], [1]
         return True
     return output
 
@@ -242,7 +256,7 @@ def remove_duplicates(iterable):
     seen = set()
     result = []
     for item in iterable:
-        marker = frozenset(item) # only works if item is an iterable
+        marker = frozenset(item)  # only works if item is an iterable
         if marker in seen:
             continue
         seen.add(marker)
@@ -253,18 +267,18 @@ def remove_duplicates(iterable):
 def equal_entries_lists(length, indices):
     r"""
     Return a list of lists such that the corresponding kernel matrix has equal entries.
-    
+
     INPUT:
-    
+
     - ``length`` -- an integer
-    
+
     - ``indices`` -- a list of integers
-    
+
     OUTPUT:
     a list of lists
-    
+
     EXAMPLES::
-    
+
         sage: from sign_vector_conditions.utility import equal_entries_lists
         sage: equal_entries_lists(5, [1, 2, 3])
         [[0, 1, -1, 0, 0], [0, 1, 0, -1, 0]]
@@ -278,10 +292,11 @@ def equal_entries_lists(length, indices):
 
     one_position = indices[0]
     return [
-        [1 if i == one_position else
-            (-1 if i == minus_one_position else 0)
+        [
+            1 if i == one_position else (-1 if i == minus_one_position else 0)
             for i in range(length)
-        ] for minus_one_position in indices[1:]
+        ]
+        for minus_one_position in indices[1:]
     ]
 
 

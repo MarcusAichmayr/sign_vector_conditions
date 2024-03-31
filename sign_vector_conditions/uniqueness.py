@@ -215,11 +215,16 @@ def condition_uniqueness_sign_vectors(W, Wt):
         True
     """
     if W.ncols() != Wt.ncols():
-        raise ValueError('Matrices have different number of columns.')
+        raise ValueError("Matrices have different number of columns.")
 
-    return len(
-        covectors_from_matrix(W, kernel=False).intersection(covectors_from_matrix(Wt, kernel=True))
-    ) == 1
+    return (
+        len(
+            covectors_from_matrix(W, kernel=False).intersection(
+                covectors_from_matrix(Wt, kernel=True)
+            )
+        )
+        == 1
+    )
 
 
 def condition_uniqueness_minors(W, Wt):
@@ -308,7 +313,7 @@ def condition_uniqueness_minors(W, Wt):
     W = W.matrix_from_rows(W.pivot_rows())
     Wt = Wt.matrix_from_rows(Wt.pivot_rows())
     if W.dimensions() != Wt.dimensions():
-        raise ValueError('Matrices must have same rank and number of columns.')
+        raise ValueError("Matrices must have same rank and number of columns.")
 
     positive_product_found = False
     negative_product_found = False
@@ -338,6 +343,6 @@ def condition_uniqueness_minors(W, Wt):
     if symbolic_expressions:
         return [
             set(expression >= 0 for expression in symbolic_expressions),
-            set(expression <= 0 for expression in symbolic_expressions)
+            set(expression <= 0 for expression in symbolic_expressions),
         ]
     return False
