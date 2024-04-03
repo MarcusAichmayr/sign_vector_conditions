@@ -23,7 +23,6 @@ class GMAKSystem(SageObject):
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.chemical_reaction_networks import *
         sage: G = DiGraph({1: [2], 2: [1, 3], 3: [1], 4: [5], 5: [4]})
         sage: Y = matrix(5, 5, [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
         sage: Y
@@ -41,6 +40,7 @@ class GMAKSystem(SageObject):
         [c 0 0 1 0]
         [1 0 0 0 0]
         [0 0 0 0 1]
+        sage: from sign_vector_conditions.chemical_reaction_networks import *
         sage: crn = GMAKSystem(G, Y, Yt)
         sage: crn.incidence_matrix()
         [-1  1  0  1  0  0]
@@ -92,3 +92,9 @@ class GMAKSystem(SageObject):
 
     def kinetic_order_matrix(self):
         return self.incidence_matrix().T * self.kinetic_order_labels
+
+    def stoichiometric_matrix_kernel(self):
+        return self.stoichiometric_matrix().right_kernel_matrix()
+
+    def kinetic_order_matrix_kernel(self):
+        return self.kinetic_order_matrix().right_kernel_matrix()
