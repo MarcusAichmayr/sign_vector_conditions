@@ -78,17 +78,41 @@ Chemical reaction networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here, we give further details to the chemical reaction network appearing in the extended abstract.
+The chemical reaction network is given by a directed graph
+and labels for the stoichiometric and kinetic-order coefficients:
+
+    sage: G = DiGraph({1: [2], 2: [1, 3], 3: [1], 4: [5], 5: [4]})
+    sage: Y = matrix(5, 5, [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+    sage: Y
+    [1 1 0 0 0]
+    [0 0 1 0 0]
+    [0 0 0 1 0]
+    [1 0 0 0 0]
+    [0 0 0 0 1]
+    sage: var('a, b, c')
+    (a, b, c)
+    sage: Yt = matrix(5, 5, [a, b, 0, 0, 0, 0, 0, 1, 0, 0, c, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+    sage: Yt
+    [a b 0 0 0]
+    [0 0 1 0 0]
+    [c 0 0 1 0]
+    [1 0 0 0 0]
+    [0 0 0 0 1]
+
+We define our generalized mass-action system::
+
+    sage: from sign_vector_conditions.chemical_reaction_networks import *
+    sage: crn = GMAKSystem(G, Y, Yt)
+
 The incidence and source matrix are given by::
 
-    sage: I_E = matrix(5, 6, [-1, 1, 0, 1, 0, 0, 1, -1, -1, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 1, -1])
-    sage: I_E
+    sage: crn.incidence_matrix()
     [-1  1  0  1  0  0]
     [ 1 -1 -1  0  0  0]
     [ 0  0  1 -1  0  0]
     [ 0  0  0  0 -1  1]
     [ 0  0  0  0  1 -1]
-    sage: I_S = matrix(5, 6, [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1])
-    sage: I_S
+    sage: crn.source_matrix()
     [1 0 0 0 0 0]
     [0 1 1 0 0 0]
     [0 0 0 1 0 0]
@@ -108,25 +132,6 @@ By introducing reaction rates, we obtain the Laplacian matrix::
     [         0          0          0       -k45        k54]
     [         0          0          0        k45       -k54]
 
-We have the following matrices of stoichiometric and kinetic-order complexes::
-
-    sage: Y = matrix(5, 5, [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]).T
-    sage: Y
-    [1 0 0 1 0]
-    [1 0 0 0 0]
-    [0 1 0 0 0]
-    [0 0 1 0 0]
-    [0 0 0 0 1]
-    sage: var('a,b,c')
-    (a, b, c)
-    sage: Yt = matrix(5, 5, [a, b, 0, 0, 0, 0, 0, 1, 0, 0, c, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]).T
-    sage: Yt
-    [a 0 c 1 0]
-    [b 0 0 0 0]
-    [0 1 0 0 0]
-    [0 0 1 0 0]
-    [0 0 0 0 1]
-
 The associated ODE system for the concentrations :math:`x` is given by::
 
     sage: var('x1, x2, x3, x4, x5')
@@ -138,20 +143,22 @@ The associated ODE system for the concentrations :math:`x` is given by::
     sage: Y * A_k * x_Yt
     (-k12*x1^a*x2^b + k31*x1^c*x4 - k45*x1 + k21*x3 + k54*x5, -k12*x1^a*x2^b + k31*x1^c*x4 + k21*x3, k12*x1^a*x2^b - (k21 + k23)*x3, -k31*x1^c*x4 + k23*x3, k45*x1 - k54*x5)
 
-To study CBE, we consider the column spaces of the following matrices::
+To study CBE, we consider the stoichiometric and the kinetic-order matrices::
 
-    sage: Y * I_E
-    [-1  1  0  1 -1  1]
-    [-1  1  0  1  0  0]
-    [ 1 -1 -1  0  0  0]
-    [ 0  0  1 -1  0  0]
-    [ 0  0  0  0  1 -1]
-    sage: Yt * I_E
-    [   -a     a     c a - c    -1     1]
-    [   -b     b     0     b     0     0]
-    [    1    -1    -1     0     0     0]
-    [    0     0     1    -1     0     0]
-    [    0     0     0     0     1    -1]
+    sage: crn.stoichiometric_matrix()
+    [-1 -1  1  0  0]
+    [ 1  1 -1  0  0]
+    [ 0  0 -1  1  0]
+    [ 1  1  0 -1  0]
+    [-1  0  0  0  1]
+    [ 1  0  0  0 -1]
+    sage: crn.kinetic_order_matrix()
+    [   -a    -b     1     0     0]
+    [    a     b    -1     0     0]
+    [    c     0    -1     1     0]
+    [a - c     b     0    -1     0]
+    [   -1     0     0     0     1]
+    [    1     0     0     0    -1]
 
 We write the column spaces as matrices::
 
