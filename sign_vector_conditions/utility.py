@@ -18,7 +18,7 @@ from sign_vectors import sign_vector, zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 
-def non_negative_cocircuits_from_matrix(M, kernel=True):
+def non_negative_cocircuits_from_matrix(M, kernel: bool = True):
     r"""
     Compute nonnegative cocircuits.
 
@@ -48,7 +48,7 @@ def non_negative_cocircuits_from_matrix(M, kernel=True):
     return set(X for X in cocircuits_from_matrix(M, kernel=kernel) if X > 0)
 
 
-def non_negative_covectors_from_matrix(M, kernel=True):
+def non_negative_covectors_from_matrix(M, kernel: bool = True):
     r"""
     Compute all nonnegative covectors.
 
