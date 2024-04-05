@@ -15,6 +15,10 @@ from sage.matrix.constructor import matrix
 
 from elementary_vectors import kernel_matrix_using_elementary_vectors
 
+from .uniqueness import condition_uniqueness_minors
+from .unique_existence import condition_faces, condition_nondegenerate
+from .robustness import condition_closure_minors
+
 
 class GMAKSystem(SageObject):
     r"""
@@ -42,7 +46,7 @@ class GMAKSystem(SageObject):
         [c 0 0 1 0]
         [1 0 0 0 0]
         [0 0 0 0 1]
-        sage: from sign_vector_conditions.chemical_reaction_networks import *
+        sage: from sign_vector_conditions import *
         sage: crn = GMAKSystem(G, Y, Yt)
         sage: crn.incidence_matrix()
         [-1  1  0  1  0  0]
@@ -70,6 +74,10 @@ class GMAKSystem(SageObject):
         sage: crn.kinetic_order_matrix_kernel
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
+        sage: crn.has_robust_CBE()
+        [{a > 0, a - c > 0, b > 0}]
+        sage: crn.has_at_most_1_CBE()
+        [{a >= 0, a - c >= 0, b >= 0}]
     """
 
     def __init__(self, graph, stoichiometric_labels, kinetic_order_labels):
@@ -106,3 +114,27 @@ class GMAKSystem(SageObject):
 
     def _kinetic_order_matrix_kernel(self):
         return kernel_matrix_using_elementary_vectors(self.kinetic_order_matrix)
+
+    def has_robust_CBE(self):
+        r"""Check whether there is a unique positive CBE with regards to small perturbations."""
+        return condition_closure_minors(
+            self.stoichiometric_matrix_kernel, self.kinetic_order_matrix_kernel
+        )
+
+    def has_at_most_1_CBE(self):
+        r"""Check whether there is at most one positive CBE."""
+        return condition_uniqueness_minors(
+            self.stoichiometric_matrix_kernel, self.kinetic_order_matrix_kernel
+        )
+
+    def condition_faces(self):
+        r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
+        return condition_faces(
+            self.stoichiometric_matrix_kernel, self.kinetic_order_matrix_kernel
+        )
+
+    def are_subspaces_nondegenerate(self):
+        r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
+        return condition_nondegenerate(
+            self.stoichiometric_matrix_kernel, self.kinetic_order_matrix_kernel
+        )
