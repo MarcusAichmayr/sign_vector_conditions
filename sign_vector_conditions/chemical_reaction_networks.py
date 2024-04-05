@@ -93,9 +93,11 @@ class GMAKSystem(SageObject):
     #     return graph
 
     def incidence_matrix(self):
+        r"""Return the incidence matrix of the graph."""
         return self.graph.incidence_matrix()
 
     def source_matrix(self):
+        r"""Return the source matrix of the graph."""
         return matrix(
             (1 if value == -1 else 0 for value in row)
             for row in self.graph.incidence_matrix()
