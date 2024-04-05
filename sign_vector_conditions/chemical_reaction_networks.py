@@ -89,9 +89,9 @@ class GMAKSystem(SageObject):
         True
         sage: crn.is_weakly_reversible()
         True
-        sage: crn.has_robust_CBE()
+        sage: crn.has_robust_CBE() # random order
         [{a > 0, a - c > 0, b > 0}]
-        sage: crn.has_at_most_1_CBE()
+        sage: crn.has_at_most_1_CBE() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
     """
 
