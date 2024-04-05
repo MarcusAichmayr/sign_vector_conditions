@@ -27,7 +27,9 @@ class GMAKSystem(SageObject):
     A generalized mass-action system is represented by a (weighted) directed graph
     and stoichiometric and kinetic-order labels of the vertices.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    We define a chemical reaction network with generalized mass-action kinetics involving 5 complexes and 2 connected components::
 
         sage: G = DiGraph({1: [2], 2: [1, 3], 3: [1], 4: [5], 5: [4]})
         sage: Y = matrix(5, 5, [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
@@ -48,6 +50,9 @@ class GMAKSystem(SageObject):
         [0 0 0 0 1]
         sage: from sign_vector_conditions import *
         sage: crn = GMAKSystem(G, Y, Yt)
+
+    We compute the incidence and source matrices of the directed graph::
+
         sage: crn.incidence_matrix()
         [-1  1  0  1  0  0]
         [ 1 -1 -1  0  0  0]
@@ -60,6 +65,9 @@ class GMAKSystem(SageObject):
         [0 0 0 1 0 0]
         [0 0 0 0 1 0]
         [0 0 0 0 0 1]
+
+    We describe the stoichiometric and kinetic-order subspaces using matrices::
+
         sage: crn.stoichiometric_matrix
         [-1 -1  1  0  0]
         [ 0  0 -1  1  0]
@@ -74,6 +82,9 @@ class GMAKSystem(SageObject):
         sage: crn.kinetic_order_matrix_kernel
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
+
+    We check some conditions for our system::
+
         sage: crn.are_deficiencies_zero()
         True
         sage: crn.is_weakly_reversible()
