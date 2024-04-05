@@ -74,6 +74,10 @@ class GMAKSystem(SageObject):
         sage: crn.kinetic_order_matrix_kernel
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
+        sage: crn.are_deficiencies_zero()
+        True
+        sage: crn.is_weakly_reversible()
+        True
         sage: crn.has_robust_CBE()
         [{a > 0, a - c > 0, b > 0}]
         sage: crn.has_at_most_1_CBE()
@@ -103,6 +107,22 @@ class GMAKSystem(SageObject):
             for row in self.graph.incidence_matrix()
         )
 
+    def deficiency_stoichiometric(self):
+        r"""Return the stoichiometric deficiency."""
+        return (
+            self.graph.num_verts()
+            - self.graph.connected_components_number()
+            - self.stoichiometric_matrix.rank()
+        )
+
+    def deficiency_kinetic_order(self):
+        r"""Return the kinetic-order deficiency."""
+        return (
+            self.graph.num_verts()
+            - self.graph.connected_components_number()
+            - self.kinetic_order_matrix.rank()
+        )
+
     def _stoichiometric_matrix(self):
         M = self.incidence_matrix().T * self.stoichiometric_labels
         return M.matrix_from_rows(M.pivot_rows())
@@ -116,6 +136,20 @@ class GMAKSystem(SageObject):
 
     def _kinetic_order_matrix_kernel(self):
         return kernel_matrix_using_elementary_vectors(self.kinetic_order_matrix)
+
+    def are_deficiencies_zero(self):
+        r"""Return whether both deficiencies are zero."""
+        return (
+            self.deficiency_stoichiometric() == 0
+            and self.deficiency_kinetic_order() == 0
+        )
+
+    def is_weakly_reversible(self):
+        r"""Return whether each component of the system is strongly connected."""
+        return all(
+            g.is_strongly_connected()
+            for g in self.graph.connected_components_subgraphs()
+        )
 
     def has_robust_CBE(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
