@@ -118,6 +118,10 @@ class GMAKSystem(SageObject):
             for row in self.graph.incidence_matrix()
         )
 
+    def number_of_species(self):
+        r"""Return the number of species."""
+        return self.stoichiometric_matrix.ncols()
+
     def deficiency_stoichiometric(self):
         r"""Return the stoichiometric deficiency."""
         return (
