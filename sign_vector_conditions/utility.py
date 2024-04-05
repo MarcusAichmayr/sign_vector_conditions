@@ -12,8 +12,8 @@ r"""Utility functions"""
 
 from sage.functions.generalized import sign
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
 
+from elementary_vectors.utility import is_symbolic
 from sign_vectors import sign_vector, zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
@@ -215,33 +215,6 @@ def closure_minors_utility(pairs, positive_only=False, negative_only=False):
     if output == [set()]:  # e.g. [1], [1] or [0], [1]
         return True
     return output
-
-
-def is_symbolic(value):
-    r"""
-    Return whether this element is a symbolic expression.
-
-    If it belongs to the symbolic ring but doesn't contain any variables it does not count as "symbolic".
-
-    EXAMPLES::
-
-        sage: from sign_vector_conditions.utility import is_symbolic
-        sage: is_symbolic(5)
-        False
-        sage: var('a, b')
-        (a, b)
-        sage: is_symbolic(a)
-        True
-        sage: is_symbolic(-a)
-        True
-        sage: is_symbolic(b^2 - a)
-        True
-        sage: is_symbolic(SR(5))
-        False
-    """
-    if hasattr(value, "variables"):
-        return bool(value.variables())
-    return False
 
 
 def sign_or_symbolic(expression):

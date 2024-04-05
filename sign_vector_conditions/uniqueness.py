@@ -161,7 +161,7 @@ In this case, it returns a system of inequalities::
 from sage.combinat.combination import Combinations
 
 from sign_vectors.oriented_matroids import covectors_from_matrix
-from .utility import is_symbolic
+from elementary_vectors.utility import is_symbolic
 
 
 def condition_uniqueness_sign_vectors(W, Wt):

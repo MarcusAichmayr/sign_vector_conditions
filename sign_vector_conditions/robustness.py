@@ -107,7 +107,8 @@ For instance, the last set can be equivalently written as::
 from sage.combinat.combination import Combinations
 
 from sign_vectors.oriented_matroids import topes_from_matrix
-from .utility import is_symbolic, closure_minors_utility
+from .utility import closure_minors_utility
+from elementary_vectors.utility import is_symbolic
 
 
 def condition_closure_sign_vectors(W, Wt):
