@@ -124,7 +124,7 @@ By introducing reaction rates, we obtain the Laplacian matrix::
     sage: var('k12, k21, k23, k31, k45, k54')
     (k12, k21, k23, k31, k45, k54)
     sage: k = [k12, k21, k23, k31, k45, k54]
-    sage: A_k = I_E * diagonal_matrix(k) * I_S.T
+    sage: A_k = crn.incidence_matrix() * diagonal_matrix(k) * crn.source_matrix().T
     sage: A_k
     [      -k12        k21        k31          0          0]
     [       k12 -k21 - k23          0          0          0]
@@ -137,41 +137,28 @@ The associated ODE system for the concentrations :math:`x` is given by::
     sage: var('x1, x2, x3, x4, x5')
     (x1, x2, x3, x4, x5)
     sage: x = vector([x1, x2, x3, x4, x5])
-    sage: x_Yt = vector(prod(xi^yi for xi, yi in zip(x, y)) for y in Yt.columns())
+    sage: x_Yt = vector(prod(xi^yi for xi, yi in zip(x, y)) for y in Yt.rows())
     sage: x_Yt
     (x1^a*x2^b, x3, x1^c*x4, x1, x5)
-    sage: Y * A_k * x_Yt
+    sage: Y.T * A_k * x_Yt
     (-k12*x1^a*x2^b + k31*x1^c*x4 - k45*x1 + k21*x3 + k54*x5, -k12*x1^a*x2^b + k31*x1^c*x4 + k21*x3, k12*x1^a*x2^b - (k21 + k23)*x3, -k31*x1^c*x4 + k23*x3, k45*x1 - k54*x5)
 
 To study CBE, we consider the stoichiometric and the kinetic-order matrices::
 
-    sage: crn.stoichiometric_matrix()
-    [-1 -1  1  0  0]
-    [ 1  1 -1  0  0]
-    [ 0  0 -1  1  0]
-    [ 1  1  0 -1  0]
-    [-1  0  0  0  1]
-    [ 1  0  0  0 -1]
-    sage: crn.kinetic_order_matrix()
-    [   -a    -b     1     0     0]
-    [    a     b    -1     0     0]
-    [    c     0    -1     1     0]
-    [a - c     b     0    -1     0]
-    [   -1     0     0     0     1]
-    [    1     0     0     0    -1]
-
-We write the column spaces as matrices::
-
-    sage: S = matrix([[-1, -1, 1, 0, 0], [0, 0, -1, 1, 0], [-1, 0, 0, 0, 1]])
-    sage: S
+    sage: crn.stoichiometric_matrix
     [-1 -1  1  0  0]
     [ 0  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: St = matrix([[-a, -b, 1, 0, 0], [c, 0, -1, 1, 0], [-1, 0, 0, 0, 1]])
-    sage: St
+    sage: crn.kinetic_order_matrix
     [-a -b  1  0  0]
     [ c  0 -1  1  0]
     [-1  0  0  0  1]
+    sage: crn.stoichiometric_matrix_kernel
+    [1 0 1 1 1]
+    [0 1 1 1 0]
+    sage: crn.kinetic_order_matrix_kernel
+    [    1     0     a a - c     1]
+    [    0     1     b     b     0]
 
 By computing the sign vectors of these matrices, we can investigate existence and uniqueness of CBE.
 Several sign vector conditions for chemical reaction networks are implemented

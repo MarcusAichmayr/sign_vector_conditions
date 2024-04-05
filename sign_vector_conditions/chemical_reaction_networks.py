@@ -13,6 +13,8 @@ r"""Class for setting up chemical reaction networks with mass-action kinetics.""
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 
+from elementary_vectors import kernel_matrix_using_elementary_vectors
+
 
 class GMAKSystem(SageObject):
     r"""
@@ -54,26 +56,30 @@ class GMAKSystem(SageObject):
         [0 0 0 1 0 0]
         [0 0 0 0 1 0]
         [0 0 0 0 0 1]
-        sage: crn.stoichiometric_matrix()
+        sage: crn.stoichiometric_matrix
         [-1 -1  1  0  0]
-        [ 1  1 -1  0  0]
         [ 0  0 -1  1  0]
-        [ 1  1  0 -1  0]
         [-1  0  0  0  1]
-        [ 1  0  0  0 -1]
-        sage: crn.kinetic_order_matrix()
-        [   -a    -b     1     0     0]
-        [    a     b    -1     0     0]
-        [    c     0    -1     1     0]
-        [a - c     b     0    -1     0]
-        [   -1     0     0     0     1]
-        [    1     0     0     0    -1]
+        sage: crn.kinetic_order_matrix
+        [-a -b  1  0  0]
+        [ c  0 -1  1  0]
+        [-1  0  0  0  1]
+        sage: crn.stoichiometric_matrix_kernel
+        [1 0 1 1 1]
+        [0 1 1 1 0]
+        sage: crn.kinetic_order_matrix_kernel
+        [    1     0     a a - c     1]
+        [    0     1     b     b     0]
     """
 
     def __init__(self, graph, stoichiometric_labels, kinetic_order_labels):
         self.graph = graph
         self.stoichiometric_labels = stoichiometric_labels
         self.kinetic_order_labels = kinetic_order_labels
+        self.stoichiometric_matrix = self._stoichiometric_matrix()
+        self.kinetic_order_matrix = self._kinetic_order_matrix()
+        self.stoichiometric_matrix_kernel = self._stoichiometric_matrix_kernel()
+        self.kinetic_order_matrix_kernel = self._kinetic_order_matrix_kernel()
 
     # def _repr_(self):
     #     return graph
@@ -87,14 +93,16 @@ class GMAKSystem(SageObject):
             for row in self.graph.incidence_matrix()
         )
 
-    def stoichiometric_matrix(self):
-        return self.incidence_matrix().T * self.stoichiometric_labels
+    def _stoichiometric_matrix(self):
+        M = self.incidence_matrix().T * self.stoichiometric_labels
+        return M.matrix_from_rows(M.pivot_rows())
 
-    def kinetic_order_matrix(self):
-        return self.incidence_matrix().T * self.kinetic_order_labels
+    def _kinetic_order_matrix(self):
+        M = self.incidence_matrix().T * self.kinetic_order_labels
+        return M.matrix_from_rows(M.pivot_rows())
 
-    def stoichiometric_matrix_kernel(self):
-        return self.stoichiometric_matrix().right_kernel_matrix()
+    def _stoichiometric_matrix_kernel(self):
+        return kernel_matrix_using_elementary_vectors(self.stoichiometric_matrix)
 
-    def kinetic_order_matrix_kernel(self):
-        return self.kinetic_order_matrix().right_kernel_matrix()
+    def _kinetic_order_matrix_kernel(self):
+        return kernel_matrix_using_elementary_vectors(self.kinetic_order_matrix)
