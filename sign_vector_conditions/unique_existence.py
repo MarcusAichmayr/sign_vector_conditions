@@ -194,15 +194,15 @@ from vectors_in_intervals import (
 from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
 
-def condition_faces(W, Wt) -> bool:
+def condition_faces(stoichiometric_kernel_matrix, kinetic_order_kernel_matrix) -> bool:
     r"""
     Condition on positive sign vectors for existence and uniqueness of equilibria
 
     INPUT:
 
-    - ``W`` -- a matrix with ``n`` columns
+    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
 
-    - ``Wt`` -- a matrix with ``n`` columns
+    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
 
     OUTPUT:
     Return whether every positive sign vector ``X`` corresponding to the rows of
@@ -225,23 +225,29 @@ def condition_faces(W, Wt) -> bool:
         sage: condition_faces(W, Wt)
         True
     """
-    non_negative_cocircuits = non_negative_cocircuits_from_matrix(W, kernel=False)
+    non_negative_cocircuits = non_negative_cocircuits_from_matrix(
+        stoichiometric_kernel_matrix, kernel=False
+    )
 
-    for cocircuit1 in non_negative_cocircuits_from_matrix(Wt, kernel=False):
+    for cocircuit1 in non_negative_cocircuits_from_matrix(
+        kinetic_order_kernel_matrix, kernel=False
+    ):
         if not any(cocircuit2 <= cocircuit1 for cocircuit2 in non_negative_cocircuits):
             return False
     return True
 
 
-def condition_nondegenerate(W, Wt) -> bool:
+def condition_nondegenerate(
+    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
+) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is nondegenerate.
 
     INPUT:
 
-    - ``W`` -- a matrix with ``n`` columns
+    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
 
-    - ``Wt`` -- a matrix with ``n`` columns
+    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
 
     OUTPUT:
     a boolean
@@ -250,10 +256,14 @@ def condition_nondegenerate(W, Wt) -> bool:
 
         :func:`~condition_degenerate`
     """
-    return not condition_degenerate(W, Wt)
+    return not condition_degenerate(
+        stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
+    )
 
 
-def condition_degenerate(W, Wt, certify: bool = False) -> bool:
+def condition_degenerate(
+    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix, certify: bool = False
+) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is degenerate.
 
@@ -262,9 +272,9 @@ def condition_degenerate(W, Wt, certify: bool = False) -> bool:
 
     INPUT:
 
-    - ``W`` -- a matrix with ``n`` columns
+    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
 
-    - ``Wt`` -- a matrix with ``n`` columns
+    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
 
     - ``certify`` -- a boolean (default: ``False``)
 
@@ -320,9 +330,11 @@ def condition_degenerate(W, Wt, certify: bool = False) -> bool:
     corresponding to ``(--++)`` can be fully covered by covectors.
     However, this vector would not satisfy the support condition.
     """
-    if W.ncols() != Wt.ncols():
+    if stoichiometric_kernel_matrix.ncols() != kinetic_order_kernel_matrix.ncols():
         raise ValueError("Matrices have different number of columns.")
-    non_negative_cocircuits = non_negative_cocircuits_from_matrix(W, kernel=True)
+    non_negative_cocircuits = non_negative_cocircuits_from_matrix(
+        stoichiometric_kernel_matrix, kernel=True
+    )
 
     if not non_negative_cocircuits:
         if certify:
@@ -332,15 +344,17 @@ def condition_degenerate(W, Wt, certify: bool = False) -> bool:
     non_negative_cocircuits = sorted(
         non_negative_cocircuits, key=lambda covector: len(covector.support())
     )
-    length = Wt.ncols()
+    length = kinetic_order_kernel_matrix.ncols()
     is_degenerate = False
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
     upper_bounds_inf = [Infinity] * length
 
-    kernel_matrix = Wt.right_kernel_matrix()
-    covectors_support_condition = non_negative_cocircuits_from_matrix(W, kernel=False)
+    kernel_matrix = kinetic_order_kernel_matrix.right_kernel_matrix()
+    covectors_support_condition = non_negative_cocircuits_from_matrix(
+        stoichiometric_kernel_matrix, kernel=False
+    )
 
     if certify:
         certificate = []

@@ -153,10 +153,10 @@ To study CBE, we consider the stoichiometric and the kinetic-order matrices::
     [-a -b  1  0  0]
     [ c  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: crn.stoichiometric_matrix_kernel
+    sage: crn.stoichiometric_kernel_matrix
     [1 0 1 1 1]
     [0 1 1 1 0]
-    sage: crn.kinetic_order_matrix_kernel
+    sage: crn.kinetic_order_kernel_matrix
     [    1     0     a a - c     1]
     [    0     1     b     b     0]
 

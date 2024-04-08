@@ -111,15 +111,17 @@ from .utility import closure_minors_utility
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_closure_sign_vectors(W, Wt) -> bool:
+def condition_closure_sign_vectors(
+    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
+) -> bool:
     r"""
     Closure condition for robustness using sign vectors.
 
     INPUT:
 
-    - ``W`` -- a matrix with ``n`` columns
+    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
 
-    - ``Wt`` -- a matrix with ``n`` columns
+    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
 
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
@@ -129,22 +131,22 @@ def condition_closure_sign_vectors(W, Wt) -> bool:
         This implementation is inefficient and should not be used for large examples.
         Instead, use :func:`~condition_closure_minors`.
     """
-    topes = topes_from_matrix(Wt, kernel=True)
-    for covector1 in topes_from_matrix(W, kernel=True):
+    topes = topes_from_matrix(kinetic_order_kernel_matrix, kernel=True)
+    for covector1 in topes_from_matrix(stoichiometric_kernel_matrix, kernel=True):
         if not any(covector1 <= covector2 for covector2 in topes):
             return False
     return True
 
 
-def condition_closure_minors(W, Wt):
+def condition_closure_minors(stoichiometric_kernel_matrix, kinetic_order_kernel_matrix):
     r"""
     Closure condition for robustness using maximal maximal minors.
 
     INPUT:
 
-    - ``W`` -- a matrix
+    - ``stoichiometric_kernel_matrix`` -- a matrix
 
-    - ``Wt`` -- a matrix with the same dimensions as ``W``
+    - ``kinetic_order_kernel_matrix`` -- a matrix with the same dimensions as ``W``
 
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
@@ -156,19 +158,28 @@ def condition_closure_minors(W, Wt):
         The matrices need to have the same rank and number of columns.
         Otherwise, a ``ValueError`` is raised.
     """
-    W = W.matrix_from_rows(W.pivot_rows())
-    Wt = Wt.matrix_from_rows(Wt.pivot_rows())
-    if W.dimensions() != Wt.dimensions():
+    stoichiometric_kernel_matrix = stoichiometric_kernel_matrix.matrix_from_rows(
+        stoichiometric_kernel_matrix.pivot_rows()
+    )
+    kinetic_order_kernel_matrix = kinetic_order_kernel_matrix.matrix_from_rows(
+        kinetic_order_kernel_matrix.pivot_rows()
+    )
+    if (
+        stoichiometric_kernel_matrix.dimensions()
+        != kinetic_order_kernel_matrix.dimensions()
+    ):
         raise ValueError("Matrices must have same rank and number of columns.")
 
     positive_found = False
     negative_found = False
     symbolic_pairs = set()
-    for indices in Combinations(W.ncols(), W.nrows()):
-        minor1 = W.matrix_from_columns(indices).det()
+    for indices in Combinations(
+        stoichiometric_kernel_matrix.ncols(), stoichiometric_kernel_matrix.nrows()
+    ):
+        minor1 = stoichiometric_kernel_matrix.matrix_from_columns(indices).det()
         if not minor1:
             continue
-        minor2 = Wt.matrix_from_columns(indices).det()
+        minor2 = kinetic_order_kernel_matrix.matrix_from_columns(indices).det()
         if not minor2:
             return False
         product = minor1 * minor2

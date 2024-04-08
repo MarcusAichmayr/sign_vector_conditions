@@ -164,15 +164,17 @@ from sign_vectors.oriented_matroids import covectors_from_matrix
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_uniqueness_sign_vectors(W, Wt) -> bool:
+def condition_uniqueness_sign_vectors(
+    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
+) -> bool:
     r"""
     Uniqueness condition for existence of an equilibrium using sign vectors.
 
     INPUT:
 
-    - ``W`` -- a matrix with ``n`` columns
+    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
 
-    - ``Wt`` -- a matrix with ``n`` columns
+    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
 
     OUTPUT:
     Return whether there exists at most one equilibrium.
@@ -214,28 +216,32 @@ def condition_uniqueness_sign_vectors(W, Wt) -> bool:
         sage: condition_uniqueness_sign_vectors(A, B)
         True
     """
-    if W.ncols() != Wt.ncols():
+    if stoichiometric_kernel_matrix.ncols() != kinetic_order_kernel_matrix.ncols():
         raise ValueError("Matrices have different number of columns.")
 
     return (
         len(
-            covectors_from_matrix(W, kernel=False).intersection(
-                covectors_from_matrix(Wt, kernel=True)
+            covectors_from_matrix(
+                stoichiometric_kernel_matrix, kernel=False
+            ).intersection(
+                covectors_from_matrix(kinetic_order_kernel_matrix, kernel=True)
             )
         )
         == 1
     )
 
 
-def condition_uniqueness_minors(W, Wt):
+def condition_uniqueness_minors(
+    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
+):
     r"""
     Uniqueness condition for existence of an equilibrium using maximal minors.
 
     INPUT:
 
-    - ``W`` -- a matrix
+    - ``stoichiometric_kernel_matrix`` -- a matrix
 
-    - ``Wt`` -- a matrix
+    - ``kinetic_order_kernel_matrix`` -- a matrix
 
     OUTPUT:
     Return whether there exists at most one equilibrium.
@@ -310,20 +316,31 @@ def condition_uniqueness_minors(W, Wt):
         [b == 0, a < 0],
         [b < 0, a < 0]]
     """
-    W = W.matrix_from_rows(W.pivot_rows())
-    Wt = Wt.matrix_from_rows(Wt.pivot_rows())
-    if W.dimensions() != Wt.dimensions():
+    stoichiometric_kernel_matrix = stoichiometric_kernel_matrix.matrix_from_rows(
+        stoichiometric_kernel_matrix.pivot_rows()
+    )
+    kinetic_order_kernel_matrix = kinetic_order_kernel_matrix.matrix_from_rows(
+        kinetic_order_kernel_matrix.pivot_rows()
+    )
+    if (
+        stoichiometric_kernel_matrix.dimensions()
+        != kinetic_order_kernel_matrix.dimensions()
+    ):
         raise ValueError("Matrices must have same rank and number of columns.")
 
     positive_product_found = False
     negative_product_found = False
     symbolic_expressions = set()
 
-    for indices in Combinations(W.ncols(), W.nrows()):
-        minor1 = W.matrix_from_columns(indices).det()
+    for indices in Combinations(
+        stoichiometric_kernel_matrix.ncols(), stoichiometric_kernel_matrix.nrows()
+    ):
+        minor1 = stoichiometric_kernel_matrix.matrix_from_columns(indices).det()
         if not minor1:
             continue
-        product = minor1 * Wt.matrix_from_columns(indices).det()
+        product = (
+            minor1 * kinetic_order_kernel_matrix.matrix_from_columns(indices).det()
+        )
         if is_symbolic(product):
             symbolic_expressions.add(product)
         elif product > 0:
