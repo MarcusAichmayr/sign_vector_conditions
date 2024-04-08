@@ -164,7 +164,7 @@ from sign_vectors.oriented_matroids import covectors_from_matrix
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_uniqueness_sign_vectors(W, Wt):
+def condition_uniqueness_sign_vectors(W, Wt) -> bool:
     r"""
     Uniqueness condition for existence of an equilibrium using sign vectors.
 

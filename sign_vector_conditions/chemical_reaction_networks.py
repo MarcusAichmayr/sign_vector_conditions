@@ -95,7 +95,7 @@ class GMAKSystem(SageObject):
         [{a >= 0, a - c >= 0, b >= 0}]
     """
 
-    def __init__(self, graph, stoichiometric_labels, kinetic_order_labels):
+    def __init__(self, graph, stoichiometric_labels, kinetic_order_labels) -> None:
         self.graph = graph
         self.stoichiometric_labels = stoichiometric_labels
         self.kinetic_order_labels = kinetic_order_labels
@@ -104,7 +104,7 @@ class GMAKSystem(SageObject):
         self.stoichiometric_matrix_kernel = self._stoichiometric_matrix_kernel()
         self.kinetic_order_matrix_kernel = self._kinetic_order_matrix_kernel()
 
-    # def _repr_(self):
+    # def _repr_(self) -> str:
     #     return graph
 
     def incidence_matrix(self):
@@ -118,7 +118,7 @@ class GMAKSystem(SageObject):
             for row in self.graph.incidence_matrix()
         )
 
-    def number_of_species(self):
+    def number_of_species(self) -> int:
         r"""Return the number of species."""
         return self.stoichiometric_matrix.ncols()
 
@@ -152,14 +152,14 @@ class GMAKSystem(SageObject):
     def _kinetic_order_matrix_kernel(self):
         return kernel_matrix_using_elementary_vectors(self.kinetic_order_matrix)
 
-    def are_deficiencies_zero(self):
+    def are_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
         return (
             self.deficiency_stoichiometric() == 0
             and self.deficiency_kinetic_order() == 0
         )
 
-    def is_weakly_reversible(self):
+    def is_weakly_reversible(self) -> bool:
         r"""Return whether each component of the system is strongly connected."""
         return all(
             g.is_strongly_connected()
@@ -178,13 +178,13 @@ class GMAKSystem(SageObject):
             self.stoichiometric_matrix_kernel, self.kinetic_order_matrix_kernel
         )
 
-    def condition_faces(self):
+    def condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         return condition_faces(
             self.stoichiometric_matrix_kernel, self.kinetic_order_matrix_kernel
         )
 
-    def are_subspaces_nondegenerate(self):
+    def are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         return condition_nondegenerate(
             self.stoichiometric_matrix_kernel, self.kinetic_order_matrix_kernel

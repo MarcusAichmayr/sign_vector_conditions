@@ -194,7 +194,7 @@ from vectors_in_intervals import (
 from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
 
-def condition_faces(W, Wt):
+def condition_faces(W, Wt) -> bool:
     r"""
     Condition on positive sign vectors for existence and uniqueness of equilibria
 
@@ -233,7 +233,7 @@ def condition_faces(W, Wt):
     return True
 
 
-def condition_nondegenerate(W, Wt):
+def condition_nondegenerate(W, Wt) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is nondegenerate.
 
@@ -253,7 +253,7 @@ def condition_nondegenerate(W, Wt):
     return not condition_degenerate(W, Wt)
 
 
-def condition_degenerate(W, Wt, certify=False):
+def condition_degenerate(W, Wt, certify: bool = False) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is degenerate.
 

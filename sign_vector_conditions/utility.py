@@ -18,7 +18,7 @@ from sign_vectors import sign_vector, zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 
-def non_negative_cocircuits_from_matrix(M, kernel: bool = True):
+def non_negative_cocircuits_from_matrix(M, kernel: bool = True) -> set:
     r"""
     Compute nonnegative cocircuits.
 
@@ -48,7 +48,7 @@ def non_negative_cocircuits_from_matrix(M, kernel: bool = True):
     return set(X for X in cocircuits_from_matrix(M, kernel=kernel) if X > 0)
 
 
-def non_negative_covectors_from_matrix(M, kernel: bool = True):
+def non_negative_covectors_from_matrix(M, kernel: bool = True) -> set:
     r"""
     Compute all nonnegative covectors.
 
@@ -110,7 +110,7 @@ def non_negative_covectors_from_matrix(M, kernel: bool = True):
     return output
 
 
-def closure_minors_utility(pairs, positive_only=False, negative_only=False):
+def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bool = False):
     r"""
     Return whether all products of components are positive (or negative) if first element is nonzero.
 
@@ -237,7 +237,7 @@ def remove_duplicates(iterable):
     return result
 
 
-def equal_entries_lists(length, indices):
+def equal_entries_lists(length: int, indices: list[int]) -> list[list[int]]:
     r"""
     Return a list of lists such that the corresponding kernel matrix has equal entries.
 
@@ -273,7 +273,7 @@ def equal_entries_lists(length, indices):
     ]
 
 
-def non_negative_vectors(vectors):
+def non_negative_vectors(vectors) -> list:
     r"""
     Return nonnegative vectors.
 

@@ -111,7 +111,7 @@ from .utility import closure_minors_utility
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_closure_sign_vectors(W, Wt):
+def condition_closure_sign_vectors(W, Wt) -> bool:
     r"""
     Closure condition for robustness using sign vectors.
 
