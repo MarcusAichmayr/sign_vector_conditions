@@ -101,8 +101,8 @@ class GMAKSystem(SageObject):
         self.kinetic_order_labels = kinetic_order_labels
         self.stoichiometric_matrix = self._stoichiometric_matrix()
         self.kinetic_order_matrix = self._kinetic_order_matrix()
-        self.stoichiometric_kernel_matrix = self._stoichiometric_matrix_kernel()
-        self.kinetic_order_kernel_matrix = self._kinetic_order_matrix_kernel()
+        self.stoichiometric_kernel_matrix = self._stoichiometric_kernel_matrix()
+        self.kinetic_order_kernel_matrix = self._kinetic_order_kernel_matrix()
 
     # def _repr_(self) -> str:
     #     return graph
@@ -146,10 +146,10 @@ class GMAKSystem(SageObject):
         M = self.incidence_matrix().T * self.kinetic_order_labels
         return M.matrix_from_rows(M.pivot_rows())
 
-    def _stoichiometric_matrix_kernel(self):
+    def _stoichiometric_kernel_matrix(self):
         return kernel_matrix_using_elementary_vectors(self.stoichiometric_matrix)
 
-    def _kinetic_order_matrix_kernel(self):
+    def _kinetic_order_kernel_matrix(self):
         return kernel_matrix_using_elementary_vectors(self.kinetic_order_matrix)
 
     def are_deficiencies_zero(self) -> bool:
