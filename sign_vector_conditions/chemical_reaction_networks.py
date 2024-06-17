@@ -113,8 +113,8 @@ class GMAKSystem(SageObject):
             self.stoichiometric_kernel_matrix = None
             self.kinetic_order_kernel_matrix = None
 
-    # def _repr_(self) -> str:
-    #     return graph
+    def _repr_(self) -> str:
+        return f"System of GMAK with {self.stoichiometric_labels.nrows()} reactions and {self.stoichiometric_labels.ncols()} species"
 
     def __copy__(self):
         new = GMAKSystem(self.graph, self.stoichiometric_labels, self.kinetic_order_labels, set_matrices=False)
