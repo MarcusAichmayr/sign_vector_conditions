@@ -10,6 +10,7 @@ r"""Class for setting up chemical reaction networks with mass-action kinetics.""
 #  http://www.gnu.org/licenses/                                             #
 #############################################################################
 
+from copy import copy
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 
@@ -89,23 +90,55 @@ class GMAKSystem(SageObject):
         True
         sage: crn.is_weakly_reversible()
         True
+        sage: crn(a=2, b=1, c=1).has_robust_CBE()
+        True
         sage: crn.has_robust_CBE() # random order
         [{a > 0, a - c > 0, b > 0}]
         sage: crn.has_at_most_1_CBE() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
     """
 
-    def __init__(self, graph, stoichiometric_labels, kinetic_order_labels) -> None:
+    def __init__(self, graph, stoichiometric_labels, kinetic_order_labels, set_matrices=True) -> None:
         self.graph = graph
         self.stoichiometric_labels = stoichiometric_labels
         self.kinetic_order_labels = kinetic_order_labels
-        self.stoichiometric_matrix = self._stoichiometric_matrix()
-        self.kinetic_order_matrix = self._kinetic_order_matrix()
-        self.stoichiometric_kernel_matrix = self._stoichiometric_kernel_matrix()
-        self.kinetic_order_kernel_matrix = self._kinetic_order_kernel_matrix()
+        if set_matrices:
+            self.stoichiometric_matrix = self._stoichiometric_matrix()
+            self.kinetic_order_matrix = self._kinetic_order_matrix()
+            self.stoichiometric_kernel_matrix = self._stoichiometric_kernel_matrix()
+            self.kinetic_order_kernel_matrix = self._kinetic_order_kernel_matrix()
+        else:
+            self.stoichiometric_matrix = None
+            self.kinetic_order_matrix = None
+            self.stoichiometric_kernel_matrix = None
+            self.kinetic_order_kernel_matrix = None
 
     # def _repr_(self) -> str:
     #     return graph
+
+    def __copy__(self):
+        new = GMAKSystem(self.graph, self.stoichiometric_labels, self.kinetic_order_labels, set_matrices=False)
+        new.stoichiometric_matrix = self.stoichiometric_matrix
+        new.kinetic_order_matrix = self.kinetic_order_matrix
+        new.stoichiometric_kernel_matrix = self.stoichiometric_kernel_matrix
+        new.kinetic_order_kernel_matrix = self.kinetic_order_kernel_matrix
+        return new
+
+    def __call__(self, **kwargs):
+        new = copy(self)
+        for attribute in [
+            "stoichiometric_labels",
+            "kinetic_order_labels",
+            "stoichiometric_matrix",
+            "kinetic_order_matrix",
+            "stoichiometric_kernel_matrix",
+            "kinetic_order_kernel_matrix",
+        ]:
+            try:
+                setattr(new, attribute, getattr(self, attribute)(**kwargs))
+            except TypeError:
+                pass
+        return new
 
     def incidence_matrix(self):
         r"""Return the incidence matrix of the graph."""
