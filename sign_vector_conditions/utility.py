@@ -110,7 +110,7 @@ def non_negative_covectors_from_matrix(M, kernel: bool = True) -> set:
     return output
 
 
-def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bool = False):
+def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bool = False) -> list:
     r"""
     Return whether all products of components are positive (or negative) if first element is nonzero.
 
