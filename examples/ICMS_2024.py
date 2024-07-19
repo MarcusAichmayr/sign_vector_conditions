@@ -33,10 +33,12 @@ We state linear inequality systems as intersection of a vector space and a Carte
 To represent these objects, we use a matrix and a list of intervals::
 
     sage: from vectors_in_intervals import *
-    sage: M = matrix([[1, 0, 1, 0], [0, 1, 1, 1]])
+    sage: M = matrix([[1, 0], [0, 1], [1, 1], [0, 1]])
     sage: M
-    [1 0 1 0]
-    [0 1 1 1]
+    [1 0]
+    [0 1]
+    [1 1]
+    [0 1]
     sage: I = intervals_from_bounds([2, 5, 0, -oo], [5, oo, 8, 5], [True, True, False, False], [False, False, False, True])
     sage: I
     [[2, 5), [5, +oo), (0, 8), (-oo, 5]]
