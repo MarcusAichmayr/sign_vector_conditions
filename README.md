@@ -4,8 +4,6 @@
 
 a SageMath package to work with sign vector conditions for chemical reaction networks
 
-This package is still in development. Please inform me if something doesn't work as expected.
-
 ## License
 
 Distributed under the terms of the GNU General Public License (GPL, see the
@@ -15,7 +13,7 @@ LICENSE file), either version 3 or (at your option) any later version
 
 ## Requirements
 
-Sage 9.0 or later is recommended. Some features should work with older versions.
+Sage 9.0 or later is recommended.
 
 The package [elementary_vectors](https://github.com/MarcusAichmayr/elementary_vectors) is necessary for this package to work.
 
