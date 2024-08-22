@@ -413,7 +413,8 @@ def condition_degenerate(
                         is_degenerate = True
                         if certify:
                             certificate = vector_from_sign_vector(
-                                sign_pattern, elementary_vectors(kernel_matrix_new)
+                                elementary_vectors(kernel_matrix_new),
+                                sign_pattern
                             )
                         return
                     if certify:
