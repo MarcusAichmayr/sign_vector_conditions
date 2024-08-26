@@ -396,7 +396,7 @@ def condition_degenerate(
             kernel_matrix_new = matrix(
                 kernel_matrix.rows() + equal_entries_lists(length, covector.support())
             ).echelon_form()
-            evs_kernel = elementary_vectors(kernel_matrix_new.right_kernel_matrix())
+            evs_kernel = elementary_vectors(kernel_matrix_new, kernel=False)
 
             if exists_vector(evs_kernel, intervals):
                 if certify:
