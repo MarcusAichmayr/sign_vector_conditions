@@ -182,7 +182,7 @@ from copy import copy
 from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 
-from elementary_vectors import elementary_vectors
+from elementary_vectors.functions import ElementaryVectors
 from vectors_in_intervals import (
     intervals_from_bounds,
     exists_vector,
@@ -396,14 +396,14 @@ def condition_degenerate(
             kernel_matrix_new = matrix(
                 kernel_matrix.rows() + equal_entries_lists(length, covector.support())
             ).echelon_form()
-            evs_kernel = elementary_vectors(kernel_matrix_new, kernel=False)
+            evs = ElementaryVectors(kernel_matrix_new)
 
-            if exists_vector(evs_kernel, intervals):
+            if exists_vector(evs.generator(kernel=False), intervals):
                 if certify:
                     covectors_certificate_support_condition = []
                 for sign_pattern in sign_vectors_in_intervals(intervals):
                     if not exists_vector(
-                        evs_kernel, intervals_from_sign_vector(sign_pattern)
+                        evs.generator(kernel=False), intervals_from_sign_vector(sign_pattern)
                     ):
                         continue
                     if not any(
@@ -413,7 +413,7 @@ def condition_degenerate(
                         is_degenerate = True
                         if certify:
                             certificate = vector_from_sign_vector(
-                                elementary_vectors(kernel_matrix_new),
+                                evs.generator(kernel=True),
                                 sign_pattern
                             )
                         return
@@ -425,7 +425,7 @@ def condition_degenerate(
                     )
 
             if exists_vector(
-                evs_kernel, intervals_from_bounds(lower_bounds_new, upper_bounds_inf)
+                evs.generator(kernel=False), intervals_from_bounds(lower_bounds_new, upper_bounds_inf)
             ):
                 if certify:
                     certificates_partial_cover.append(indices_new)
