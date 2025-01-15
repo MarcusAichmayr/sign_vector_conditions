@@ -1,7 +1,7 @@
 r"""Class for setting up chemical reaction networks with mass-action kinetics."""
 
 #############################################################################
-#  Copyright (C) 2024                                                       #
+#  Copyright (C) 2025                                                       #
 #          Marcus S. Aichmayr (aichmayr@mathematik.uni-kassel.de)           #
 #                                                                           #
 #  Distributed under the terms of the GNU General Public License (GPL)      #
