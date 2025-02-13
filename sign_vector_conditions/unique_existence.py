@@ -28,7 +28,7 @@ corresponding to the matrices::
     sage: from sign_vectors.oriented_matroids import *
     sage: cc1 = cocircuits_from_matrix(W, kernel=False)
     sage: cc1
-    {(+0+0), (0-0-), (-0-0), (0+0+)}
+    {(0-0-), (+0+0), (-0-0), (0+0+)}
     sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
     sage: cc2
     {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
@@ -88,7 +88,7 @@ Now, we check the face condition::
     {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
     sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
     sage: cc2
-    {(+0+0), (0-0-), (-0-0), (0+0+)}
+    {(0-0-), (+0+0), (-0-0), (0+0+)}
 
 Again, we are only interested in the positive cocircuits::
 
