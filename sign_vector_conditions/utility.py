@@ -18,7 +18,7 @@ from sign_vectors import sign_vector, zero_sign_vector
 from sign_vectors.oriented_matroids import cocircuits_from_matrix
 
 
-def non_negative_cocircuits_from_matrix(M, kernel: bool = True) -> set:
+def non_negative_cocircuits_from_matrix(M, dual: bool = True) -> set:
     r"""
     Compute nonnegative cocircuits.
 
@@ -26,12 +26,12 @@ def non_negative_cocircuits_from_matrix(M, kernel: bool = True) -> set:
 
     - ``M`` -- a matrix with real arguments.
 
-    - ``kernel`` -- a boolean (default: ``True``)
+    - ``dual`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
     Return a set of nonnegative cocircuits determined by the kernel of ``M``. (default)
-    If ``kernel`` is false, considers the row space of ``M``.
+    If ``dual`` is false, considers the row space of ``M``.
 
     EXAMPLES::
 
@@ -45,10 +45,10 @@ def non_negative_cocircuits_from_matrix(M, kernel: bool = True) -> set:
         sage: non_negative_cocircuits_from_matrix(M)
         {(+0+0), (++00), (000+)}
     """
-    return set(X for X in cocircuits_from_matrix(M, kernel=kernel) if X > 0)
+    return set(X for X in cocircuits_from_matrix(M, dual=dual) if X > 0)
 
 
-def non_negative_covectors_from_matrix(M, kernel: bool = True) -> set:
+def non_negative_covectors_from_matrix(M, dual: bool = True) -> set:
     r"""
     Compute all nonnegative covectors.
 
@@ -56,12 +56,12 @@ def non_negative_covectors_from_matrix(M, kernel: bool = True) -> set:
 
     - ``M`` -- a matrix
 
-    - ``kernel`` -- a boolean (default: ``True``)
+    - ``dual`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
     Return a set of nonnegative covectors determined by the kernel of ``M``. (default)
-    If ``kernel`` is false, considers the row space of ``M``.
+    If ``dual`` is false, considers the row space of ``M``.
 
     EXAMPLES::
 
@@ -88,7 +88,7 @@ def non_negative_covectors_from_matrix(M, kernel: bool = True) -> set:
     """
     cocircuits = [
         cocircuit
-        for cocircuit in cocircuits_from_matrix(M, kernel=kernel)
+        for cocircuit in cocircuits_from_matrix(M, dual=dual)
         if not cocircuit < 0
     ]
 

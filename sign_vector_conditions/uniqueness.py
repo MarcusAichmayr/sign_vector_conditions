@@ -18,7 +18,7 @@ has at most one equilibrium for all rate constants.
 For this purpose, we compute the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cvW = covectors_from_matrix(W, kernel=False, algorithm='fe')
+    sage: cvW = covectors_from_matrix(W, dual=False, algorithm='fe')
     sage: cvW
     {(000),
      (+-+),
@@ -33,7 +33,7 @@ For this purpose, we compute the corresponding oriented matroids::
      (-0+),
      (--+),
      (++-)}
-    sage: cvWt = covectors_from_matrix(Wt, kernel=True, algorithm='fe')
+    sage: cvWt = covectors_from_matrix(Wt, dual=True, algorithm='fe')
     sage: cvWt
     {(000), (+0+), (-0-)}
 
@@ -84,11 +84,11 @@ Now, we consider another example::
 
 Next, we compute the corresponding oriented matroids::
 
-    sage: covectors_from_matrix(W, kernel=False, algorithm='fe', separate=True)
+    sage: covectors_from_matrix(W, dual=False, algorithm='fe', separate=True)
     [{(000)},
      {(-+0), (0-+), (0+-), (+-0), (+0-), (-0+)},
      {(+-+), (-+-), (--+), (-++), (++-), (+--)}]
-    sage: covectors_from_matrix(Wt, kernel=True, algorithm='fe', separate=True)
+    sage: covectors_from_matrix(Wt, dual=True, algorithm='fe', separate=True)
     [{(000)}, {(+-+), (-+-)}]
 
 Now, we check the condition from before::
@@ -222,9 +222,9 @@ def condition_uniqueness_sign_vectors(
     return (
         len(
             covectors_from_matrix(
-                stoichiometric_kernel_matrix, kernel=False
+                stoichiometric_kernel_matrix, dual=False
             ).intersection(
-                covectors_from_matrix(kinetic_order_kernel_matrix, kernel=True)
+                covectors_from_matrix(kinetic_order_kernel_matrix, dual=True)
             )
         )
         == 1

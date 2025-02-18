@@ -26,10 +26,10 @@ For this purpose, we compute the cocircuits of the oriented matroids
 corresponding to the matrices::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cc1 = cocircuits_from_matrix(W, kernel=False)
+    sage: cc1 = cocircuits_from_matrix(W, dual=False)
     sage: cc1
     {(0-0-), (+0+0), (-0-0), (0+0+)}
-    sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
+    sage: cc2 = cocircuits_from_matrix(Wt, dual=False)
     sage: cc2
     {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
 
@@ -53,7 +53,7 @@ to check whether this condition is fulfilled::
 We need to check a third condition to verify surjectivity.
 For this purpose, we consider again the oriented matroid determined by ``W``::
 
-    sage: covectors_from_matrix(W, kernel=True)
+    sage: covectors_from_matrix(W, dual=True)
     {(0000), (+--+), (++--), (-0+0), (0-0+), (--++), (0+0-), (-++-), (+0-0)}
 
 Since there are no nonnegative covectors, the chemical reaction network has at least one equilibrium.
@@ -83,10 +83,10 @@ Because of symmetry, there is at most one equilibrium::
 
 Now, we check the face condition::
 
-    sage: cc1 = cocircuits_from_matrix(W, kernel=False)
+    sage: cc1 = cocircuits_from_matrix(W, dual=False)
     sage: cc1
     {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
-    sage: cc2 = cocircuits_from_matrix(Wt, kernel=False)
+    sage: cc2 = cocircuits_from_matrix(Wt, dual=False)
     sage: cc2
     {(0-0-), (+0+0), (-0-0), (0+0+)}
 
@@ -226,11 +226,11 @@ def condition_faces(stoichiometric_kernel_matrix, kinetic_order_kernel_matrix) -
         True
     """
     non_negative_cocircuits = non_negative_cocircuits_from_matrix(
-        stoichiometric_kernel_matrix, kernel=False
+        stoichiometric_kernel_matrix, dual=False
     )
 
     for cocircuit1 in non_negative_cocircuits_from_matrix(
-        kinetic_order_kernel_matrix, kernel=False
+        kinetic_order_kernel_matrix, dual=False
     ):
         if not any(cocircuit2 <= cocircuit1 for cocircuit2 in non_negative_cocircuits):
             return False
@@ -333,7 +333,7 @@ def condition_degenerate(
     if stoichiometric_kernel_matrix.ncols() != kinetic_order_kernel_matrix.ncols():
         raise ValueError("Matrices have different number of columns.")
     non_negative_cocircuits = non_negative_cocircuits_from_matrix(
-        stoichiometric_kernel_matrix, kernel=True
+        stoichiometric_kernel_matrix, dual=True
     )
 
     if not non_negative_cocircuits:
@@ -353,7 +353,7 @@ def condition_degenerate(
 
     kernel_matrix = kinetic_order_kernel_matrix.right_kernel_matrix()
     covectors_support_condition = non_negative_cocircuits_from_matrix(
-        stoichiometric_kernel_matrix, kernel=False
+        stoichiometric_kernel_matrix, dual=False
     )
 
     if certify:
@@ -398,12 +398,12 @@ def condition_degenerate(
             ).echelon_form()
             evs = ElementaryVectors(kernel_matrix_new)
 
-            if exists_vector(evs.generator(kernel=False), intervals):
+            if exists_vector(evs.generator(dual=False), intervals):
                 if certify:
                     covectors_certificate_support_condition = []
                 for sign_pattern in sign_vectors_in_intervals(intervals):
                     if not exists_vector(
-                        evs.generator(kernel=False), intervals_from_sign_vector(sign_pattern)
+                        evs.generator(dual=False), intervals_from_sign_vector(sign_pattern)
                     ):
                         continue
                     if not any(
@@ -413,7 +413,7 @@ def condition_degenerate(
                         is_degenerate = True
                         if certify:
                             certificate = vector_from_sign_vector(
-                                evs.generator(kernel=True),
+                                evs.generator(dual=True),
                                 sign_pattern
                             )
                         return
@@ -425,7 +425,7 @@ def condition_degenerate(
                     )
 
             if exists_vector(
-                evs.generator(kernel=False), intervals_from_bounds(lower_bounds_new, upper_bounds_inf)
+                evs.generator(dual=False), intervals_from_bounds(lower_bounds_new, upper_bounds_inf)
             ):
                 if certify:
                     certificates_partial_cover.append(indices_new)

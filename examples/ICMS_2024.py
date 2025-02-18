@@ -178,7 +178,7 @@ To examine robustness of CBE, we compute the covectors corresponding to the resu
     [-1 -1  1  0  0]
     [ 0  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: covectors_from_matrix(S, kernel=False)
+    sage: covectors_from_matrix(S, dual=False)
     {(00000),
      (00+-0),
      (0-0+-),
@@ -245,7 +245,7 @@ To examine robustness of CBE, we compute the covectors corresponding to the resu
     [-a -b  1  0  0]
     [ c  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: covectors_from_matrix(St(a=2, b=1, c=1), kernel=False)
+    sage: covectors_from_matrix(St(a=2, b=1, c=1), dual=False)
     {(00000),
      (+-++-),
      (0--+-),
