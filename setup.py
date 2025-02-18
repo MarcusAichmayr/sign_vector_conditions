@@ -9,7 +9,7 @@ def readfile(filename):
 
 setup(
     name="sign_vector_conditions",
-    version="v1.1",
+    version="v1.2",
     description="a SageMath package to work with sign vector conditions for chemical reaction networks",
     long_description=readfile("README.md"),
     long_description_content_type="text/markdown",
@@ -30,5 +30,13 @@ setup(
         "sign vector conditions, oriented matroids",
     ],
     packages=["sign_vector_conditions", "examples"],
-    setup_requires=["elementary_vectors>=1.1"],
+    setup_requires=["elementary_vectors>=1.2"],
+    extras_require={
+        "passagemath": [
+            "passagemath-symbolics",
+            "passagemath-flint",
+            "passagemath-graphs",
+            "passagemath-repl",
+        ],
+    },
 )

@@ -26,11 +26,11 @@ was built from source or installed from official packages, run
 
     sage -pip install git+https://github.com/MarcusAichmayr/sign_vector_conditions.git
 
-or
+### Install from PyPI (recommended)
 
-    sage -pip install --user git+https://github.com/MarcusAichmayr/sign_vector_conditions.git
+To install the package for Python directly, run:
 
-The optional `--user` flag causes the package to be installed in your `.sage` directory instead of the Sage installation tree.
+    pip install sign-vector-conditions
 
 ### Local install from source
 
@@ -40,18 +40,27 @@ Download the source from the git repository:
 
 Change to the root directory of the repository and run:
 
-    sage -pip install --upgrade --no-index -v .
-
-You can also run instead the shorthand:
-
     make install
 
-### Documentation
+### Local install from source (no Sage installation required)
 
-The documentation of this package can be found on GitHub:
+Download the source from the git repository:
+
+    git clone https://github.com/MarcusAichmayr/sign_vector_conditions.git
+
+Change to the root directory of the repository and run:
+
+    python3 -m venv venv
+    . venv/bin/activate
+    pip install -v -e ".[passagemath]"
+
+## Documentation
+
+The documentation of this package is available on GitHub:
+
 https://marcusaichmayr.github.io/sign_vector_conditions/index.html
 
-To generate the documentation of this package, run
+To generate it, run
 
     make doc
 
@@ -61,7 +70,7 @@ or
 
 at the root directory of the repository.
 
-### Testing
+## Testing
 
 To run the test suite, install the package and run the command
 
