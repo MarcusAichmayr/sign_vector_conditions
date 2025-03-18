@@ -39,9 +39,9 @@ To represent these objects, we use a matrix and a list of intervals::
     [0 1]
     [1 1]
     [0 1]
-    sage: I = intervals_from_bounds([2, 5, 0, -oo], [5, oo, 8, 5], [True, True, False, False], [False, False, False, True])
+    sage: I = Intervals.from_bounds([2, 5, 0, -oo], [5, oo, 8, 5], [True, True, False, False], [False, False, False, True])
     sage: I
-    [[2, 5), [5, +oo), (0, 8), (-oo, 5]]
+    [2, 5) x [5, +oo) x (0, 8) x (-oo, 5]
     sage: exists_vector(M, I)
     True
 

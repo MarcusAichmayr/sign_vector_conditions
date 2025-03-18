@@ -183,13 +183,7 @@ from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 
 from elementary_vectors.functions import ElementaryVectors
-from vectors_in_intervals import (
-    intervals_from_bounds,
-    exists_vector,
-    vector_from_sign_vector,
-    sign_vectors_in_intervals,
-    intervals_from_sign_vector,
-)
+from vectors_in_intervals import exists_vector, sign_vectors_in_intervals, vector_from_sign_vector, Intervals
 
 from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
@@ -391,7 +385,7 @@ def condition_degenerate(
                 lower_bounds_new[i] = 1
                 upper_bounds_new[i] = Infinity
 
-            intervals = intervals_from_bounds(lower_bounds_new, upper_bounds_new)
+            intervals = Intervals.from_bounds(lower_bounds_new, upper_bounds_new)
             indices_new = indices + [covector.support()]
             kernel_matrix_new = matrix(
                 kernel_matrix.rows() + equal_entries_lists(length, covector.support())
@@ -403,7 +397,7 @@ def condition_degenerate(
                     covectors_certificate_support_condition = []
                 for sign_pattern in sign_vectors_in_intervals(intervals):
                     if not exists_vector(
-                        evs.generator(dual=False), intervals_from_sign_vector(sign_pattern)
+                        evs.generator(dual=False), Intervals.from_sign_vector(sign_pattern)
                     ):
                         continue
                     if not any(
@@ -425,7 +419,7 @@ def condition_degenerate(
                     )
 
             if exists_vector(
-                evs.generator(dual=False), intervals_from_bounds(lower_bounds_new, upper_bounds_inf)
+                evs.generator(dual=False), Intervals.from_bounds(lower_bounds_new, upper_bounds_inf)
             ):
                 if certify:
                     certificates_partial_cover.append(indices_new)
