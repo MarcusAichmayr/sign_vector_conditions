@@ -16,4 +16,3 @@ To install this SageMath package, visit the `repository on GitHub <https://githu
     :toctree: generated
 
     examples.ICMS_2024
-

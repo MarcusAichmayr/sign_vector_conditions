@@ -83,7 +83,8 @@ Here, we give further details to the chemical reaction network appearing in the 
 The chemical reaction network is given by a directed graph
 and labels for the stoichiometric and kinetic-order coefficients::
 
-    sage: G = DiGraph({1: [2], 2: [1, 3], 3: [1], 4: [5], 5: [4]})
+    sage: from sign_vector_conditions.chemical_reaction_networks import *
+    sage: edge_destinations = [[1], [0, 2], [0], [4], [3]]
     sage: Y = matrix(5, 5, [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
     sage: Y
     [1 1 0 0 0]
@@ -103,8 +104,7 @@ and labels for the stoichiometric and kinetic-order coefficients::
 
 We define our generalized mass-action system::
 
-    sage: from sign_vector_conditions.chemical_reaction_networks import *
-    sage: crn = GMAKSystem(G, Y, Yt)
+    sage: crn = GMAKSystem(edge_destinations, Y, Yt)
 
 The incidence and source matrix are given by::
 
