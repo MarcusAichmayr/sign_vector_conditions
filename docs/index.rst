@@ -15,5 +15,5 @@ To install this SageMath package, visit the `repository on GitHub <https://githu
 .. autosummary::
     :toctree: generated
 
-    examples.ICMS_2025
+    examples.ICMS_2024
 
