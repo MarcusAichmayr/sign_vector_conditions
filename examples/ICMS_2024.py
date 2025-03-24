@@ -132,7 +132,6 @@ By introducing reaction rates, we obtain the Laplacian matrix::
 
 We compute required matrices::
 
-    sage: crn.update_matrices()
     sage: Y = crn.matrix_of_complexes_stoichiometric
     sage: Y
     [1 1 0 0 0]
