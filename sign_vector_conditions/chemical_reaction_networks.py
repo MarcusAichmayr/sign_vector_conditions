@@ -163,6 +163,22 @@ class GMAKSystem(SageObject):
         [{a > 0, a - c > 0, b > 0}]
         sage: crn.has_at_most_1_CBE() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
+
+    We remove one component and a reaction of our system::
+
+        sage: crn.remove_complex(3)
+        sage: crn.remove_complex(4)
+        sage: crn.remove_reaction(1, 0)
+        sage: crn.remove_species(E)
+        sage: crn
+        Reaction network with 3 complexes and 3 reactions.
+        sage: crn.plot()
+        Graphics object consisting of 10 graphics primitives
+        sage: crn.set_matrices()
+        sage: crn.is_weakly_reversible()
+        True
+        sage: crn.has_at_most_1_CBE() # random order
+        [{a >= 0, a - c >= 0, b >= 0}]
     """
     def __init__(self, species: list) -> None:
         r"""
