@@ -120,10 +120,10 @@ class GMAKSystem(SageObject):
         self.matrix_of_complexes_stoichiometric = matrix_of_complexes_stoichiometric
         self.matrix_of_complexes_kinetic_order = matrix_of_complexes_kinetic_order
         if set_matrices:
-            self.matrix_stoichiometric = self._matrix_stoichiometric()
-            self.matrix_kinetic_order = self._matrix_kinetic_order()
-            self.kernel_matrix_stoichiometric = self._kernel_matrix_stoichiometric()
-            self.kernel_matrix_kinetic_order = self._kernel_matrix_kinetic_order()
+            self.set_matrix_stoichiometric()
+            self.set_matrix_kinetic_order()
+            self.set_kernel_matrix_stoichiometric()
+            self.set_kernel_matrix_kinetic_order()
         else:
             self.matrix_stoichiometric = None
             self.matrix_kinetic_order = None
@@ -163,7 +163,7 @@ class GMAKSystem(SageObject):
 
     def source_matrix(self):
         r"""Return the source matrix of the graph."""
-        return matrix((1 if value == -1 else 0 for value in row) for row in self.graph.incidence_matrix())
+        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix())
 
     def number_of_species(self) -> int:
         r"""Return the number of species."""
@@ -177,19 +177,19 @@ class GMAKSystem(SageObject):
         r"""Return the kinetic-order deficiency."""
         return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_kinetic_order.rank()
 
-    def _matrix_stoichiometric(self):
+    def set_matrix_stoichiometric(self):
         M = self.incidence_matrix().T * self.matrix_of_complexes_stoichiometric
-        return M.matrix_from_rows(M.pivot_rows())
+        self.matrix_stoichiometric = M.matrix_from_rows(M.pivot_rows())
 
-    def _matrix_kinetic_order(self):
+    def set_matrix_kinetic_order(self):
         M = self.incidence_matrix().T * self.matrix_of_complexes_kinetic_order
-        return M.matrix_from_rows(M.pivot_rows())
+        self.matrix_kinetic_order = M.matrix_from_rows(M.pivot_rows())
 
-    def _kernel_matrix_stoichiometric(self):
-        return kernel_matrix_using_elementary_vectors(self.matrix_stoichiometric)
+    def set_kernel_matrix_stoichiometric(self):
+        self.kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self.matrix_stoichiometric)
 
-    def _kernel_matrix_kinetic_order(self):
-        return kernel_matrix_using_elementary_vectors(self.matrix_kinetic_order)
+    def set_kernel_matrix_kinetic_order(self):
+        self.kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self.matrix_kinetic_order)
 
     def are_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
