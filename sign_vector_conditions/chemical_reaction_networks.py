@@ -121,8 +121,8 @@ class GMAKSystem(SageObject):
         - ``species`` -- a list of species.
         """
         self.species = species
-        self.complexes = dict()
-        self.complexes_kinetic_order = dict()
+        self.complexes = {}
+        self.complexes_kinetic_order = {}
         self.graph = DiGraph()
 
         self.matrix_of_complexes_stoichiometric = None
@@ -148,8 +148,8 @@ class GMAKSystem(SageObject):
 
     def __call__(self, **kwargs) -> GMAKSystem:
         new = copy(self)
-        new.complexes = {id: complex(**kwargs) for id, complex in self.complexes.items()}
-        new.complexes_kinetic_order = {id: complex(**kwargs) for id, complex in self.complexes_kinetic_order.items()}
+        new.complexes = {i: complex(**kwargs) for i, complex in self.complexes.items()}
+        new.complexes_kinetic_order = {i: complex(**kwargs) for i, complex in self.complexes_kinetic_order.items()}
         for attribute in [
             "matrix_of_complexes_stoichiometric",
             "matrix_of_complexes_kinetic_order",
@@ -158,25 +158,23 @@ class GMAKSystem(SageObject):
             "kernel_matrix_stoichiometric",
             "kernel_matrix_kinetic_order",
         ]:
-            try:
-                setattr(new, attribute, getattr(self, attribute)(**kwargs))
-            except TypeError:
-                pass
+            attr = getattr(self, attribute)
+            setattr(new, attribute, attr(**kwargs) if callable(attr) else attr)
         return new
 
     def add_complexes(self, complexes: list[tuple]) -> None:
         for complex in complexes:
             self.add_complex(*complex)
 
-    def add_complex(self, id: int, complex, complex_kinetic_order=None) -> None:
-        self.complexes[id] = complex
-        self.complexes_kinetic_order[id] = complex if complex_kinetic_order is None else complex_kinetic_order
-        self.graph.add_vertex(id)
+    def add_complex(self, i: int, complex, complex_kinetic_order=None) -> None:
+        self.complexes[i] = complex
+        self.complexes_kinetic_order[i] = complex if complex_kinetic_order is None else complex_kinetic_order
+        self.graph.add_vertex(i)
 
-    def remove_complex(self, id: int) -> None:
-        self.complexes.pop(id)
-        self.complexes_kinetic_order.pop(id)
-        self.graph.delete_vertex(id)
+    def remove_complex(self, i: int) -> None:
+        self.complexes.pop(i)
+        self.complexes_kinetic_order.pop(i)
+        self.graph.delete_vertex(i)
 
     def add_reactions(self, reactions: list[tuple]) -> None:
         for reaction in reactions:
@@ -198,7 +196,7 @@ class GMAKSystem(SageObject):
         return self.graph.edges()
 
     def add_species(self, species) -> None:
-        raise NotImplementedError("Do we really need this?")
+        # TODO do we need this
         self.species.append(species)
 
     def set_matrices(self) -> None:
@@ -220,12 +218,12 @@ class GMAKSystem(SageObject):
         )
 
     def set_matrix_stoichiometric(self):
-        M = self.incidence_matrix().T * self.matrix_of_complexes_stoichiometric
-        self.matrix_stoichiometric = M.matrix_from_rows(M.pivot_rows())
+        product = self.incidence_matrix().T * self.matrix_of_complexes_stoichiometric
+        self.matrix_stoichiometric = product.matrix_from_rows(product.pivot_rows())
 
     def set_matrix_kinetic_order(self):
-        M = self.incidence_matrix().T * self.matrix_of_complexes_kinetic_order
-        self.matrix_kinetic_order = M.matrix_from_rows(M.pivot_rows())
+        product = self.incidence_matrix().T * self.matrix_of_complexes_kinetic_order
+        self.matrix_kinetic_order = product.matrix_from_rows(product.pivot_rows())
 
     def set_kernel_matrix_stoichiometric(self):
         self.kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self.matrix_stoichiometric)
@@ -243,17 +241,17 @@ class GMAKSystem(SageObject):
 
     def plot(self, kinetic_order: bool = True):
         return self.graph.plot(
-            vertex_labels={id: self.vertex_label(id, kinetic_order=kinetic_order) for id in self.graph.vertices()},
+            vertex_labels={i: self.vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
             edge_labels=True,
             # edge_labels_background="transparent",
             vertex_colors="white",
             vertex_size=5000,
         )
 
-    def vertex_label(self, id: int, kinetic_order: bool = False) -> str:
-        if not kinetic_order or self.complexes[id] == self.complexes_kinetic_order[id]:
-            return f"{self.complexes[id]}"
-        return f"{self.complexes[id]}\n({self.complexes_kinetic_order[id]})"
+    def vertex_label(self, i: int, kinetic_order: bool = False) -> str:
+        if not kinetic_order or self.complexes[i] == self.complexes_kinetic_order[i]:
+            return f"{self.complexes[i]}"
+        return f"{self.complexes[i]}\n({self.complexes_kinetic_order[i]})"
 
     def edge_labels(self):
         # TODO remove?
