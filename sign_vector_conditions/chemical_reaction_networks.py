@@ -179,6 +179,28 @@ class ReactionNetwork(SageObject):
         True
         sage: crn.has_at_most_1_CBE() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
+
+    If a species is not specified, it will be ignored::
+
+        sage: crn.add_complex(4, E)
+        sage: crn.add_reaction(1, 4)
+        sage: crn
+        Reaction network with 4 complexes and 4 reactions.
+        sage: crn.species
+        [A, B, C, D]
+        sage: crn.plot()
+        Graphics object consisting of 13 graphics primitives
+
+    To overwrite complexes we add them as usual::
+
+        sage: crn.add_species(E)
+        sage: crn.add_complex(4, E)
+        sage: crn
+        Reaction network with 4 complexes and 4 reactions.
+        sage: crn.species
+        [A, B, C, D, E]
+        sage: crn.plot()
+        Graphics object consisting of 13 graphics primitives
     """
     def __init__(self, species: list) -> None:
         r"""
@@ -303,8 +325,11 @@ class ReactionNetwork(SageObject):
         product = self.incidence_matrix.T * self._matrix_of_complexes_kinetic_order
         self._matrix_kinetic_order = product.matrix_from_rows(product.pivot_rows())
 
-        self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric)
-        self._kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order)
+        try:
+            self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric)
+            self._kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order)
+        except ValueError:
+            print("TODO what should we do, when no zero minor?")
         self._update_needed = False
 
     def _matrix_from_complexes(self, complexes: list):
