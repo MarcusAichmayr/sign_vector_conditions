@@ -333,14 +333,14 @@ class GMAKSystem(SageObject):
 
     def plot(self, kinetic_order: bool = True):
         return self.graph.plot(
-            vertex_labels={i: self.vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
+            vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
             edge_labels=True,
             # edge_labels_background="transparent",
             vertex_colors="white",
             vertex_size=5000,
         )
 
-    def vertex_label(self, i: int, kinetic_order: bool = False) -> str:
+    def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
         if not kinetic_order or self.complexes[i] == self.complexes_kinetic_order[i]:
             return f"{self.complexes[i]}"
         return f"{self.complexes[i]}\n({self.complexes_kinetic_order[i]})"
