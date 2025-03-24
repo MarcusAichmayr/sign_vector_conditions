@@ -87,7 +87,7 @@ and labels for the stoichiometric and kinetic-order coefficients::
     sage: var('a, b, c')
     (a, b, c)
     sage: species = var('A, B, C, D, E')
-    sage: crn = GMAKSystem(species)
+    sage: crn = ReactionNetwork(species)
     sage: crn.add_complex(0, A + B, a * A + b * B)
     sage: crn.add_complex(1, C)
     sage: crn.add_complex(2, D, c * A + D)

@@ -24,7 +24,7 @@ from .unique_existence import condition_faces, condition_nondegenerate
 from .robustness import condition_closure_minors
 
 
-class GMAKSystem(SageObject):
+class ReactionNetwork(SageObject):
     r"""
     Class for chemical reaction networks with generalized mass-action kinetics.
 
@@ -39,7 +39,7 @@ class GMAKSystem(SageObject):
         sage: var('a, b')
         (a, b)
         sage: species = var('A, B, C')
-        sage: crn = GMAKSystem(species)
+        sage: crn = ReactionNetwork(species)
         sage: crn.add_complex(0, A + B, a * A + b * B)
         sage: crn.add_complex(1, C)
         sage: crn.add_reactions([(0, 1), (1, 0)])
@@ -204,8 +204,8 @@ class GMAKSystem(SageObject):
     def _repr_(self) -> str:
         return f"Reaction network with {self.graph.num_verts()} complexes and {self.graph.num_edges()} reactions."
 
-    def __copy__(self) -> GMAKSystem:
-        new = GMAKSystem(self.species)
+    def __copy__(self) -> ReactionNetwork:
+        new = ReactionNetwork(self.species)
         new.complexes = self.complexes.copy()
         new.complexes_kinetic_order = self.complexes_kinetic_order.copy()
         new.graph = self.graph.copy()
@@ -217,7 +217,7 @@ class GMAKSystem(SageObject):
         new._update_needed = False
         return new
 
-    def __call__(self, **kwargs) -> GMAKSystem:
+    def __call__(self, **kwargs) -> ReactionNetwork:
         new = copy(self)
         new.complexes = {i: complex(**kwargs) for i, complex in self.complexes.items()}
         new.complexes_kinetic_order = {i: complex(**kwargs) for i, complex in self.complexes_kinetic_order.items()}
