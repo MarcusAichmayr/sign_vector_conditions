@@ -104,13 +104,13 @@ and labels for the stoichiometric and kinetic-order coefficients::
 
 The incidence and source matrix are given by::
 
-    sage: crn.incidence_matrix()
+    sage: crn.incidence_matrix
     [-1  1  0  1  0  0]
     [ 1 -1 -1  0  0  0]
     [ 0  0  1 -1  0  0]
     [ 0  0  0  0 -1  1]
     [ 0  0  0  0  1 -1]
-    sage: crn.source_matrix()
+    sage: crn.source_matrix
     [1 0 0 0 0 0]
     [0 1 1 0 0 0]
     [0 0 0 1 0 0]
@@ -122,7 +122,7 @@ By introducing reaction rates, we obtain the Laplacian matrix::
     sage: var('k12, k21, k23, k31, k45, k54')
     (k12, k21, k23, k31, k45, k54)
     sage: k = [k12, k21, k23, k31, k45, k54]
-    sage: A_k = crn.incidence_matrix() * diagonal_matrix(k) * crn.source_matrix().T
+    sage: A_k = crn.incidence_matrix * diagonal_matrix(k) * crn.source_matrix.T
     sage: A_k
     [      -k12        k21        k31          0          0]
     [       k12 -k21 - k23          0          0          0]

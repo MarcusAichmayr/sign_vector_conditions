@@ -89,6 +89,8 @@ class ReactionNetwork(SageObject):
         sage: crn.add_species(D, E)
         sage: crn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: crn.add_reactions([(1, 2), (3, 4), (4, 3)])
+        sage: crn.reactions
+        [(0, 1, '$k_{01}$'), (1, 0, '$k_{10}$'), (1, 2, '$k_{12}$'), (3, 4, '$k_{34}$'), (4, 3, '$k_{43}$')]
         sage: crn
         Reaction network with 5 complexes and 5 reactions.
         sage: crn.plot()
@@ -107,13 +109,13 @@ class ReactionNetwork(SageObject):
 
     We compute the incidence and source matrices of the directed graph::
 
-        sage: crn.incidence_matrix()
+        sage: crn.incidence_matrix
         [-1  1  0  1  0  0]
         [ 1 -1 -1  0  0  0]
         [ 0  0  1 -1  0  0]
         [ 0  0  0  0 -1  1]
         [ 0  0  0  0  1 -1]
-        sage: crn.source_matrix()
+        sage: crn.source_matrix
         [1 0 0 0 0 0]
         [0 1 1 0 0 0]
         [0 0 0 1 0 0]
@@ -271,6 +273,7 @@ class ReactionNetwork(SageObject):
         self.graph.delete_edge(start, end)
         self._update_needed = True
 
+    @property
     def reactions(self) -> list:
         r"""Return reactions."""
         return self.graph.edges()
@@ -294,9 +297,9 @@ class ReactionNetwork(SageObject):
         self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes)
         self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
 
-        product = self.incidence_matrix().T * self._matrix_of_complexes_stoichiometric
+        product = self.incidence_matrix.T * self._matrix_of_complexes_stoichiometric
         self._matrix_stoichiometric = product.matrix_from_rows(product.pivot_rows())
-        product = self.incidence_matrix().T * self._matrix_of_complexes_kinetic_order
+        product = self.incidence_matrix.T * self._matrix_of_complexes_kinetic_order
         self._matrix_kinetic_order = product.matrix_from_rows(product.pivot_rows())
 
         self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric)
@@ -343,13 +346,15 @@ class ReactionNetwork(SageObject):
         r"""Return the kernel matrix of the kinetic-order matrix."""
         return self._get_matrix('_kernel_matrix_kinetic_order')
 
+    @property
     def incidence_matrix(self):
         r"""Return the incidence matrix of the graph."""
         return self.graph.incidence_matrix()
 
+    @property
     def source_matrix(self):
         r"""Return the source matrix of the graph."""
-        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix())
+        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix)
 
     def plot(self, kinetic_order: bool = True):
         return self.graph.plot(
