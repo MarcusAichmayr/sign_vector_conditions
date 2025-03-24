@@ -356,13 +356,15 @@ class ReactionNetwork(SageObject):
         r"""Return the source matrix of the graph."""
         return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix)
 
-    def plot(self, kinetic_order: bool = True, vertex_size=5000):
+    def plot(self, kinetic_order: bool = True, vertex_size=5000, **kwargs):
+        r"""Plot the reaction network."""
         return self.graph.plot(
             vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
             edge_labels=True,
             # edge_labels_background="transparent",
             vertex_colors="white",
             vertex_size=vertex_size,
+            **kwargs
         )
 
     def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
