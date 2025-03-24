@@ -84,27 +84,23 @@ The chemical reaction network is given by a directed graph
 and labels for the stoichiometric and kinetic-order coefficients::
 
     sage: from sign_vector_conditions.chemical_reaction_networks import *
-    sage: edge_destinations = [[1], [0, 2], [0], [4], [3]]
-    sage: Y = matrix(5, 5, [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
-    sage: Y
-    [1 1 0 0 0]
-    [0 0 1 0 0]
-    [0 0 0 1 0]
-    [1 0 0 0 0]
-    [0 0 0 0 1]
     sage: var('a, b, c')
     (a, b, c)
-    sage: Yt = matrix(5, 5, [a, b, 0, 0, 0, 0, 0, 1, 0, 0, c, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
-    sage: Yt
-    [a b 0 0 0]
-    [0 0 1 0 0]
-    [c 0 0 1 0]
-    [1 0 0 0 0]
-    [0 0 0 0 1]
-
-We define our generalized mass-action system::
-
-    sage: crn = GMAKSystem(edge_destinations, Y, Yt)
+    sage: species = var('A, B, C, D, E')
+    sage: crn = GMAKSystem(species)
+    sage: crn.add_complex(0, A + B, a * A + b * B)
+    sage: crn.add_complex(1, C)
+    sage: crn.add_complex(2, D, c * A + D)
+    sage: crn.add_complex(3, A)
+    sage: crn.add_complex(4, E)
+    sage: crn.add_reaction(0, 1)
+    sage: crn.add_reaction(1, 0, var("h"))
+    sage: crn.add_reaction(1, 2)
+    sage: crn.add_reaction(2, 0)
+    sage: crn.add_reaction(3, 4)
+    sage: crn.add_reaction(4, 3)
+    sage: crn
+    Reaction network with 5 complexes and 6 reactions.
 
 The incidence and source matrix are given by::
 
@@ -133,6 +129,24 @@ By introducing reaction rates, we obtain the Laplacian matrix::
     [         0        k23       -k31          0          0]
     [         0          0          0       -k45        k54]
     [         0          0          0        k45       -k54]
+
+We compute required matrices::
+
+    sage: crn.set_matrices()
+    sage: Y = crn.matrix_of_complexes_stoichiometric
+    sage: Y
+    [1 1 0 0 0]
+    [0 0 1 0 0]
+    [0 0 0 1 0]
+    [1 0 0 0 0]
+    [0 0 0 0 1]
+    sage: Yt = crn.matrix_of_complexes_kinetic_order
+    sage: Yt
+    [a b 0 0 0]
+    [0 0 1 0 0]
+    [c 0 0 1 0]
+    [1 0 0 0 0]
+    [0 0 0 0 1]
 
 The associated ODE system for the concentrations :math:`x` is given by::
 

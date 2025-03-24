@@ -36,24 +36,23 @@ class GMAKSystem(SageObject):
     We define a chemical reaction network with generalized mass-action kinetics involving 5 complexes and 2 connected components::
 
         sage: from sign_vector_conditions import *
-        sage: edge_destinations = [[1], [0, 2], [0], [4], [3]]
-        sage: Y = matrix([[1, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [1, 0, 0, 0, 0], [0, 0, 0, 0, 1]])
-        sage: Y
-        [1 1 0 0 0]
-        [0 0 1 0 0]
-        [0 0 0 1 0]
-        [1 0 0 0 0]
-        [0 0 0 0 1]
         sage: var('a, b, c')
         (a, b, c)
-        sage: Yt = matrix([[a, b, 0, 0, 0], [0, 0, 1, 0, 0], [c, 0, 0, 1, 0], [1, 0, 0, 0, 0], [0, 0, 0, 0, 1]])
-        sage: Yt
-        [a b 0 0 0]
-        [0 0 1 0 0]
-        [c 0 0 1 0]
-        [1 0 0 0 0]
-        [0 0 0 0 1]
-        sage: crn = GMAKSystem(edge_destinations, Y, Yt)
+        sage: species = var('A, B, C, D, E')
+        sage: crn = GMAKSystem(species)
+        sage: crn.add_complex(0, A + B, a * A + b * B)
+        sage: crn.add_complex(1, C)
+        sage: crn.add_complex(2, D, c * A + D)
+        sage: crn.add_complex(3, A)
+        sage: crn.add_complex(4, E)
+        sage: crn.add_reaction(0, 1)
+        sage: crn.add_reaction(1, 0, var("h"))
+        sage: crn.add_reaction(1, 2)
+        sage: crn.add_reaction(2, 0)
+        sage: crn.add_reaction(3, 4)
+        sage: crn.add_reaction(4, 3)
+        sage: crn
+        Reaction network with 5 complexes and 6 reactions.
 
     We compute the incidence and source matrices of the directed graph::
 
@@ -72,6 +71,19 @@ class GMAKSystem(SageObject):
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
+        sage: crn.set_matrices()
+        sage: crn.matrix_of_complexes_stoichiometric
+        [1 1 0 0 0]
+        [0 0 1 0 0]
+        [0 0 0 1 0]
+        [1 0 0 0 0]
+        [0 0 0 0 1]
+        sage: crn.matrix_of_complexes_kinetic_order
+        [a b 0 0 0]
+        [0 0 1 0 0]
+        [c 0 0 1 0]
+        [1 0 0 0 0]
+        [0 0 0 0 1]
         sage: crn.matrix_stoichiometric
         [-1 -1  1  0  0]
         [ 0  0 -1  1  0]
@@ -100,41 +112,34 @@ class GMAKSystem(SageObject):
         sage: crn.has_at_most_1_CBE() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
     """
-    def __init__(self, edge_destinations: list[list[int]], matrix_of_complexes_stoichiometric, matrix_of_complexes_kinetic_order, set_matrices=True) -> None:
+    def __init__(self, species: list) -> None:
         r"""
-        Initialize a chemical reaction network with generalized mass-action kinetics.
+        A (chemical) reaction network with (generalized) mass-action kinetics.
 
         INPUT:
 
-        - ``edge_destinations`` -- a list of lists of integers representing the directed graph
-        - ``matrix_of_complexes_stoichiometric`` -- a matrix of stoichiometric labels
-        - ``matrix_of_complexes_kinetic_order`` -- a matrix of kinetic-order labels
-        - ``set_matrices`` -- whether to compute the stoichiometric and kinetic-order matrices
-
-        The vertices of the graph are ``0, ..., n - 1``.
-        The ``i``th list in ``edge_destinations`` contains the destinations of the vertex ``i``.
-        The ``i``th row of ``matrix_of_complexes_stoichiometric`` and ``matrix_of_complexes_kinetic_order`` contain the labels of the vertex ``i``.
+        - ``species`` -- a list of species.
         """
-        self.edge_destinations = edge_destinations
-        self.graph = DiGraph(dict(enumerate(edge_destinations)))
-        self.matrix_of_complexes_stoichiometric = matrix_of_complexes_stoichiometric
-        self.matrix_of_complexes_kinetic_order = matrix_of_complexes_kinetic_order
-        if set_matrices:
-            self.set_matrix_stoichiometric()
-            self.set_matrix_kinetic_order()
-            self.set_kernel_matrix_stoichiometric()
-            self.set_kernel_matrix_kinetic_order()
-        else:
-            self.matrix_stoichiometric = None
-            self.matrix_kinetic_order = None
-            self.kernel_matrix_stoichiometric = None
-            self.kernel_matrix_kinetic_order = None
+        self.species = species
+        self.complexes = dict()
+        self.complexes_kinetic_order = dict()
+        self.graph = DiGraph()
+
+        self.matrix_of_complexes_stoichiometric = None
+        self.matrix_of_complexes_kinetic_order = None
+        self.matrix_stoichiometric = None
+        self.matrix_kinetic_order = None
+        self.kernel_matrix_stoichiometric = None
+        self.kernel_matrix_kinetic_order = None
 
     def _repr_(self) -> str:
-        return f"System of GMAK with {self.matrix_of_complexes_stoichiometric.nrows()} reactions and {self.matrix_of_complexes_stoichiometric.ncols()} species"
+        return f"Reaction network with {self.graph.num_verts()} complexes and {self.graph.num_edges()} reactions."
 
     def __copy__(self) -> GMAKSystem:
-        new = GMAKSystem(self.edge_destinations, self.matrix_of_complexes_stoichiometric, self.matrix_of_complexes_kinetic_order, set_matrices=False)
+        new = GMAKSystem(self.species)
+        new.complexes = self.complexes.copy()
+        new.complexes_kinetic_order = self.complexes_kinetic_order.copy()
+        new.graph = self.graph.copy()
         new.matrix_stoichiometric = self.matrix_stoichiometric
         new.matrix_kinetic_order = self.matrix_kinetic_order
         new.kernel_matrix_stoichiometric = self.kernel_matrix_stoichiometric
@@ -143,6 +148,8 @@ class GMAKSystem(SageObject):
 
     def __call__(self, **kwargs) -> GMAKSystem:
         new = copy(self)
+        new.complexes = {id: complex(**kwargs) for id, complex in self.complexes.items()}
+        new.complexes_kinetic_order = {id: complex(**kwargs) for id, complex in self.complexes_kinetic_order.items()}
         for attribute in [
             "matrix_of_complexes_stoichiometric",
             "matrix_of_complexes_kinetic_order",
@@ -157,25 +164,60 @@ class GMAKSystem(SageObject):
                 pass
         return new
 
-    def incidence_matrix(self):
-        r"""Return the incidence matrix of the graph."""
-        return self.graph.incidence_matrix()
+    def add_complexes(self, complexes: list[tuple]) -> None:
+        for complex in complexes:
+            self.add_complex(*complex)
 
-    def source_matrix(self):
-        r"""Return the source matrix of the graph."""
-        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix())
+    def add_complex(self, id: int, complex, complex_kinetic_order=None) -> None:
+        self.complexes[id] = complex
+        self.complexes_kinetic_order[id] = complex if complex_kinetic_order is None else complex_kinetic_order
+        self.graph.add_vertex(id)
 
-    def number_of_species(self) -> int:
-        r"""Return the number of species."""
-        return self.matrix_stoichiometric.ncols()
+    def remove_complex(self, id: int) -> None:
+        self.complexes.pop(id)
+        self.complexes_kinetic_order.pop(id)
+        self.graph.delete_vertex(id)
 
-    def deficiency_stoichiometric(self):
-        r"""Return the stoichiometric deficiency."""
-        return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_stoichiometric.rank()
+    def add_reactions(self, reactions: list[tuple]) -> None:
+        for reaction in reactions:
+            self.add_reaction(*reaction)
 
-    def deficiency_kinetic_order(self):
-        r"""Return the kinetic-order deficiency."""
-        return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_kinetic_order.rank()
+    def add_reaction(self, start: int, end: int, label: str = None) -> None:
+        for vertex in (start, end):
+            if vertex not in self.complexes:
+                self.add_complex(vertex, 0)
+        if label is None:
+            label = f"$k_{{{start}{end}}}$"
+            # label = var(f"k_{start}{end}")
+        self.graph.add_edge(start, end, label)
+
+    def remove_reaction(self, start: int, end: int) -> None:
+        self.graph.delete_edge(start, end)
+
+    def reactions(self) -> list:
+        return self.graph.edges()
+
+    def add_species(self, species) -> None:
+        raise NotImplementedError("Do we really need this?")
+        self.species.append(species)
+
+    def set_matrices(self) -> None:
+        self.set_matrices_of_complexes()
+        self.set_matrix_stoichiometric()
+        self.set_matrix_kinetic_order()
+        self.set_kernel_matrix_stoichiometric()
+        self.set_kernel_matrix_kinetic_order()
+        # TODO (re)computes matrices if changes have been detected?
+
+    def set_matrices_of_complexes(self) -> None:
+        self.matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes)
+        self.matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
+
+    def _matrix_from_complexes(self, complexes: list):
+        return matrix(
+            [0 if complex == 0 else complex.coefficient(s) for s in self.species]
+            for _, complex in sorted(complexes.items())
+        )
 
     def set_matrix_stoichiometric(self):
         M = self.incidence_matrix().T * self.matrix_of_complexes_stoichiometric
@@ -190,6 +232,40 @@ class GMAKSystem(SageObject):
 
     def set_kernel_matrix_kinetic_order(self):
         self.kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self.matrix_kinetic_order)
+
+    def incidence_matrix(self):
+        r"""Return the incidence matrix of the graph."""
+        return self.graph.incidence_matrix()
+
+    def source_matrix(self):
+        r"""Return the source matrix of the graph."""
+        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix())
+
+    def plot(self, kinetic_order: bool = True):
+        return self.graph.plot(
+            vertex_labels={id: self.vertex_label(id, kinetic_order=kinetic_order) for id in self.graph.vertices()},
+            edge_labels=True,
+            # edge_labels_background="transparent",
+            vertex_colors="white",
+            vertex_size=5000,
+        )
+
+    def vertex_label(self, id: int, kinetic_order: bool = False) -> str:
+        if not kinetic_order or self.complexes[id] == self.complexes_kinetic_order[id]:
+            return f"{self.complexes[id]}"
+        return f"{self.complexes[id]}\n({self.complexes_kinetic_order[id]})"
+
+    def edge_labels(self):
+        # TODO remove?
+        return self.graph.edge_labels()
+
+    def deficiency_stoichiometric(self):
+        r"""Return the stoichiometric deficiency."""
+        return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_stoichiometric.rank()
+
+    def deficiency_kinetic_order(self):
+        r"""Return the kinetic-order deficiency."""
+        return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_kinetic_order.rank()
 
     def are_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
