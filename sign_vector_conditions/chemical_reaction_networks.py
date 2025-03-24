@@ -50,7 +50,7 @@ class GMAKSystem(SageObject):
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
-        sage: crn.set_matrices()
+        sage: crn.update_matrices()
         sage: crn.matrix_of_complexes_stoichiometric
         [1 1 0]
         [0 0 1]
@@ -123,7 +123,7 @@ class GMAKSystem(SageObject):
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
-        sage: crn.set_matrices()
+        sage: crn.update_matrices()
         sage: crn.matrix_of_complexes_stoichiometric
         [1 1 0 0 0]
         [0 0 1 0 0]
@@ -174,7 +174,6 @@ class GMAKSystem(SageObject):
         Reaction network with 3 complexes and 3 reactions.
         sage: crn.plot()
         Graphics object consisting of 10 graphics primitives
-        sage: crn.set_matrices()
         sage: crn.is_weakly_reversible()
         True
         sage: crn.has_at_most_1_CBE() # random order
@@ -200,6 +199,8 @@ class GMAKSystem(SageObject):
         self.kernel_matrix_stoichiometric = None
         self.kernel_matrix_kinetic_order = None
 
+        self._update_needed = True
+
     def _repr_(self) -> str:
         return f"Reaction network with {self.graph.num_verts()} complexes and {self.graph.num_edges()} reactions."
 
@@ -212,6 +213,8 @@ class GMAKSystem(SageObject):
         new.matrix_kinetic_order = self.matrix_kinetic_order
         new.kernel_matrix_stoichiometric = self.kernel_matrix_stoichiometric
         new.kernel_matrix_kinetic_order = self.kernel_matrix_kinetic_order
+
+        new._update_needed = False
         return new
 
     def __call__(self, **kwargs) -> GMAKSystem:
@@ -240,12 +243,14 @@ class GMAKSystem(SageObject):
         self.complexes[i] = complex
         self.complexes_kinetic_order[i] = complex if complex_kinetic_order is None else complex_kinetic_order
         self.graph.add_vertex(i)
+        self._update_needed = True
 
     def remove_complex(self, i: int) -> None:
         r"""Remove complex from system."""
         self.complexes.pop(i)
         self.complexes_kinetic_order.pop(i)
         self.graph.delete_vertex(i)
+        self._update_needed = True
 
     def add_reactions(self, reactions: list[tuple]) -> None:
         r"""Add reactions to system."""
@@ -261,10 +266,12 @@ class GMAKSystem(SageObject):
             label = f"$k_{{{start}{end}}}$"
             # label = var(f"k_{start}{end}")
         self.graph.add_edge(start, end, label)
+        self._update_needed = True
 
     def remove_reaction(self, start: int, end: int) -> None:
         r"""Remove reaction from system."""
         self.graph.delete_edge(start, end)
+        self._update_needed = True
 
     def reactions(self) -> list:
         r"""Return reactions."""
@@ -274,13 +281,15 @@ class GMAKSystem(SageObject):
         r"""Add one or more species."""
         for s in species:
             self.species.append(s)
+        self._update_needed = True
 
     def remove_species(self, *species) -> None:
         r"""Remove one or more species."""
         for s in species:
             self.species.remove(s)
+        self._update_needed = True
 
-    def set_matrices(self) -> None:
+    def update_matrices(self) -> None:
         r"""Set stoichiometric and kinetic-order matrices."""
         self._set_matrices_of_complexes()
         self._set_matrix_stoichiometric()
@@ -288,6 +297,7 @@ class GMAKSystem(SageObject):
         self._set_kernel_matrix_stoichiometric()
         self._set_kernel_matrix_kinetic_order()
         # TODO (re)computes matrices if changes have been detected?
+        self._update_needed = False
 
     def _set_matrices_of_complexes(self) -> None:
         self.matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes)
@@ -341,10 +351,14 @@ class GMAKSystem(SageObject):
 
     def deficiency_stoichiometric(self):
         r"""Return the stoichiometric deficiency."""
+        if self._update_needed:
+            self.update_matrices()
         return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_stoichiometric.rank()
 
     def deficiency_kinetic_order(self):
         r"""Return the kinetic-order deficiency."""
+        if self._update_needed:
+            self.update_matrices()
         return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_kinetic_order.rank()
 
     def are_deficiencies_zero(self) -> bool:
@@ -357,16 +371,24 @@ class GMAKSystem(SageObject):
 
     def has_robust_CBE(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
+        if self._update_needed:
+            self.update_matrices()
         return condition_closure_minors(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
 
     def has_at_most_1_CBE(self):
         r"""Check whether there is at most one positive CBE."""
+        if self._update_needed:
+            self.update_matrices()
         return condition_uniqueness_minors(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
 
     def condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
+        if self._update_needed:
+            self.update_matrices()
         return condition_faces(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
 
     def are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
+        if self._update_needed:
+            self.update_matrices()
         return condition_nondegenerate(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
