@@ -144,7 +144,7 @@ Therefore, there is at most one equilibrium if and only if :math:`a, b \leq 0`.
 The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
-    sage: condition_uniqueness_minors(W, Wt)
+    sage: condition_uniqueness_minors(W, Wt) # random order
     [{-a >= 0, -b >= 0}]
 """
 
@@ -286,8 +286,12 @@ def condition_uniqueness_minors(
         sage: Wt
         [1 0 a]
         [0 1 b]
-        sage: condition_uniqueness_minors(W, Wt)
+        sage: condition_uniqueness_minors(W, Wt) # random order
         [{-a >= 0, -b >= 0}]
+        sage: conditions = condition_uniqueness_minors(W, Wt)[0]
+        sage: conditions # random order
+        sage: (-a >= 0) in conditions and (-b >= 0) in conditions # 
+        True
         sage: W = matrix([
         ....:     [a, 0, 1, 0],
         ....:     [0, 1, -1, 0],
