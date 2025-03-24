@@ -16,6 +16,7 @@ from copy import copy
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
+from sage.misc.latex import latex
 
 from elementary_vectors import kernel_matrix_using_elementary_vectors
 
@@ -369,8 +370,8 @@ class ReactionNetwork(SageObject):
 
     def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
         if not kinetic_order or self.complexes[i] == self.complexes_kinetic_order[i]:
-            return f"{self.complexes[i]}"
-        return f"{self.complexes[i]}\n({self.complexes_kinetic_order[i]})"
+            return f"${latex(self.complexes[i])}$"
+        return f"${latex(self.complexes[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
 
     def edge_labels(self):
         # TODO remove?
