@@ -36,23 +36,75 @@ class GMAKSystem(SageObject):
     We define a chemical reaction network with generalized mass-action kinetics involving 5 complexes and 2 connected components::
 
         sage: from sign_vector_conditions import *
-        sage: var('a, b, c')
-        (a, b, c)
-        sage: species = var('A, B, C, D, E')
+        sage: var('a, b')
+        (a, b)
+        sage: species = var('A, B, C')
         sage: crn = GMAKSystem(species)
         sage: crn.add_complex(0, A + B, a * A + b * B)
         sage: crn.add_complex(1, C)
-        sage: crn.add_complex(2, D, c * A + D)
-        sage: crn.add_complex(3, A)
-        sage: crn.add_complex(4, E)
-        sage: crn.add_reaction(0, 1)
-        sage: crn.add_reaction(1, 0, var("h"))
-        sage: crn.add_reaction(1, 2)
-        sage: crn.add_reaction(2, 0)
-        sage: crn.add_reaction(3, 4)
-        sage: crn.add_reaction(4, 3)
+        sage: crn.add_reactions([(0, 1), (1, 0)])
+        sage: crn
+        Reaction network with 2 complexes and 2 reactions.
+        sage: crn.plot()
+        Graphics object consisting of 8 graphics primitives
+
+    We describe the stoichiometric and kinetic-order subspaces using matrices::
+
+        sage: crn.set_matrices()
+        sage: crn.matrix_of_complexes_stoichiometric
+        [1 1 0]
+        [0 0 1]
+        sage: crn.matrix_of_complexes_kinetic_order
+        [a b 0]
+        [0 0 1]
+        sage: crn.matrix_stoichiometric
+        [-1 -1  1]
+        sage: crn.matrix_kinetic_order
+        [-a -b  1]
+        sage: crn.kernel_matrix_stoichiometric
+        [1 0 1]
+        [0 1 1]
+        sage: crn.kernel_matrix_kinetic_order
+        [1 0 a]
+        [0 1 b]
+
+    We check some conditions for our system::
+
+        sage: crn.are_deficiencies_zero()
+        True
+        sage: crn.is_weakly_reversible()
+        True
+        sage: crn(a=2, b=1).has_robust_CBE()
+        True
+        sage: crn.has_robust_CBE()
+        [{a > 0, b > 0}]
+        sage: crn.has_at_most_1_CBE()
+        [{a >= 0, b >= 0}]
+
+    We extend our network by adding further complexes and reactions::
+
+        sage: var('c')
+        c
+        sage: var('D, E')
+        (D, E)
+        sage: crn.add_species(D, E)
+        sage: crn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
+        sage: crn.add_reactions([(1, 2), (3, 4), (4, 3)])
+        sage: crn
+        Reaction network with 5 complexes and 5 reactions.
+        sage: crn.plot()
+        Graphics object consisting of 20 graphics primitives
+
+    To make this system weakly reversible, we add another reaction.
+    We specify a name for it::
+
+        sage: crn.is_weakly_reversible()
+        False
+        sage: crn.add_reaction(2, 0, "h")
         sage: crn
         Reaction network with 5 complexes and 6 reactions.
+        sage: crn.is_weakly_reversible()
+        True
 
     We compute the incidence and source matrices of the directed graph::
 
@@ -120,7 +172,7 @@ class GMAKSystem(SageObject):
 
         - ``species`` -- a list of species.
         """
-        self.species = species
+        self.species = species if isinstance(species, list) else list(species)
         self.complexes = {}
         self.complexes_kinetic_order = {}
         self.graph = DiGraph()
@@ -163,24 +215,29 @@ class GMAKSystem(SageObject):
         return new
 
     def add_complexes(self, complexes: list[tuple]) -> None:
+        r"""Add complexes to system."""
         for complex in complexes:
             self.add_complex(*complex)
 
     def add_complex(self, i: int, complex, complex_kinetic_order=None) -> None:
+        r"""Add complex to system."""
         self.complexes[i] = complex
         self.complexes_kinetic_order[i] = complex if complex_kinetic_order is None else complex_kinetic_order
         self.graph.add_vertex(i)
 
     def remove_complex(self, i: int) -> None:
+        r"""Remove complex from system."""
         self.complexes.pop(i)
         self.complexes_kinetic_order.pop(i)
         self.graph.delete_vertex(i)
 
     def add_reactions(self, reactions: list[tuple]) -> None:
+        r"""Add reactions to system."""
         for reaction in reactions:
             self.add_reaction(*reaction)
 
     def add_reaction(self, start: int, end: int, label: str = None) -> None:
+        r"""Add reaction to system."""
         for vertex in (start, end):
             if vertex not in self.complexes:
                 self.add_complex(vertex, 0)
@@ -190,24 +247,33 @@ class GMAKSystem(SageObject):
         self.graph.add_edge(start, end, label)
 
     def remove_reaction(self, start: int, end: int) -> None:
+        r"""Remove reaction from system."""
         self.graph.delete_edge(start, end)
 
     def reactions(self) -> list:
+        r"""Return reactions."""
         return self.graph.edges()
 
-    def add_species(self, species) -> None:
-        # TODO do we need this
-        self.species.append(species)
+    def add_species(self, *species) -> None:
+        r"""Add one or more species."""
+        for s in species:
+            self.species.append(s)
+
+    def remove_species(self, *species) -> None:
+        r"""Remove one or more species."""
+        for s in species:
+            self.species.remove(s)
 
     def set_matrices(self) -> None:
-        self.set_matrices_of_complexes()
-        self.set_matrix_stoichiometric()
-        self.set_matrix_kinetic_order()
-        self.set_kernel_matrix_stoichiometric()
-        self.set_kernel_matrix_kinetic_order()
+        r"""Set stoichiometric and kinetic-order matrices."""
+        self._set_matrices_of_complexes()
+        self._set_matrix_stoichiometric()
+        self._set_matrix_kinetic_order()
+        self._set_kernel_matrix_stoichiometric()
+        self._set_kernel_matrix_kinetic_order()
         # TODO (re)computes matrices if changes have been detected?
 
-    def set_matrices_of_complexes(self) -> None:
+    def _set_matrices_of_complexes(self) -> None:
         self.matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes)
         self.matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
 
@@ -217,18 +283,18 @@ class GMAKSystem(SageObject):
             for _, complex in sorted(complexes.items())
         )
 
-    def set_matrix_stoichiometric(self):
+    def _set_matrix_stoichiometric(self):
         product = self.incidence_matrix().T * self.matrix_of_complexes_stoichiometric
         self.matrix_stoichiometric = product.matrix_from_rows(product.pivot_rows())
 
-    def set_matrix_kinetic_order(self):
+    def _set_matrix_kinetic_order(self):
         product = self.incidence_matrix().T * self.matrix_of_complexes_kinetic_order
         self.matrix_kinetic_order = product.matrix_from_rows(product.pivot_rows())
 
-    def set_kernel_matrix_stoichiometric(self):
+    def _set_kernel_matrix_stoichiometric(self):
         self.kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self.matrix_stoichiometric)
 
-    def set_kernel_matrix_kinetic_order(self):
+    def _set_kernel_matrix_kinetic_order(self):
         self.kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self.matrix_kinetic_order)
 
     def incidence_matrix(self):
