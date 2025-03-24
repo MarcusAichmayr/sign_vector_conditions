@@ -292,16 +292,8 @@ def condition_uniqueness_minors(
         sage: conditions # random order
         sage: (-a >= 0) in conditions and (-b >= 0) in conditions # 
         True
-        sage: W = matrix([
-        ....:     [a, 0, 1, 0],
-        ....:     [0, 1, -1, 0],
-        ....:     [0, 0, 0, 1]
-        ....: ])
-        sage: Wt = matrix([
-        ....:     [1, 0, 0, -1],
-        ....:     [0, b, 1, 1],
-        ....:     [0, 0, a, 1]
-        ....: ])
+        sage: W = matrix([[a, 0, 1, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
+        sage: Wt = matrix([[1, 0, 0, -1], [0, b, 1, 1], [0, 0, a, 1]])
         sage: condition_uniqueness_minors(W, Wt) # random
         [{(a - 1)*a >= 0, a*b >= 0}, {(a - 1)*a <= 0, a*b <= 0}]
         sage: len(_), len(_[0]) # for testing
