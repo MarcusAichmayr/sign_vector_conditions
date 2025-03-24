@@ -147,18 +147,18 @@ The associated ODE system for the concentrations :math:`x` is given by::
 
 To study CBE, we consider the stoichiometric and the kinetic-order matrices::
 
-    sage: crn.stoichiometric_matrix
+    sage: crn.matrix_stoichiometric
     [-1 -1  1  0  0]
     [ 0  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: crn.kinetic_order_matrix
+    sage: crn.matrix_kinetic_order
     [-a -b  1  0  0]
     [ c  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: crn.stoichiometric_kernel_matrix
+    sage: crn.kernel_matrix_stoichiometric
     [1 0 1 1 1]
     [0 1 1 1 0]
-    sage: crn.kinetic_order_kernel_matrix
+    sage: crn.kernel_matrix_kinetic_order
     [    1     0     a a - c     1]
     [    0     1     b     b     0]
 

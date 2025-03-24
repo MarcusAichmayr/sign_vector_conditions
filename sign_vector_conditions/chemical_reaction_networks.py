@@ -72,18 +72,18 @@ class GMAKSystem(SageObject):
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
-        sage: crn.stoichiometric_matrix
+        sage: crn.matrix_stoichiometric
         [-1 -1  1  0  0]
         [ 0  0 -1  1  0]
         [-1  0  0  0  1]
-        sage: crn.kinetic_order_matrix
+        sage: crn.matrix_kinetic_order
         [-a -b  1  0  0]
         [ c  0 -1  1  0]
         [-1  0  0  0  1]
-        sage: crn.stoichiometric_kernel_matrix
+        sage: crn.kernel_matrix_stoichiometric
         [1 0 1 1 1]
         [0 1 1 1 0]
-        sage: crn.kinetic_order_kernel_matrix
+        sage: crn.kernel_matrix_kinetic_order
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
 
@@ -100,56 +100,56 @@ class GMAKSystem(SageObject):
         sage: crn.has_at_most_1_CBE() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
     """
-    def __init__(self, edge_destinations: list[list[int]], stoichiometric_labels, kinetic_order_labels, set_matrices=True) -> None:
+    def __init__(self, edge_destinations: list[list[int]], matrix_of_complexes_stoichiometric, matrix_of_complexes_kinetic_order, set_matrices=True) -> None:
         r"""
         Initialize a chemical reaction network with generalized mass-action kinetics.
 
         INPUT:
 
         - ``edge_destinations`` -- a list of lists of integers representing the directed graph
-        - ``stoichiometric_labels`` -- a matrix of stoichiometric labels
-        - ``kinetic_order_labels`` -- a matrix of kinetic-order labels
+        - ``matrix_of_complexes_stoichiometric`` -- a matrix of stoichiometric labels
+        - ``matrix_of_complexes_kinetic_order`` -- a matrix of kinetic-order labels
         - ``set_matrices`` -- whether to compute the stoichiometric and kinetic-order matrices
 
         The vertices of the graph are ``0, ..., n - 1``.
         The ``i``th list in ``edge_destinations`` contains the destinations of the vertex ``i``.
-        The ``i``th row of ``stoichiometric_labels`` and ``kinetic_order_labels`` contain the labels of the vertex ``i``.
+        The ``i``th row of ``matrix_of_complexes_stoichiometric`` and ``matrix_of_complexes_kinetic_order`` contain the labels of the vertex ``i``.
         """
         self.edge_destinations = edge_destinations
         self.graph = DiGraph(dict(enumerate(edge_destinations)))
-        self.stoichiometric_labels = stoichiometric_labels
-        self.kinetic_order_labels = kinetic_order_labels
+        self.matrix_of_complexes_stoichiometric = matrix_of_complexes_stoichiometric
+        self.matrix_of_complexes_kinetic_order = matrix_of_complexes_kinetic_order
         if set_matrices:
-            self.stoichiometric_matrix = self._stoichiometric_matrix()
-            self.kinetic_order_matrix = self._kinetic_order_matrix()
-            self.stoichiometric_kernel_matrix = self._stoichiometric_kernel_matrix()
-            self.kinetic_order_kernel_matrix = self._kinetic_order_kernel_matrix()
+            self.matrix_stoichiometric = self._matrix_stoichiometric()
+            self.matrix_kinetic_order = self._matrix_kinetic_order()
+            self.kernel_matrix_stoichiometric = self._kernel_matrix_stoichiometric()
+            self.kernel_matrix_kinetic_order = self._kernel_matrix_kinetic_order()
         else:
-            self.stoichiometric_matrix = None
-            self.kinetic_order_matrix = None
-            self.stoichiometric_kernel_matrix = None
-            self.kinetic_order_kernel_matrix = None
+            self.matrix_stoichiometric = None
+            self.matrix_kinetic_order = None
+            self.kernel_matrix_stoichiometric = None
+            self.kernel_matrix_kinetic_order = None
 
     def _repr_(self) -> str:
-        return f"System of GMAK with {self.stoichiometric_labels.nrows()} reactions and {self.stoichiometric_labels.ncols()} species"
+        return f"System of GMAK with {self.matrix_of_complexes_stoichiometric.nrows()} reactions and {self.matrix_of_complexes_stoichiometric.ncols()} species"
 
     def __copy__(self) -> GMAKSystem:
-        new = GMAKSystem(self.edge_destinations, self.stoichiometric_labels, self.kinetic_order_labels, set_matrices=False)
-        new.stoichiometric_matrix = self.stoichiometric_matrix
-        new.kinetic_order_matrix = self.kinetic_order_matrix
-        new.stoichiometric_kernel_matrix = self.stoichiometric_kernel_matrix
-        new.kinetic_order_kernel_matrix = self.kinetic_order_kernel_matrix
+        new = GMAKSystem(self.edge_destinations, self.matrix_of_complexes_stoichiometric, self.matrix_of_complexes_kinetic_order, set_matrices=False)
+        new.matrix_stoichiometric = self.matrix_stoichiometric
+        new.matrix_kinetic_order = self.matrix_kinetic_order
+        new.kernel_matrix_stoichiometric = self.kernel_matrix_stoichiometric
+        new.kernel_matrix_kinetic_order = self.kernel_matrix_kinetic_order
         return new
 
     def __call__(self, **kwargs) -> GMAKSystem:
         new = copy(self)
         for attribute in [
-            "stoichiometric_labels",
-            "kinetic_order_labels",
-            "stoichiometric_matrix",
-            "kinetic_order_matrix",
-            "stoichiometric_kernel_matrix",
-            "kinetic_order_kernel_matrix",
+            "matrix_of_complexes_stoichiometric",
+            "matrix_of_complexes_kinetic_order",
+            "matrix_stoichiometric",
+            "matrix_kinetic_order",
+            "kernel_matrix_stoichiometric",
+            "kernel_matrix_kinetic_order",
         ]:
             try:
                 setattr(new, attribute, getattr(self, attribute)(**kwargs))
@@ -167,29 +167,29 @@ class GMAKSystem(SageObject):
 
     def number_of_species(self) -> int:
         r"""Return the number of species."""
-        return self.stoichiometric_matrix.ncols()
+        return self.matrix_stoichiometric.ncols()
 
     def deficiency_stoichiometric(self):
         r"""Return the stoichiometric deficiency."""
-        return self.graph.num_verts() - self.graph.connected_components_number() - self.stoichiometric_matrix.rank()
+        return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_stoichiometric.rank()
 
     def deficiency_kinetic_order(self):
         r"""Return the kinetic-order deficiency."""
-        return self.graph.num_verts() - self.graph.connected_components_number() - self.kinetic_order_matrix.rank()
+        return self.graph.num_verts() - self.graph.connected_components_number() - self.matrix_kinetic_order.rank()
 
-    def _stoichiometric_matrix(self):
-        M = self.incidence_matrix().T * self.stoichiometric_labels
+    def _matrix_stoichiometric(self):
+        M = self.incidence_matrix().T * self.matrix_of_complexes_stoichiometric
         return M.matrix_from_rows(M.pivot_rows())
 
-    def _kinetic_order_matrix(self):
-        M = self.incidence_matrix().T * self.kinetic_order_labels
+    def _matrix_kinetic_order(self):
+        M = self.incidence_matrix().T * self.matrix_of_complexes_kinetic_order
         return M.matrix_from_rows(M.pivot_rows())
 
-    def _stoichiometric_kernel_matrix(self):
-        return kernel_matrix_using_elementary_vectors(self.stoichiometric_matrix)
+    def _kernel_matrix_stoichiometric(self):
+        return kernel_matrix_using_elementary_vectors(self.matrix_stoichiometric)
 
-    def _kinetic_order_kernel_matrix(self):
-        return kernel_matrix_using_elementary_vectors(self.kinetic_order_matrix)
+    def _kernel_matrix_kinetic_order(self):
+        return kernel_matrix_using_elementary_vectors(self.matrix_kinetic_order)
 
     def are_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
@@ -201,16 +201,16 @@ class GMAKSystem(SageObject):
 
     def has_robust_CBE(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
-        return condition_closure_minors(self.stoichiometric_kernel_matrix, self.kinetic_order_kernel_matrix)
+        return condition_closure_minors(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
 
     def has_at_most_1_CBE(self):
         r"""Check whether there is at most one positive CBE."""
-        return condition_uniqueness_minors(self.stoichiometric_kernel_matrix, self.kinetic_order_kernel_matrix)
+        return condition_uniqueness_minors(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
 
     def condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
-        return condition_faces(self.stoichiometric_kernel_matrix, self.kinetic_order_kernel_matrix)
+        return condition_faces(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
 
     def are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
-        return condition_nondegenerate(self.stoichiometric_kernel_matrix, self.kinetic_order_kernel_matrix)
+        return condition_nondegenerate(self.kernel_matrix_stoichiometric, self.kernel_matrix_kinetic_order)
