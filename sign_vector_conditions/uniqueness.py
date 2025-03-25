@@ -4,22 +4,20 @@ Uniqueness of equilibria
 
 We define some matrices::
 
-    sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-    sage: W
-    [ 1  0 -1]
-    [ 0  1 -1]
-    sage: Wt = matrix([[1, 0, -1], [0, 1, 0]])
-    sage: Wt
-    [ 1  0 -1]
-    [ 0  1  0]
+    sage: S = matrix([[1, 1, 1]])
+    sage: S
+    [1 1 1]
+    sage: St = matrix([[1, 0, 1]])
+    sage: St
+    [1 0 1]
 
 We want to check whether the corresponding chemical reaction network
 has at most one equilibrium for all rate constants.
 For this purpose, we compute the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cvW = covectors_from_matrix(W, dual=False, algorithm='fe')
-    sage: cvW
+    sage: cvS = covectors_from_matrix(S, dual=True, algorithm='fe')
+    sage: cvS
     {(000),
      (+-+),
      (-+0),
@@ -33,30 +31,30 @@ For this purpose, we compute the corresponding oriented matroids::
      (-0+),
      (--+),
      (++-)}
-    sage: cvWt = covectors_from_matrix(Wt, dual=True, algorithm='fe')
-    sage: cvWt
+    sage: cvSt = covectors_from_matrix(St, dual=False, algorithm='fe')
+    sage: cvSt
     {(000), (+0+), (-0-)}
 
 The intersection of these oriented matroids consists only of the zero sign vector.
 We can compute the intersection directly by applying the built in method intersection::
 
-    sage: set(cvW).intersection(cvWt)
+    sage: set(cvS).intersection(cvSt)
     {(000)}
 
 Therefore, there is at most one equilibrium.
 We can also check this condition in the following way::
 
     sage: from sign_vector_conditions import *
-    sage: condition_uniqueness_sign_vectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(S, St)
     True
 
 There is another way to check this condition
 that involves the computation of maximal minors of the corresponding matrices::
 
-    sage: m1 = W.minors(2)
+    sage: m1 = S.minors(1)
     sage: m1
-    [1, -1, 1]
-    sage: m2 = Wt.minors(2)
+    [1, 1, 1]
+    sage: m2 = St.minors(1)
     sage: m2
     [1, 0, 1]
 
@@ -68,83 +66,80 @@ We multiply those minors component-wise::
 Since all arguments are greater or equal zero, there is at most one equilibrium.
 We can also check this condition by applying the following function from this package::
 
-    sage: condition_uniqueness_minors(W, Wt)
+    sage: condition_uniqueness_minors(S, St)
     True
 
 Now, we consider another example::
 
-    sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-    sage: W
-    [ 1  0 -1]
-    [ 0  1 -1]
-    sage: Wt = matrix([[1, 0, -1], [0, 1, 1]])
-    sage: Wt
-    [ 1  0 -1]
-    [ 0  1  1]
+    sage: S = matrix([[1, 1, 1]])
+    sage: S
+    [1 1 1]
+    sage: St = matrix([[1, 0, -1], [0, 1, 1]])
+    sage: St = matrix([[1, -1, 1]])
+    sage: St
+    [ 1 -1  1]
 
 Next, we compute the corresponding oriented matroids::
 
-    sage: covectors_from_matrix(W, dual=False, algorithm='fe', separate=True)
+    sage: covectors_from_matrix(S, dual=True, algorithm='fe', separate=True)
     [{(000)},
      {(-+0), (0-+), (0+-), (+-0), (+0-), (-0+)},
      {(+-+), (-+-), (--+), (-++), (++-), (+--)}]
-    sage: covectors_from_matrix(Wt, dual=True, algorithm='fe', separate=True)
+    sage: covectors_from_matrix(St, dual=False, algorithm='fe', separate=True)
     [{(000)}, {(+-+), (-+-)}]
 
 Now, we check the condition from before::
 
-    sage: condition_uniqueness_sign_vectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(S, St)
     False
 
 Therefore, the corresponding exponential map is not injective.
 Furthermore, we obtain the following minors::
 
-    sage: m1 = W.minors(2)
+    sage: m1 = S.minors(1)
     sage: m1
-    [1, -1, 1]
-    sage: m2 = Wt.minors(2)
-    sage: m2
     [1, 1, 1]
-    sage: [m1[i]*m2[i] for i in range(len(m1))]
+    sage: m2 = St.minors(1)
+    sage: m2
+    [1, -1, 1]
+    sage: [m1[i] * m2[i] for i in range(len(m1))]
     [1, -1, 1]
 
 There are positive and negative elements in the resulting list.
 Hence, this condition also states that there is no unique equilibrium::
 
-    sage: condition_uniqueness_minors(W, Wt)
+    sage: condition_uniqueness_minors(S, St)
     False
 
 Finally, we consider an example with variables::
 
     sage: var('a, b')
     (a, b)
-    sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-    sage: W
-    [ 1  0 -1]
-    [ 0  1 -1]
-    sage: Wt = matrix([[1, 0, a], [0, 1, b]])
-    sage: Wt
-    [1 0 a]
-    [0 1 b]
+    sage: S = matrix([[1, 1, 1]])
+    sage: S
+    [1 1 1]
+    sage: St = matrix([[a, b, -1]])
+    sage: St
+    [ a  b -1]
 
-The matrix ``Wt`` contains variables :math:`a, b \in \mathbb{R}`.
+The matrix ``St`` contains variables :math:`a, b \in \mathbb{R}`.
 Consequently, we cannot compute the corresponding oriented matroids.
-On the other hand, we can still compute the minors of ``W`` and ``Wt``, that is::
+On the other hand, we can still compute the minors of ``S`` and ``St``, that is::
 
-    sage: m1 = W.minors(2)
+    sage: m1 = S.minors(1)
     sage: m1
-    [1, -1, 1]
-    sage: m2 = Wt.minors(2)
+    [1, 1, 1]
+    sage: m2 = St.minors(1)
     sage: m2
-    [1, b, -a]
+    [a, b, -1]
     sage: [m1[i] * m2[i] for i in range(len(m1))]
-    [1, -b, -a]
+    [a, b, -1]
 
 Therefore, there is at most one equilibrium if and only if :math:`a, b \leq 0`.
 The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
-    sage: condition_uniqueness_minors(W, Wt) # random order
+    sage: condition_uniqueness_minors(S, St) # random order
     [{-a >= 0, -b >= 0}]
 """
 
@@ -164,17 +159,15 @@ from sign_vectors.oriented_matroids import covectors_from_matrix
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_uniqueness_sign_vectors(
-    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
-) -> bool:
+def condition_uniqueness_sign_vectors(stoichiometric_matrix, kinetic_order_matrix) -> bool:
     r"""
     Uniqueness condition for existence of an equilibrium using sign vectors.
 
     INPUT:
 
-    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``stoichiometric_matrix`` -- a matrix
 
-    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``kinetic_order_matrix`` -- a matrix
 
     OUTPUT:
     Return whether there exists at most one equilibrium.
@@ -187,25 +180,23 @@ def condition_uniqueness_sign_vectors(
     EXAMPLES::
 
         sage: from sign_vector_conditions import *
-        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-        sage: W
-        [ 1  0 -1]
-        [ 0  1 -1]
-        sage: Wt = matrix([[1, 0, -1], [0, 1, 0]])
-        sage: Wt
-        [ 1  0 -1]
-        [ 0  1  0]
-        sage: condition_uniqueness_sign_vectors(W, Wt)
+        sage: S = matrix([[1, 1, 1]])
+        sage: S
+        [1 1 1]
+        sage: St = matrix([[1, 0, 1]])
+        sage: St
+        [1 0 1]
+        sage: condition_uniqueness_sign_vectors(S, St)
         True
-        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-        sage: W
+        sage: S = matrix([[1, 0, -1], [0, 1, -1]])
+        sage: S
         [ 1  0 -1]
         [ 0  1 -1]
-        sage: Wt = matrix([[1, 0, -1], [0, 1, 1]])
-        sage: Wt
+        sage: St = matrix([[1, 0, -1], [0, 1, 1]])
+        sage: St
         [ 1  0 -1]
         [ 0  1  1]
-        sage: condition_uniqueness_sign_vectors(W, Wt)
+        sage: condition_uniqueness_sign_vectors(S, St)
         False
 
     TESTS::
@@ -216,18 +207,15 @@ def condition_uniqueness_sign_vectors(
         sage: condition_uniqueness_sign_vectors(A, B)
         True
     """
-    if stoichiometric_kernel_matrix.ncols() != kinetic_order_kernel_matrix.ncols():
+    if stoichiometric_matrix.ncols() != kinetic_order_matrix.ncols():
         raise ValueError("Matrices have different number of columns.")
 
     return (
         len(
-            covectors_from_matrix(
-                stoichiometric_kernel_matrix, dual=False
-            ).intersection(
-                covectors_from_matrix(kinetic_order_kernel_matrix, dual=True)
+            covectors_from_matrix(stoichiometric_matrix, dual=True).intersection(
+                covectors_from_matrix(kinetic_order_matrix, dual=False)
             )
-        )
-        == 1
+        ) == 1
     )
 
 
@@ -254,45 +242,45 @@ def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
     EXAMPLES::
 
         sage: from sign_vector_conditions import *
-        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-        sage: W
+        sage: S = matrix([[1, 0, -1], [0, 1, -1]])
+        sage: S
         [ 1  0 -1]
         [ 0  1 -1]
-        sage: Wt = matrix([[1, 0, -1], [0, 1, 0]])
-        sage: Wt
+        sage: St = matrix([[1, 0, -1], [0, 1, 0]])
+        sage: St
         [ 1  0 -1]
         [ 0  1  0]
-        sage: condition_uniqueness_minors(W, Wt)
+        sage: condition_uniqueness_minors(S, St)
         True
-        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-        sage: W
+        sage: S = matrix([[1, 0, -1], [0, 1, -1]])
+        sage: S
         [ 1  0 -1]
         [ 0  1 -1]
-        sage: Wt = matrix([[1, 0, -1], [0, 1, 1]])
-        sage: Wt
+        sage: St = matrix([[1, 0, -1], [0, 1, 1]])
+        sage: St
         [ 1  0 -1]
         [ 0  1  1]
-        sage: condition_uniqueness_minors(W, Wt)
+        sage: condition_uniqueness_minors(S, St)
         False
         sage: var('a, b')
         (a, b)
-        sage: W = matrix([[1, 0, -1], [0, 1, -1]])
-        sage: W
+        sage: S = matrix([[1, 0, -1], [0, 1, -1]])
+        sage: S
         [ 1  0 -1]
         [ 0  1 -1]
-        sage: Wt = matrix([[1, 0, a], [0, 1, b]])
-        sage: Wt
+        sage: St = matrix([[1, 0, a], [0, 1, b]])
+        sage: St
         [1 0 a]
         [0 1 b]
-        sage: condition_uniqueness_minors(W, Wt) # random order
+        sage: condition_uniqueness_minors(S, St) # random order
         [{-a >= 0, -b >= 0}]
-        sage: conditions = condition_uniqueness_minors(W, Wt)[0]
+        sage: conditions = condition_uniqueness_minors(S, St)[0]
         sage: conditions # random order
         sage: (-a >= 0) in conditions and (-b >= 0) in conditions # 
         True
-        sage: W = matrix([[a, 0, 1, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
-        sage: Wt = matrix([[1, 0, 0, -1], [0, b, 1, 1], [0, 0, a, 1]])
-        sage: condition_uniqueness_minors(W, Wt) # random
+        sage: S = matrix([[a, 0, 1, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
+        sage: St = matrix([[1, 0, 0, -1], [0, b, 1, 1], [0, 0, a, 1]])
+        sage: condition_uniqueness_minors(S, St) # random
         [{(a - 1)*a >= 0, a*b >= 0}, {(a - 1)*a <= 0, a*b <= 0}]
         sage: len(_), len(_[0]) # for testing
         (2, 2)
@@ -300,7 +288,7 @@ def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
     We can also apply the built-in function ``solve_ineq`` to the resulting sets of inequalities.
     For instance, the first set can be equivalently written as::
 
-        sage: solve_ineq(list(condition_uniqueness_minors(W, Wt)[0])) # random
+        sage: solve_ineq(list(condition_uniqueness_minors(S, St)[0])) # random
         [[b == 0, a == 0],
         [a == 0],
         [b == 0, a == 1],

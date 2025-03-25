@@ -4,78 +4,77 @@ Robustness of existence and uniqueness of equilibria
 
 Let us consider the following matrices::
 
-    sage: W = matrix([[1, 0, -1, 0], [0, 1, 0, 0]])
-    sage: W
-    [ 1  0 -1  0]
-    [ 0  1  0  0]
-    sage: Wt = matrix([[1, 0, -1, 0], [0, 1, -1, 1]])
-    sage: Wt
-    [ 1  0 -1  0]
-    [ 0  1 -1  1]
+    sage: S = matrix([[1, 0, 1, 0], [0, 0, 0, 1]])
+    sage: S
+    [1 0 1 0]
+    [0 0 0 1]
+    sage: St = matrix([[1, 0, 1, 1], [0, 1, 0, -1]])
+    sage: St
+    [ 1  0  1  1]
+    [ 0  1  0 -1]
+
 
 To check, whether the corresponding chemical reaction network
-has a unique equilibrium for all rate constants and all small perturbations of ``Wt``,
+has a unique equilibrium for all rate constants and all small perturbations of ``St``,
 we consider the topes of the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: topes_from_matrix(W, dual=True)
+    sage: topes_from_matrix(S, dual=False)
     {(+0+-), (+0++), (-0--), (-0-+)}
-    sage: topes_from_matrix(Wt, dual=True)
+    sage: topes_from_matrix(St, dual=False)
     {(---+), (-+--), (++++), (----), (+-++), (+++-)}
 
-One can see that for every tope ``X`` of the oriented matroid corresponding to ``W`` there is a
-tope ``Y`` corresponding to ``Wt`` such that ``X`` conforms to ``Y``.
+One can see that for every tope ``X`` of the oriented matroid corresponding to ``S`` there is a
+tope ``Y`` corresponding to ``St`` such that ``X`` conforms to ``Y``.
 Therefore, the exponential map is a diffeomorphism for all ``c > 0``
-and all small perturbations of ``Wt``.
+and all small perturbations of ``St``.
 The package offers a function that checks this condition directly::
 
     sage: from sign_vector_conditions import *
-    sage: condition_closure_sign_vectors(W, Wt)
+    sage: condition_closure_sign_vectors(S, St)
     True
 
 There is an equivalent condition.
 To verify it, we compute the maximal minors of the two matrices::
 
-    sage: W.minors(2)
-    [1, 0, 0, 1, 0, 0]
-    sage: Wt.minors(2)
-    [1, -1, 1, 1, 0, -1]
+    sage: S.minors(2)
+    [0, 0, 1, 0, 0, 1]
+    sage: St.minors(2)
+    [1, 0, -1, -1, -1, -1]
 
-From the output, we see whenever a minor of ``W`` is nonzero,
-the corresponding minor of ``Wt`` has the same sign.
+From the output, we see whenever a minor of ``S`` is nonzero,
+the corresponding minor of ``St`` has the same sign.
 Hence, this condition is fulfilled.
 This condition can also be checked directly with the package::
 
-    sage: condition_closure_minors(W, Wt)
+    sage: condition_closure_minors(S, St)
     True
 
 Now, we consider matrices with variables::
 
     sage: var('a, b, c')
     (a, b, c)
-    sage: W = matrix([[1, 0, -1], [0, c, -1]])
-    sage: W
-    [ 1  0 -1]
-    [ 0  c -1]
-    sage: Wt = matrix([[1, 0, a], [0, 1, b]])
-    sage: Wt
-    [1 0 a]
-    [0 1 b]
+    sage: S = matrix([[c, 1, c]])
+    sage: S
+    [c 1 c]
+    sage: St = matrix([[a, b, -1]])
+    sage: St
+    [ a  b -1]
 
-We cannot check the first condition since there are variables in ``W`` and ``Wt``.
+We cannot check the first condition since there are variables in ``S`` and ``St``.
 Therefore, we want to obtain equations on the variables ``a``, ``b``, ``c``
 such that this condition is satisfied.
 First, we compute the minors of the matrices::
 
-    sage: W.minors(2)
-    [c, -1, c]
-    sage: Wt.minors(2)
-    [1, b, -a]
+    sage: S.minors(1)
+    [c, 1, c]
+    sage: St.minors(1)
+    [a, b, -1]
 
 The function from the package supports symbolic matrices as input.
 In this case, we obtain the following equations on the variables::
 
-    sage: condition_closure_minors(W, Wt) # random
+    sage: condition_closure_minors(S, St) # random
     [{-b > 0, c == 0},
      {-b < 0, c == 0},
      {-b > 0, c > 0, -a*c > 0},
@@ -90,7 +89,7 @@ or if ``a`` and ``b`` are positive and ``c`` is negative.
 We can also apply the built-in function ``solve_ineq`` to the resulting sets of inequalities.
 For instance, the last set can be equivalently written as::
 
-    sage: solve_ineq(list(condition_closure_minors(W, Wt)[3])) # random
+    sage: solve_ineq(list(condition_closure_minors(S, St)[3])) # random
     [[c < 0, 0 < b, a < 0]]
 """
 
@@ -111,17 +110,15 @@ from .utility import closure_minors_utility
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_closure_sign_vectors(
-    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
-) -> bool:
+def condition_closure_sign_vectors(stoichiometric_matrix, kinetic_order_matrix) -> bool:
     r"""
     Closure condition for robustness using sign vectors.
 
     INPUT:
 
-    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``stoichiometric_matrix`` -- a matrix
 
-    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``kinetic_order_matrix`` -- a matrix
 
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
@@ -131,8 +128,8 @@ def condition_closure_sign_vectors(
         This implementation is inefficient and should not be used for large examples.
         Instead, use :func:`~condition_closure_minors`.
     """
-    topes = topes_from_matrix(kinetic_order_kernel_matrix, dual=True)
-    for covector1 in topes_from_matrix(stoichiometric_kernel_matrix, dual=True):
+    topes = topes_from_matrix(kinetic_order_matrix, dual=False)
+    for covector1 in topes_from_matrix(stoichiometric_matrix, dual=False):
         if not any(covector1 <= covector2 for covector2 in topes):
             return False
     return True
