@@ -371,7 +371,7 @@ class ReactionNetwork(SageObject):
             self.species.remove(s)
         self._update_needed = True
 
-    def _update_matrices(self) -> None:
+    def _update(self) -> None:
         r"""Set stoichiometric and kinetic-order matrices."""
         if not self._update_needed:
             return
@@ -400,49 +400,49 @@ class ReactionNetwork(SageObject):
             for _, complex in sorted(complexes.items())
         )
 
-    def _get_matrix(self, matrix_name):
-        self._update_matrices()
+    def _get(self, matrix_name):
+        self._update()
         return getattr(self, matrix_name)
 
     @property
     def matrix_of_complexes_stoichiometric(self):
         r"""Return the matrix that decodes the stoichiometric complexes of the reaction network."""
-        return self._get_matrix('_matrix_of_complexes_stoichiometric').T
+        return self._get('_matrix_of_complexes_stoichiometric').T
 
     @property
     def matrix_of_complexes_kinetic_order(self):
         r"""Return the matrix that decodes the kinetic-order complexes of the reaction network."""
-        return self._get_matrix('_matrix_of_complexes_kinetic_order').T
+        return self._get('_matrix_of_complexes_kinetic_order').T
 
     @property
     def matrix_stoichiometric(self):
         r"""Return the stoichiometric matrix."""
-        return self._get_matrix('_matrix_stoichiometric').T
+        return self._get('_matrix_stoichiometric').T
 
     @property
     def matrix_kinetic_order(self):
         r"""Return the kinetic-order matrix."""
-        return self._get_matrix('_matrix_kinetic_order').T
+        return self._get('_matrix_kinetic_order').T
 
     @property
     def matrix_stoichiometric_reduced(self):
         r"""Return the reduced stoichiometric matrix."""
-        return self._get_matrix('_matrix_stoichiometric_reduced').T
+        return self._get('_matrix_stoichiometric_reduced').T
 
     @property
     def matrix_kinetic_order_reduced(self):
         r"""Return the reduced kinetic-order matrix."""
-        return self._get_matrix('_matrix_kinetic_order_reduced').T
+        return self._get('_matrix_kinetic_order_reduced').T
 
     @property
     def matrix_stoichiometric_as_kernel(self):
         r"""Return the kernel matrix of the stoichiometric matrix."""
-        return self._get_matrix('_kernel_matrix_stoichiometric')
+        return self._get('_kernel_matrix_stoichiometric')
 
     @property
     def matrix_kinetic_order_as_kernel(self):
         r"""Return the kernel matrix of the kinetic-order matrix."""
-        return self._get_matrix('_kernel_matrix_kinetic_order')
+        return self._get('_kernel_matrix_kinetic_order')
 
     @property
     def incidence_matrix(self):
@@ -457,12 +457,12 @@ class ReactionNetwork(SageObject):
     @property
     def deficiency_stoichiometric(self):
         r"""Return the stoichiometric deficiency."""
-        return self._get_matrix('_deficiency_stoichiometric')
+        return self._get('_deficiency_stoichiometric')
 
     @property
     def deficiency_kinetic_order(self):
         r"""Return the kinetic-order deficiency."""
-        return self._get_matrix('_deficiency_kinetic_order')
+        return self._get('_deficiency_kinetic_order')
 
     def plot(
             self,
@@ -491,7 +491,7 @@ class ReactionNetwork(SageObject):
 
     def are_both_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
-        self._update_matrices()
+        self._update()
         return self._deficiency_stoichiometric == self._deficiency_kinetic_order == 0
 
     def is_weakly_reversible(self) -> bool:
@@ -500,7 +500,7 @@ class ReactionNetwork(SageObject):
 
     def _check_network_conditions(self):
         r"""Perform common network checks for uniqueness and existence of CBE."""
-        self._update_matrices()
+        self._update()
         if self._deficiency_stoichiometric != 0:
             raise ValueError(f"Stoichiometric deficiency should be zero and not {self._deficiency_stoichiometric}!")
         if self._deficiency_kinetic_order != 0:
