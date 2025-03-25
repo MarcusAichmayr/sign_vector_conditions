@@ -179,8 +179,10 @@ class ReactionNetwork(SageObject):
 
     We check some conditions for our system::
 
-        sage: rn.are_both_deficiencies_zero()
-        True
+        sage: rn.deficiency_stoichiometric
+        0
+        sage: rn.deficiency_kinetic_order
+        0
         sage: rn.is_weakly_reversible()
         True
         sage: rn(a=2, b=1, c=1).has_robust_cbe()
@@ -264,6 +266,9 @@ class ReactionNetwork(SageObject):
         self._kernel_matrix_stoichiometric = None # TODO remove member
         self._kernel_matrix_kinetic_order = None # TODO remove member
 
+        self._deficiency_stoichiometric = 0
+        self._deficiency_kinetic_order = 0
+
         self._update_needed = True
 
     def _repr_(self) -> str:
@@ -278,6 +283,8 @@ class ReactionNetwork(SageObject):
         new._matrix_kinetic_order = self._matrix_kinetic_order
         new._kernel_matrix_stoichiometric = self._kernel_matrix_stoichiometric
         new._kernel_matrix_kinetic_order = self._kernel_matrix_kinetic_order
+
+        # TODO copy all members by iterating over vars
 
         new._update_needed = False
         return new
@@ -377,6 +384,9 @@ class ReactionNetwork(SageObject):
         self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
         self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
 
+        self._deficiency_stoichiometric = self.graph.num_verts() - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
+        self._deficiency_kinetic_order = self.graph.num_verts() - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
+
         try:
             self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric_reduced)
             self._kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
@@ -444,6 +454,16 @@ class ReactionNetwork(SageObject):
         r"""Return the source matrix of the graph."""
         return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix)
 
+    @property
+    def deficiency_stoichiometric(self):
+        r"""Return the stoichiometric deficiency."""
+        return self._get_matrix('_deficiency_stoichiometric')
+
+    @property
+    def deficiency_kinetic_order(self):
+        r"""Return the kinetic-order deficiency."""
+        return self._get_matrix('_deficiency_kinetic_order')
+
     def plot(
             self,
             kinetic_order: bool = True,
@@ -469,19 +489,10 @@ class ReactionNetwork(SageObject):
             return f"${latex(self.complexes[i])}$"
         return f"${latex(self.complexes[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
 
-    def deficiency_stoichiometric(self):
-        r"""Return the stoichiometric deficiency."""
-        self._update_matrices()
-        return self.graph.num_verts() - self.graph.connected_components_number() - self._matrix_stoichiometric.rank()
-
-    def deficiency_kinetic_order(self):
-        r"""Return the kinetic-order deficiency."""
-        self._update_matrices()
-        return self.graph.num_verts() - self.graph.connected_components_number() - self._matrix_kinetic_order.rank()
-
     def are_both_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
-        return self.deficiency_stoichiometric() == self.deficiency_kinetic_order() == 0
+        self._update_matrices()
+        return self._deficiency_stoichiometric == self._deficiency_kinetic_order == 0
 
     def is_weakly_reversible(self) -> bool:
         r"""Return whether each component of the system is strongly connected."""
@@ -490,10 +501,10 @@ class ReactionNetwork(SageObject):
     def _check_network_conditions(self):
         r"""Perform common network checks for uniqueness and existence of CBE."""
         self._update_matrices()
-        if self.deficiency_stoichiometric() != 0:
-            raise ValueError(f"Stoichiometric deficiency should be zero and not {self.deficiency_stoichiometric()}!")
-        if self.deficiency_kinetic_order() != 0:
-            raise ValueError(f"Kinetic-order deficiency should be zero and not {self.deficiency_kinetic_order()}!")
+        if self._deficiency_stoichiometric != 0:
+            raise ValueError(f"Stoichiometric deficiency should be zero and not {self._deficiency_stoichiometric}!")
+        if self._deficiency_kinetic_order != 0:
+            raise ValueError(f"Kinetic-order deficiency should be zero and not {self._deficiency_kinetic_order}!")
         if not self.is_weakly_reversible():
             raise ValueError("Network is not weakly reversible!")
 
