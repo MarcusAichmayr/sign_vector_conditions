@@ -231,17 +231,15 @@ def condition_uniqueness_sign_vectors(
     )
 
 
-def condition_uniqueness_minors(
-    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
-):
+def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
     r"""
     Uniqueness condition for existence of an equilibrium using maximal minors.
 
     INPUT:
 
-    - ``stoichiometric_kernel_matrix`` -- a matrix
+    - ``stoichiometric_matrix`` -- a matrix
 
-    - ``kinetic_order_kernel_matrix`` -- a matrix
+    - ``kinetic_order_matrix`` -- a matrix
 
     OUTPUT:
     Return whether there exists at most one equilibrium.
@@ -312,30 +310,21 @@ def condition_uniqueness_minors(
         [b == 0, a < 0],
         [b < 0, a < 0]]
     """
-    stoichiometric_kernel_matrix = stoichiometric_kernel_matrix.matrix_from_rows(
-        stoichiometric_kernel_matrix.pivot_rows()
-    )
-    kinetic_order_kernel_matrix = kinetic_order_kernel_matrix.matrix_from_rows(
-        kinetic_order_kernel_matrix.pivot_rows()
-    )
-    if (
-        stoichiometric_kernel_matrix.dimensions()
-        != kinetic_order_kernel_matrix.dimensions()
-    ):
+    stoichiometric_matrix = stoichiometric_matrix.matrix_from_rows(stoichiometric_matrix.pivot_rows())
+    kinetic_order_matrix = kinetic_order_matrix.matrix_from_rows(kinetic_order_matrix.pivot_rows())
+    if stoichiometric_matrix.dimensions() != kinetic_order_matrix.dimensions():
         raise ValueError("Matrices must have same rank and number of columns.")
 
     positive_product_found = False
     negative_product_found = False
     symbolic_expressions = set()
 
-    for indices in Combinations(
-        stoichiometric_kernel_matrix.ncols(), stoichiometric_kernel_matrix.nrows()
-    ):
-        minor1 = stoichiometric_kernel_matrix.matrix_from_columns(indices).det()
+    for indices in Combinations(stoichiometric_matrix.ncols(), stoichiometric_matrix.nrows()):
+        minor1 = stoichiometric_matrix.matrix_from_columns(indices).det()
         if not minor1:
             continue
         product = (
-            minor1 * kinetic_order_kernel_matrix.matrix_from_columns(indices).det()
+            minor1 * kinetic_order_matrix.matrix_from_columns(indices).det()
         )
         if is_symbolic(product):
             symbolic_expressions.add(product)

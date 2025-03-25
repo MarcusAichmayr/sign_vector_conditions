@@ -367,15 +367,15 @@ class ReactionNetwork(SageObject):
 
         self._update_needed = False
 
+    def _get(self, matrix_name):
+        self._update()
+        return getattr(self, matrix_name)
+
     def _matrix_from_complexes(self, complexes: list):
         return matrix(
             [0 if complex == 0 else complex.coefficient(s) for s in self.species]
             for _, complex in sorted(complexes.items())
         )
-
-    def _get(self, matrix_name):
-        self._update()
-        return getattr(self, matrix_name)
 
     @property
     def matrix_of_complexes_stoichiometric(self):
@@ -486,22 +486,22 @@ class ReactionNetwork(SageObject):
     def has_robust_cbe(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
         self._check_network_conditions()
-        return condition_closure_minors(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
+        return condition_closure_minors(self._matrix_stoichiometric, self._matrix_kinetic_order)
 
     def has_at_most_one_cbe(self):
         r"""Check whether there is at most one positive CBE."""
         self._check_network_conditions()
-        return condition_uniqueness_minors(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
+        return condition_uniqueness_minors(self._matrix_stoichiometric, self._matrix_kinetic_order)
 
     def _condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_faces(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
+        return condition_faces(self.matrix_stoichiometric_as_kernel, self.matrix_kinetic_order_as_kernel)
 
     def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_nondegenerate(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
+        return condition_nondegenerate(self.matrix_stoichiometric_as_kernel, self.matrix_kinetic_order_as_kernel)
 
     def has_exactly_one_cbe(self) -> bool:
         r"""Check whether there is exactly one positive CBE."""
@@ -509,8 +509,4 @@ class ReactionNetwork(SageObject):
         at_most_one = self.has_at_most_one_cbe()
         if at_most_one not in [True, False]:
             raise ValueError("Method does not support variables!")
-        return (
-            at_most_one
-            and self._condition_faces()
-            and self._are_subspaces_nondegenerate()
-        )
+        return at_most_one and self._condition_faces() and self._are_subspaces_nondegenerate()

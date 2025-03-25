@@ -138,15 +138,15 @@ def condition_closure_sign_vectors(
     return True
 
 
-def condition_closure_minors(stoichiometric_kernel_matrix, kinetic_order_kernel_matrix):
+def condition_closure_minors(stoichiometric_matrix, kinetic_order_matrix):
     r"""
     Closure condition for robustness using maximal maximal minors.
 
     INPUT:
 
-    - ``stoichiometric_kernel_matrix`` -- a matrix
+    - ``stoichiometric_matrix`` -- a matrix
 
-    - ``kinetic_order_kernel_matrix`` -- a matrix with the same dimensions as ``W``
+    - ``kinetic_order_matrix`` -- a matrix
 
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
@@ -158,28 +158,19 @@ def condition_closure_minors(stoichiometric_kernel_matrix, kinetic_order_kernel_
         The matrices need to have the same rank and number of columns.
         Otherwise, a ``ValueError`` is raised.
     """
-    stoichiometric_kernel_matrix = stoichiometric_kernel_matrix.matrix_from_rows(
-        stoichiometric_kernel_matrix.pivot_rows()
-    )
-    kinetic_order_kernel_matrix = kinetic_order_kernel_matrix.matrix_from_rows(
-        kinetic_order_kernel_matrix.pivot_rows()
-    )
-    if (
-        stoichiometric_kernel_matrix.dimensions()
-        != kinetic_order_kernel_matrix.dimensions()
-    ):
+    stoichiometric_matrix = stoichiometric_matrix.matrix_from_rows(stoichiometric_matrix.pivot_rows())
+    kinetic_order_matrix = kinetic_order_matrix.matrix_from_rows(kinetic_order_matrix.pivot_rows())
+    if stoichiometric_matrix.dimensions() != kinetic_order_matrix.dimensions():
         raise ValueError("Matrices must have same rank and number of columns.")
 
     positive_found = False
     negative_found = False
     symbolic_pairs = set()
-    for indices in Combinations(
-        stoichiometric_kernel_matrix.ncols(), stoichiometric_kernel_matrix.nrows()
-    ):
-        minor1 = stoichiometric_kernel_matrix.matrix_from_columns(indices).det()
+    for indices in Combinations(stoichiometric_matrix.ncols(), stoichiometric_matrix.nrows()):
+        minor1 = stoichiometric_matrix.matrix_from_columns(indices).det()
         if not minor1:
             continue
-        minor2 = kinetic_order_kernel_matrix.matrix_from_columns(indices).det()
+        minor2 = kinetic_order_matrix.matrix_from_columns(indices).det()
         if not minor2:
             return False
         product = minor1 * minor2
