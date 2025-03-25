@@ -369,55 +369,55 @@ class ReactionNetwork(SageObject):
 
         self._update_needed = False
 
-    def _get(self, matrix_name):
+    def _get(self, element: str):
         self._update()
-        return getattr(self, matrix_name)
+        return getattr(self, element)
 
-    def _matrix_from_complexes(self, complexes: list):
+    def _matrix_from_complexes(self, complexes: list) -> matrix:
         return matrix(
             [0 if complex == 0 else complex.coefficient(s) for s in self.species]
             for _, complex in sorted(complexes.items())
         )
 
     @property
-    def matrix_of_complexes_stoichiometric(self):
+    def matrix_of_complexes_stoichiometric(self) -> matrix:
         r"""Return the matrix that decodes the stoichiometric complexes of the reaction network."""
         return self._get('_matrix_of_complexes_stoichiometric').T
 
     @property
-    def matrix_of_complexes_kinetic_order(self):
+    def matrix_of_complexes_kinetic_order(self) -> matrix:
         r"""Return the matrix that decodes the kinetic-order complexes of the reaction network."""
         return self._get('_matrix_of_complexes_kinetic_order').T
 
     @property
-    def matrix_stoichiometric(self):
+    def matrix_stoichiometric(self) -> matrix:
         r"""Return the stoichiometric matrix."""
         return self._get('_matrix_stoichiometric').T
 
     @property
-    def matrix_kinetic_order(self):
+    def matrix_kinetic_order(self) -> matrix:
         r"""Return the kinetic-order matrix."""
         return self._get('_matrix_kinetic_order').T
 
     @property
-    def matrix_stoichiometric_as_kernel(self):
+    def matrix_stoichiometric_as_kernel(self) -> matrix:
         r"""Return the kernel matrix of the stoichiometric matrix."""
         self._update()
         return kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric_reduced)
 
     @property
-    def matrix_kinetic_order_as_kernel(self):
+    def matrix_kinetic_order_as_kernel(self) -> matrix:
         r"""Return the kernel matrix of the kinetic-order matrix."""
         self._update()
         return kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
 
     @property
-    def incidence_matrix(self):
+    def incidence_matrix(self) -> matrix:
         r"""Return the incidence matrix of the graph."""
         return self.graph.incidence_matrix()
 
     @property
-    def source_matrix(self):
+    def source_matrix(self) -> matrix:
         r"""Return the source matrix of the graph."""
         return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix)
 
@@ -480,7 +480,7 @@ class ReactionNetwork(SageObject):
         r"""Return whether each component of the system is strongly connected."""
         return all(g.is_strongly_connected() for g in self.graph.connected_components_subgraphs())
 
-    def _check_network_conditions(self):
+    def _check_network_conditions(self) -> None:
         r"""Perform common network checks for uniqueness and existence of CBE."""
         self._update()
         if self._deficiency_stoichiometric != 0:
@@ -490,12 +490,12 @@ class ReactionNetwork(SageObject):
         if not self.is_weakly_reversible():
             raise ValueError("Network is not weakly reversible!")
 
-    def has_robust_cbe(self):
+    def has_robust_cbe(self) -> bool:
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
         self._check_network_conditions()
         return condition_closure_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
-    def has_at_most_one_cbe(self):
+    def has_at_most_one_cbe(self) -> bool:
         r"""Check whether there is at most one positive CBE."""
         self._check_network_conditions()
         return condition_uniqueness_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
