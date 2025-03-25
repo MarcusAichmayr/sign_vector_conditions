@@ -76,7 +76,7 @@ class ReactionNetwork(SageObject):
 
     We check some conditions for our system::
 
-        sage: rn.are_deficiencies_zero()
+        sage: rn.are_both_deficiencies_zero()
         True
         sage: rn.is_weakly_reversible()
         True
@@ -176,7 +176,7 @@ class ReactionNetwork(SageObject):
 
     We check some conditions for our system::
 
-        sage: rn.are_deficiencies_zero()
+        sage: rn.are_both_deficiencies_zero()
         True
         sage: rn.is_weakly_reversible()
         True
@@ -436,7 +436,7 @@ class ReactionNetwork(SageObject):
         return f"${latex(self.complexes[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
 
     def edge_labels(self):
-        # TODO remove?
+        # TODO remove? doctest?
         return self.graph.edge_labels()
 
     def deficiency_stoichiometric(self):
@@ -449,7 +449,7 @@ class ReactionNetwork(SageObject):
         self._update_matrices()
         return self.graph.num_verts() - self.graph.connected_components_number() - self._matrix_kinetic_order.rank()
 
-    def are_deficiencies_zero(self) -> bool:
+    def are_both_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
         return self.deficiency_stoichiometric() == self.deficiency_kinetic_order() == 0
 
