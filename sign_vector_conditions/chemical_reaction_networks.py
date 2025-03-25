@@ -384,8 +384,8 @@ class ReactionNetwork(SageObject):
         self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
         self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
 
-        self._deficiency_stoichiometric = self.graph.num_verts() - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
-        self._deficiency_kinetic_order = self.graph.num_verts() - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
+        self._deficiency_stoichiometric = len(self.complexes) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
+        self._deficiency_kinetic_order = len(self.complexes) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
 
         try:
             self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric_reduced)
