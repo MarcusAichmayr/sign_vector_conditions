@@ -14,11 +14,14 @@ from __future__ import annotations
 
 from copy import copy
 from collections.abc import Iterable
+from sage.calculus.var import var
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
+from sage.matrix.special import diagonal_matrix
+from sage.modules.free_module_element import vector
 from sage.misc.latex import latex
-from sage.calculus.var import var
+from sage.misc.misc_c import prod
 
 from elementary_vectors import kernel_matrix_using_elementary_vectors
 
@@ -127,6 +130,18 @@ class ReactionNetwork(SageObject):
         [0 0 0 1 0 0]
         [0 0 0 0 1 0]
         [0 0 0 0 0 1]
+        sage: rn.laplacian_matrix()
+        [        -k_0_1          k_1_0          k_2_0              0              0]
+        [         k_0_1 -k_1_0 - k_1_2              0              0              0]
+        [             0          k_1_2         -k_2_0              0              0]
+        [             0              0              0         -k_3_4          k_4_3]
+        [             0              0              0          k_3_4         -k_4_3]
+        sage: rn.differential_equation()
+        (-k_0_1*x_0^a*x_2^c*x_3 + k_1_0*x_0^b + k_2_0*x_1 - k_3_4*x_2 + k_4_3*x_4,
+         -k_0_1*x_0^a*x_2^c*x_3 + k_1_0*x_0^b + k_2_0*x_1,
+         k_0_1*x_0^a*x_2^c*x_3 - (k_1_0 + k_1_2)*x_0^b,
+         k_1_2*x_0^b - k_2_0*x_1,
+         k_3_4*x_2 - k_4_3*x_4)
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
@@ -408,6 +423,21 @@ class ReactionNetwork(SageObject):
     def source_matrix(self):
         r"""Return the source matrix of the graph."""
         return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix)
+
+    def laplacian_matrix(self) -> matrix:
+        r"""Return the Laplacian matrix of the graph."""
+        # return self.graph.laplacian_matrix() # TODO which one?
+        return self.incidence_matrix * diagonal_matrix(self.rate_constants()) * self.source_matrix.T
+
+    def differential_equation(self):
+        r"""Return the differential equation of the system."""
+        x = vector(var(f"x_{i}") for i in range(len(self.complexes_stoichiometric)))
+        return (
+            self.matrix_of_complexes_stoichiometric * self.laplacian_matrix() * vector(
+                prod(xi ** yi for xi, yi in zip(x, y))
+                for y in self.matrix_of_complexes_kinetic_order.rows()
+            )
+        )
 
     @property
     def deficiency_stoichiometric(self):
