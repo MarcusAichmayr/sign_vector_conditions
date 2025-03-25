@@ -345,22 +345,22 @@ class ReactionNetwork(SageObject):
     @property
     def matrix_of_complexes_stoichiometric(self):
         r"""Return the matrix that decodes the stoichiometric complexes of the reaction network."""
-        return self._get_matrix('_matrix_of_complexes_stoichiometric')
+        return self._get_matrix('_matrix_of_complexes_stoichiometric').T
 
     @property
     def matrix_of_complexes_kinetic_order(self):
         r"""Return the matrix that decodes the kinetic-order complexes of the reaction network."""
-        return self._get_matrix('_matrix_of_complexes_kinetic_order')
+        return self._get_matrix('_matrix_of_complexes_kinetic_order').T
 
     @property
     def matrix_stoichiometric(self):
         r"""Return the stoichiometric matrix."""
-        return self._get_matrix('_matrix_stoichiometric')
+        return self._get_matrix('_matrix_stoichiometric').T
 
     @property
     def matrix_kinetic_order(self):
         r"""Return the kinetic-order matrix."""
-        return self._get_matrix('_matrix_kinetic_order')
+        return self._get_matrix('_matrix_kinetic_order').T
 
     @property
     def kernel_matrix_stoichiometric(self):
