@@ -32,10 +32,7 @@ from .robustness import condition_closure_minors
 
 class ReactionNetwork(SageObject):
     r"""
-    Class for chemical reaction networks with generalized mass-action kinetics.
-
-    A generalized mass-action system is represented by a (weighted) directed graph
-    and stoichiometric and kinetic-order labels of the vertices.
+    A (chemical) reaction networks with (generalized) mass-action kinetics.
 
     EXAMPLES:
 
@@ -236,7 +233,7 @@ class ReactionNetwork(SageObject):
 
     We can set the rate constant variable to a different name::
 
-        sage: rn.set_rate_constant_variable("t")
+        sage: rn.set_variable_for_rate_constants("t")
         sage: rn.rate_constants()
         (t_0_1, t_1_2, t_1_4, t_2_0)
         sage: rn.plot()
@@ -326,7 +323,7 @@ class ReactionNetwork(SageObject):
         r"""Return reactions."""
         return [(start, end) for start, end, _ in self.graph.edges()]
 
-    def set_rate_constant_variable(self, variable: str) -> None:
+    def set_variable_for_rate_constants(self, variable: str) -> None:
         r"""Set rate constant variable."""
         self._rate_constant_variable = variable
         for edge in self.graph.edges():
