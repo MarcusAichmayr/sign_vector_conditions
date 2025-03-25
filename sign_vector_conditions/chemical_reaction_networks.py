@@ -423,16 +423,16 @@ class ReactionNetwork(SageObject):
 
     def laplacian_matrix(self) -> matrix:
         r"""Return the Laplacian matrix of the graph."""
-        # return self.graph.laplacian_matrix() # TODO which one?
         return self.incidence_matrix * diagonal_matrix(self.rate_constants()) * self.source_matrix.T
 
     def differential_equation(self):
         r"""Return the differential equation of the system."""
+        self._update()
         x = vector(var(f"x_{i}") for i in range(len(self.complexes_stoichiometric)))
         return (
-            self.matrix_of_complexes_stoichiometric * self.laplacian_matrix() * vector(
+            self._matrix_of_complexes_stoichiometric.T * self.laplacian_matrix() * vector(
                 prod(xi ** yi for xi, yi in zip(x, y))
-                for y in self.matrix_of_complexes_kinetic_order.rows()
+                for y in self._matrix_of_complexes_kinetic_order.columns()
             )
         )
 
