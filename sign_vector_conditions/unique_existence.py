@@ -4,19 +4,20 @@ Existence and uniqueness of equilibria
 
 Let us consider the following matrices to describe a chemical reaction network::
 
-    sage: W = matrix([[1, 0, 1, 0], [0, 1, 0, 1]])
-    sage: W
-    [1 0 1 0]
-    [0 1 0 1]
-    sage: Wt = matrix([[1, 0, 0, -1], [0, 1, 1, 1]])
-    sage: Wt
-    [ 1  0  0 -1]
-    [ 0  1  1  1]
+    sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
+    sage: S
+    [ 1  0 -1  0]
+    [ 0  1  0 -1]
+    sage: St = matrix([[1, 0, -1, 1], [0, 1, -1, 0]])
+    sage: St
+    [ 1  0 -1  1]
+    [ 0  1 -1  0]
+
 
 To check whether a unique equilibrium exists, we apply :func:`~condition_uniqueness_minors`::
 
     sage: from sign_vector_conditions import *
-    sage: condition_uniqueness_minors(W, Wt)
+    sage: condition_uniqueness_minors(S, St)
     True
 
 This means that the chemical reaction network has at most one equilibrium.
@@ -26,10 +27,10 @@ For this purpose, we compute the cocircuits of the oriented matroids
 corresponding to the matrices::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cc1 = cocircuits_from_matrix(W, dual=False)
+    sage: cc1 = cocircuits_from_matrix(S, dual=True)
     sage: cc1
-    {(0-0-), (+0+0), (-0-0), (0+0+)}
-    sage: cc2 = cocircuits_from_matrix(Wt, dual=False)
+    {(+0+0), (0-0-), (-0-0), (0+0+)}
+    sage: cc2 = cocircuits_from_matrix(St, dual=True)
     sage: cc2
     {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
 
@@ -47,19 +48,19 @@ the face condition is satisfied.
 There is also a function in the package that can be used directly
 to check whether this condition is fulfilled::
 
-    sage: condition_faces(W, Wt)
+    sage: condition_faces(S, St)
     True
 
 We need to check a third condition to verify surjectivity.
-For this purpose, we consider again the oriented matroid determined by ``W``::
+For this purpose, we consider again the oriented matroid determined by ``S``::
 
-    sage: covectors_from_matrix(W, dual=True)
+    sage: covectors_from_matrix(S, dual=False)
     {(0000), (+--+), (++--), (-0+0), (0-0+), (--++), (0+0-), (-++-), (+0-0)}
 
 Since there are no nonnegative covectors, the chemical reaction network has at least one equilibrium.
 The package offers a function to check this condition condition::
 
-    sage: condition_nondegenerate(W, Wt)
+    sage: condition_nondegenerate(S, St)
     True
 
 Hence, the chemical reaction network has a unique equilibrium.
@@ -67,28 +68,21 @@ Hence, the chemical reaction network has a unique equilibrium.
 Let us consider another example.
 We swap the two matrices from before::
 
-    sage: W = matrix([[1, 0, 0, -1], [0, 1, 1, 1]])
-    sage: W
-    [ 1  0  0 -1]
-    [ 0  1  1  1]
-    sage: Wt = matrix([[1, 0, 1, 0], [0, 1, 0, 1]])
-    sage: Wt
-    [1 0 1 0]
-    [0 1 0 1]
+    sage: S, St = St, S
 
 Because of symmetry, there is at most one equilibrium::
 
-    sage: condition_uniqueness_sign_vectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(S, St)
     True
 
 Now, we check the face condition::
 
-    sage: cc1 = cocircuits_from_matrix(W, dual=False)
+    sage: cc1 = cocircuits_from_matrix(S, dual=True)
     sage: cc1
     {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
-    sage: cc2 = cocircuits_from_matrix(Wt, dual=False)
+    sage: cc2 = cocircuits_from_matrix(St, dual=True)
     sage: cc2
-    {(0-0-), (+0+0), (-0-0), (0+0+)}
+    {(+0+0), (0-0-), (-0-0), (0+0+)}
 
 Again, we are only interested in the positive cocircuits::
 
@@ -102,7 +96,7 @@ Again, we are only interested in the positive cocircuits::
 Therefore, the condition does not hold.
 We also apply the corresponding function from the package::
 
-    sage: condition_faces(W, Wt)
+    sage: condition_faces(S, St)
     False
 
 Consequently, there exists no unique equilibrium.
@@ -123,47 +117,58 @@ Depending on this parameter, the chemical reaction network has a unique equilibr
     [ 1  1  0  0 -1  a]
     [ 1 -1  0  0  0  0]
     [ 0  0  1 -1  0  0]
+    sage: S = W.right_kernel_matrix()
+    sage: S
+    [ 1  0  0  0  0  1]
+    [ 0  1  0  0  0 -1]
+    [ 0  0  1  1  2  0]
+    sage: from elementary_vectors.functions import kernel_matrix_using_elementary_vectors
+    sage: St = kernel_matrix_using_elementary_vectors(Wt) # prevents division by ``a``
+    sage: St
+    [-1 -1  0  0 -2  0]
+    [ 0  0  1  1  0  0]
+    [ 0  0  0  0  a  1]
 
 The first two conditions depend on the sign vectors of the corresponding oriented matroids.
 Consequently, the choice of the positive parameter ``a`` does not affect the result::
 
     sage: assume(a > 0)
-    sage: condition_uniqueness_sign_vectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(S, St)
     True
 
 Hence, there exists at most one equilibrium.
 Also the face condition is satisfied::
 
-    sage: condition_faces(W, Wt)
+    sage: condition_faces(S, St)
     True
 
 For specific values of ``a``, the pair of subspaces
 determined by kernels of the matrices is nondegenerate.
 This is the case for :math:`a \in (0, 1) \cup (1, 2)`::
 
-    sage: condition_nondegenerate(W, Wt(a=1/2))
+    sage: condition_nondegenerate(S, St(a=1/2))
     True
-    sage: condition_nondegenerate(W, Wt(a=3/2))
+    sage: condition_nondegenerate(S, St(a=3/2))
     True
 
 On the other hand, this condition does not hold if
 :math:`a \in {1} \cup [2, \infty)`::
 
-    sage: condition_nondegenerate(W, Wt(a=1))
+    sage: condition_nondegenerate(S, St(a=1))
     False
 
 To certify the result, we call::
 
-    sage: condition_degenerate(W, Wt(a=1), certify=True)
+    sage: condition_degenerate(S, St(a=1), certify=True)
     (True, (1, 1, 0, 0, -1, 1))
 
-Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``Wt``
-can be covered by a sign vector ``(++000+)`` corresponding to ``ker(W)``.
+Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``St``
+can be covered by a sign vector ``(++000+)`` corresponding to ``ker(S)``.
 Further, ``v`` does not satisfy the support condition.
 
-    sage: condition_nondegenerate(W, Wt(a=2))
+    sage: condition_nondegenerate(S, St(a=2))
     False
-    sage: condition_nondegenerate(W, Wt(a=3))
+    sage: condition_nondegenerate(S, St(a=3))
     False
 """
 
@@ -188,19 +193,20 @@ from vectors_in_intervals import exists_vector, sign_vectors_in_intervals, vecto
 from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
 
 
-def condition_faces(stoichiometric_kernel_matrix, kinetic_order_kernel_matrix) -> bool:
+def condition_faces(stoichiometric_matrix, kinetic_order_matrix) -> bool:
     r"""
     Condition on positive sign vectors for existence and uniqueness of equilibria
 
     INPUT:
 
-    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``stoichiometric_matrix`` -- a matrix
 
-    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``kinetic_order_matrix`` -- a matrix
 
     OUTPUT:
+    TODO
     Return whether every positive sign vector ``X`` corresponding to the rows of
-    ``Wt`` has a positive sign vector ``Y`` corresponding to the rows of ``W``
+    ``St`` has a positive sign vector ``Y`` corresponding to the rows of ``S``
     such that ``Y <= X``.
 
     Return a boolean.
@@ -208,40 +214,36 @@ def condition_faces(stoichiometric_kernel_matrix, kinetic_order_kernel_matrix) -
     EXAMPLES::
 
         sage: from sign_vector_conditions.unique_existence import condition_faces
-        sage: W = matrix([[1, 0, -1, 0], [0, 1, 0, -1]]).right_kernel_matrix()
-        sage: W
-        [1 0 1 0]
-        [0 1 0 1]
-        sage: Wt = matrix([[1, 0, -1, 1], [0, 1, -1, 0]]).right_kernel_matrix()
-        sage: Wt
-        [ 1  0  0 -1]
-        [ 0  1  1  1]
-        sage: condition_faces(W, Wt)
+        sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
+        sage: S
+        [ 1  0 -1  0]
+        [ 0  1  0 -1]
+        sage: St = matrix([[1, 0, -1, 1], [0, 1, -1, 0]])
+        sage: St
+        [ 1  0 -1  1]
+        [ 0  1 -1  0]
+        sage: condition_faces(S, St)
         True
     """
-    non_negative_cocircuits = non_negative_cocircuits_from_matrix(
-        stoichiometric_kernel_matrix, dual=False
-    )
+    non_negative_cocircuits = non_negative_cocircuits_from_matrix(stoichiometric_matrix, dual=True)
 
-    for cocircuit1 in non_negative_cocircuits_from_matrix(
-        kinetic_order_kernel_matrix, dual=False
-    ):
+    for cocircuit1 in non_negative_cocircuits_from_matrix(kinetic_order_matrix, dual=True):
         if not any(cocircuit2 <= cocircuit1 for cocircuit2 in non_negative_cocircuits):
             return False
     return True
 
 
 def condition_nondegenerate(
-    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
+    stoichiometric_matrix, kinetic_order_matrix
 ) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is nondegenerate.
 
     INPUT:
 
-    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``stoichiometric_matrix`` -- a matrix
 
-    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``kinetic_order_matrix`` -- a matrix
 
     OUTPUT:
     a boolean
@@ -250,25 +252,21 @@ def condition_nondegenerate(
 
         :func:`~condition_degenerate`
     """
-    return not condition_degenerate(
-        stoichiometric_kernel_matrix, kinetic_order_kernel_matrix
-    )
+    return not condition_degenerate(stoichiometric_matrix, kinetic_order_matrix)
 
 
-def condition_degenerate(
-    stoichiometric_kernel_matrix, kinetic_order_kernel_matrix, certify: bool = False
-) -> bool:
+def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: bool = False) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is degenerate.
 
-    This condition is about whether all positive equal components of a vector in ``Wt``
-    can be covered by covectors corresponding to the kernel of ``W``.
+    This condition is about whether all positive equal components of a vector in ``St``
+    can be covered by covectors corresponding to the kernel of ``S``.
 
     INPUT:
 
-    - ``stoichiometric_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``stoichiometric_matrix`` -- a matrix with ``n`` columns
 
-    - ``kinetic_order_kernel_matrix`` -- a matrix with ``n`` columns
+    - ``kinetic_order_matrix`` -- a matrix with ``n`` columns
 
     - ``certify`` -- a boolean (default: ``False``)
 
@@ -283,31 +281,39 @@ def condition_degenerate(
         sage: from sign_vector_conditions.unique_existence import *
 
     Next, we certify our results. In the first examples, the subspaces are trivially nondegenerate
-    since there are no nonnegative covectors in the kernel of ``W``::
+    since there are no nonnegative covectors in the kernel of ``S``::
 
-        sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, 1]])
-        sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
-        sage: condition_degenerate(W, Wt, certify=True)
+        sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
+        sage: St = matrix([[1, 0, 0, 1], [0, 1, 0, 1]])
+        sage: condition_degenerate(S, St, certify=True)
         (False, 'no nonnegative covectors')
 
     Here, we have a pair of degenerate subspaces::
 
-        sage: W = matrix([[1, -1, 0], [0, 0, 1]])
-        sage: Wt = matrix([[1, 0, 0], [0, 1, 0]])
-        sage: condition_degenerate(W, Wt, certify=True)
+        sage: S = matrix([[1, 1, 0]])
+        sage: St = matrix([[0, 0, 1]])
+        sage: condition_degenerate(S, St, certify=True)
         (True, (1, 1, 0))
 
-    The resulting vector lies in the row space of ``Wt``.
-    The nonnegative covector ``(++0)`` in the kernel of ``W`` covers the first two equal components.
+    The resulting vector lies in the row space of ``St``.
+    The nonnegative covector ``(++0)`` in the kernel of ``S`` covers the first two equal components.
 
     In the following, we have another example for nondegenerate subspaces::
 
-        sage: W = matrix([[1, 1, 0, -1, 0], [0, 0, 1, -1, -1]])
-        sage: Wt = matrix([[1, 1, 0, -1, 0], [0, 0, 1, 1, 1]])
-        sage: condition_degenerate(W, Wt, certify=True)
+        sage: S = matrix([[1, 0, 0, 1, -1], [0, 1, 0, 1, -1], [0, 0, 1, 0, 1]])
+        sage: S
+        [ 1  0  0  1 -1]
+        [ 0  1  0  1 -1]
+        [ 0  0  1  0  1]
+        sage: St = matrix([[1, 0, 0, 1, -1], [0, 1, 0, 1, -1], [0, 0, 1, 0, -1]])
+        sage: St
+        [ 1  0  0  1 -1]
+        [ 0  1  0  1 -1]
+        [ 0  0  1  0 -1]
+        sage: condition_degenerate(S, St, certify=True)
         (False, ([[[0, 2, 3]], [[1, 2, 3]]], [[[2, 4]]], []))
 
-    The certificate tells us that there is no vector in the row space of ``Wt``
+    The certificate tells us that there is no vector in the row space of ``St``
     with positive support on the components ``0, 2, 3`` and ``1, 2, 3``.
     Positive equal components can partially be covered by a covector ``(00+0+)``
     which corresponds to ``[[2, 4]]``.
@@ -315,40 +321,34 @@ def condition_degenerate(
 
     In the next example, there exists a partial cover::
 
-        sage: W = matrix([[1, 1, 0, 0], [0, 0, 1, -1]])
-        sage: Wt = matrix([[1, 1, 0, -1], [0, 0, 1, 0]])
-        sage: condition_degenerate(W, Wt, certify=True)
+        sage: S = matrix([[1, -1, 0, 0], [0, 0, 1, 1]])
+        sage: St = matrix([[1, 0, 0, 1], [0, 1, 0, 1]])
+        sage: condition_degenerate(S, St, certify=True)
         (False, ([], [[[2, 3]]], [[[[2, 3]], [(--++)]]]))
 
-    In fact, a vector in ``Wt`` with equal positive components on ``[2, 3]``
+    In fact, a vector in ``St`` with equal positive components on ``[2, 3]``
     corresponding to ``(--++)`` can be fully covered by covectors.
     However, this vector would not satisfy the support condition.
     """
-    if stoichiometric_kernel_matrix.ncols() != kinetic_order_kernel_matrix.ncols():
+    if stoichiometric_matrix.ncols() != kinetic_order_matrix.ncols():
         raise ValueError("Matrices have different number of columns.")
-    non_negative_cocircuits = non_negative_cocircuits_from_matrix(
-        stoichiometric_kernel_matrix, dual=True
-    )
+    non_negative_cocircuits = non_negative_cocircuits_from_matrix(stoichiometric_matrix, dual=False)
 
     if not non_negative_cocircuits:
         if certify:
             return False, "no nonnegative covectors"
         return False
 
-    non_negative_cocircuits = sorted(
-        non_negative_cocircuits, key=lambda covector: len(covector.support())
-    )
-    length = kinetic_order_kernel_matrix.ncols()
+    non_negative_cocircuits = sorted(non_negative_cocircuits, key=lambda covector: len(covector.support()))
+    length = kinetic_order_matrix.ncols()
     is_degenerate = False
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
     upper_bounds_inf = [Infinity] * length
 
-    kernel_matrix = kinetic_order_kernel_matrix.right_kernel_matrix()
-    covectors_support_condition = non_negative_cocircuits_from_matrix(
-        stoichiometric_kernel_matrix, dual=False
-    )
+    kernel_matrix = kinetic_order_matrix
+    covectors_support_condition = non_negative_cocircuits_from_matrix(stoichiometric_matrix, dual=True)
 
     if certify:
         certificate = []

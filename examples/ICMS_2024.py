@@ -338,18 +338,18 @@ To examine robustness of CBE, we compute the covectors corresponding to the resu
 For :math:`a = 2`, :math:`b = 1` and :math:`c = 1`, the covectors of :math:`S` are included in the closure of the covectors of :math:`\widetilde{S}`.
 To consider the general case, we compute the maximal minors of :math:`S` and :math:`\widetilde{S}`::
 
-    sage: W  = matrix([[1, 0, 1, 1, 1], [0, 1, 1, 1, 0]])
-    sage: W
+    sage: S  = matrix([[1, 0, 1, 1, 1], [0, 1, 1, 1, 0]])
+    sage: S
     [1 0 1 1 1]
     [0 1 1 1 0]
     sage: var('a, b, c')
     (a, b, c)
-    sage: Wt = matrix([[1, 0, a, a - c, 1], [0, 1, b, b, 0]])
-    sage: Wt
+    sage: St = matrix([[1, 0, a, a - c, 1], [0, 1, b, b, 0]])
+    sage: St
     [    1     0     a a - c     1]
     [    0     1     b     b     0]
     sage: from sign_vector_conditions import *
-    sage: condition_closure_minors(W, Wt) # random order
+    sage: condition_closure_minors(S, St) # random order
     [{a > 0, b > 0, a - c > 0}]
 
 Hence, the network has a unique positive CBE if and only if :math:`a, b > 0` and :math:`a > c`.
@@ -359,7 +359,7 @@ Uniqueness
 
 We can also use the maximal minors to study uniqueness of CBE::
 
-    sage: condition_uniqueness_minors(W, Wt) # random order
+    sage: condition_uniqueness_minors(S, St) # random order
     [{a >= 0, b >= 0, a - c >= 0}]
 
 Hence, positive CBE are unique if and only if :math:`a, b \geq 0` and :math:`a \geq c`.
@@ -374,27 +374,27 @@ Depending on this parameter, the network has a unique positive CBE::
     sage: var('a')
     a
     sage: assume(a > 0)
-    sage: W = matrix(3, 6, [0, 0, 1, 1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, -1, 0, 0])
-    sage: W
-    [ 0  0  1  1 -1  0]
-    [ 1 -1  0  0  0 -1]
-    [ 0  0  1 -1  0  0]
-    sage: Wt = matrix(3, 6, [1, 1, 0, 0, -1, a, 1, -1, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])
-    sage: Wt
-    [ 1  1  0  0 -1  a]
-    [ 1 -1  0  0  0  0]
-    [ 0  0  1 -1  0  0]
+    sage: S = matrix([[1, 0, 0, 0, 0, 1], [0, 1, 0, 0, 0, -1], [0, 0, 1, 1, 2, 0]])
+    sage: S
+    [ 1  0  0  0  0  1]
+    [ 0  1  0  0  0 -1]
+    [ 0  0  1  1  2  0]
+    sage: St = matrix([[-1, -1, 0, 0, -2, 0], [0, 0, 1, 1, 0, 0], [0, 0, 0, 0, a, 1]])
+    sage: St
+    [-1 -1  0  0 -2  0]
+    [ 0  0  1  1  0  0]
+    [ 0  0  0  0  a  1]
 
 The first two conditions depend on the sign vectors corresponding
 to the rows of these matrices which are independent of the specific value for :math:`a`::
 
-    sage: condition_uniqueness_sign_vectors(W, Wt)
+    sage: condition_uniqueness_sign_vectors(S, St)
     True
 
 Hence, there exists at most one equilibrium.
 Also the face condition is satisfied::
 
-    sage: condition_faces(W, Wt)
+    sage: condition_faces(S, St)
     True
 
 For specific values of ``a``, the pair of subspaces
@@ -402,14 +402,14 @@ determined by kernels of the matrices is nondegenerate.
 This is exactly the case for :math:`a \in (0, 1) \cup (1, 2)`.
 We demonstrate this for specific values::
 
-    sage: condition_nondegenerate(W, Wt(a=1/2))
+    sage: condition_nondegenerate(S, St(a=1/2))
     True
-    sage: condition_nondegenerate(W, Wt(a=3/2))
+    sage: condition_nondegenerate(S, St(a=3/2))
     True
-    sage: condition_nondegenerate(W, Wt(a=1))
+    sage: condition_nondegenerate(S, St(a=1))
     False
-    sage: condition_nondegenerate(W, Wt(a=2))
+    sage: condition_nondegenerate(S, St(a=2))
     False
-    sage: condition_nondegenerate(W, Wt(a=3))
+    sage: condition_nondegenerate(S, St(a=3))
     False
 """

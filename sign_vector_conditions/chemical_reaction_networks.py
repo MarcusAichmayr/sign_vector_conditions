@@ -496,12 +496,12 @@ class ReactionNetwork(SageObject):
     def _condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_faces(self.matrix_stoichiometric_as_kernel, self.matrix_kinetic_order_as_kernel)
+        return condition_faces(self._matrix_stoichiometric, self._matrix_kinetic_order)
 
     def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_nondegenerate(self.matrix_stoichiometric_as_kernel, self.matrix_kinetic_order_as_kernel)
+        return condition_nondegenerate(self._matrix_stoichiometric, self._matrix_kinetic_order)
 
     def has_exactly_one_cbe(self) -> bool:
         r"""Check whether there is exactly one positive CBE."""
