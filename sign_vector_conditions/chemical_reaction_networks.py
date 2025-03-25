@@ -235,13 +235,13 @@ class ReactionNetwork(SageObject):
 
         - ``species`` -- a list of species.
         """
-        self._update_needed = True
-        self.species = []
+        self._update_needed: bool = True
+        self.species: list = []
         self.add_species(species)
-        self.complexes_stoichiometric = {}
-        self.complexes_kinetic_order = {}
-        self._rate_constant_variable = "k"
-        self.graph = DiGraph()
+        self.complexes_stoichiometric: set = {}
+        self.complexes_kinetic_order: set = {}
+        self._rate_constant_variable: str = "k"
+        self.graph: DiGraph = DiGraph()
 
         self._matrix_of_complexes_stoichiometric = None
         self._matrix_of_complexes_kinetic_order = None
@@ -250,8 +250,8 @@ class ReactionNetwork(SageObject):
         self._matrix_stoichiometric_reduced = None
         self._matrix_kinetic_order_reduced = None
 
-        self._deficiency_stoichiometric = 0
-        self._deficiency_kinetic_order = 0
+        self._deficiency_stoichiometric: int = 0
+        self._deficiency_kinetic_order: int = 0
 
     def _repr_(self) -> str:
         return f"Reaction network with {self.graph.num_verts()} complexes and {self.graph.num_edges()} reactions."
