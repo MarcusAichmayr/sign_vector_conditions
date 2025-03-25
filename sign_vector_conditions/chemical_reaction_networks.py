@@ -40,51 +40,51 @@ class ReactionNetwork(SageObject):
         sage: var('a, b')
         (a, b)
         sage: species = var('A, B, C')
-        sage: crn = ReactionNetwork(species)
-        sage: crn.add_complex(0, A + B, a * A + b * B)
-        sage: crn.add_complex(1, C)
-        sage: crn.add_reactions([(0, 1), (1, 0)])
-        sage: crn
+        sage: rn = ReactionNetwork(species)
+        sage: rn.add_complex(0, A + B, a * A + b * B)
+        sage: rn.add_complex(1, C)
+        sage: rn.add_reactions([(0, 1), (1, 0)])
+        sage: rn
         Reaction network with 2 complexes and 2 reactions.
-        sage: crn.plot()
+        sage: rn.plot()
         Graphics object consisting of 8 graphics primitives
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
-        sage: crn.matrix_of_complexes_stoichiometric
+        sage: rn.matrix_of_complexes_stoichiometric
         [1 0]
         [1 0]
         [0 1]
-        sage: crn.matrix_of_complexes_kinetic_order
+        sage: rn.matrix_of_complexes_kinetic_order
         [a 0]
         [b 0]
         [0 1]
-        sage: crn.matrix_stoichiometric
+        sage: rn.matrix_stoichiometric
         [-1  1]
         [-1  1]
         [ 1 -1]
-        sage: crn.matrix_kinetic_order
+        sage: rn.matrix_kinetic_order
         [-a  a]
         [-b  b]
         [ 1 -1]
-        sage: crn.kernel_matrix_stoichiometric
+        sage: rn.kernel_matrix_stoichiometric
         [1 0 1]
         [0 1 1]
-        sage: crn.kernel_matrix_kinetic_order
+        sage: rn.kernel_matrix_kinetic_order
         [1 0 a]
         [0 1 b]
 
     We check some conditions for our system::
 
-        sage: crn.are_deficiencies_zero()
+        sage: rn.are_deficiencies_zero()
         True
-        sage: crn.is_weakly_reversible()
+        sage: rn.is_weakly_reversible()
         True
-        sage: crn(a=2, b=1).has_robust_cbe()
+        sage: rn(a=2, b=1).has_robust_cbe()
         True
-        sage: crn.has_robust_cbe()
+        sage: rn.has_robust_cbe()
         [{a > 0, b > 0}]
-        sage: crn.has_at_most_one_cbe()
+        sage: rn.has_at_most_one_cbe()
         [{a >= 0, b >= 0}]
 
     We extend our network by adding further complexes and reactions::
@@ -93,36 +93,36 @@ class ReactionNetwork(SageObject):
         c
         sage: var('D, E')
         (D, E)
-        sage: crn.add_species(D, E)
-        sage: crn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
-        sage: crn.add_reactions([(1, 2), (3, 4), (4, 3)])
-        sage: crn.reactions
+        sage: rn.add_species(D, E)
+        sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
+        sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
+        sage: rn.reactions
         [(0, 1, '$k_{01}$'), (1, 0, '$k_{10}$'), (1, 2, '$k_{12}$'), (3, 4, '$k_{34}$'), (4, 3, '$k_{43}$')]
-        sage: crn
+        sage: rn
         Reaction network with 5 complexes and 5 reactions.
-        sage: crn.plot()
+        sage: rn.plot()
         Graphics object consisting of 20 graphics primitives
 
     To make this system weakly reversible, we add another reaction.
     We specify a name for it::
 
-        sage: crn.is_weakly_reversible()
+        sage: rn.is_weakly_reversible()
         False
-        sage: crn.add_reaction(2, 0, "h")
-        sage: crn
+        sage: rn.add_reaction(2, 0, "h")
+        sage: rn
         Reaction network with 5 complexes and 6 reactions.
-        sage: crn.is_weakly_reversible()
+        sage: rn.is_weakly_reversible()
         True
 
     We compute the incidence and source matrices of the directed graph::
 
-        sage: crn.incidence_matrix
+        sage: rn.incidence_matrix
         [-1  1  0  1  0  0]
         [ 1 -1 -1  0  0  0]
         [ 0  0  1 -1  0  0]
         [ 0  0  0  0 -1  1]
         [ 0  0  0  0  1 -1]
-        sage: crn.source_matrix
+        sage: rn.source_matrix
         [1 0 0 0 0 0]
         [0 1 1 0 0 0]
         [0 0 0 1 0 0]
@@ -131,97 +131,97 @@ class ReactionNetwork(SageObject):
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
-        sage: crn.matrix_of_complexes_stoichiometric
+        sage: rn.matrix_of_complexes_stoichiometric
         [1 0 0 1 0]
         [1 0 0 0 0]
         [0 1 0 0 0]
         [0 0 1 0 0]
         [0 0 0 0 1]
-        sage: crn.matrix_of_complexes_kinetic_order
+        sage: rn.matrix_of_complexes_kinetic_order
         [a 0 c 1 0]
         [b 0 0 0 0]
         [0 1 0 0 0]
         [0 0 1 0 0]
         [0 0 0 0 1]
-        sage: crn.matrix_stoichiometric
+        sage: rn.matrix_stoichiometric
         [-1  1  0  1 -1  1]
         [-1  1  0  1  0  0]
         [ 1 -1 -1  0  0  0]
         [ 0  0  1 -1  0  0]
         [ 0  0  0  0  1 -1]
-        sage: crn.matrix_kinetic_order
+        sage: rn.matrix_kinetic_order
         [   -a     a     c a - c    -1     1]
         [   -b     b     0     b     0     0]
         [    1    -1    -1     0     0     0]
         [    0     0     1    -1     0     0]
         [    0     0     0     0     1    -1]
-        sage: crn.matrix_stoichiometric_reduced
+        sage: rn.matrix_stoichiometric_reduced
         [-1  0 -1]
         [-1  0  0]
         [ 1 -1  0]
         [ 0  1  0]
         [ 0  0  1]
-        sage: crn.matrix_kinetic_order_reduced
+        sage: rn.matrix_kinetic_order_reduced
         [-a  c -1]
         [-b  0  0]
         [ 1 -1  0]
         [ 0  1  0]
         [ 0  0  1]
-        sage: crn.kernel_matrix_stoichiometric
+        sage: rn.kernel_matrix_stoichiometric
         [1 0 1 1 1]
         [0 1 1 1 0]
-        sage: crn.kernel_matrix_kinetic_order
+        sage: rn.kernel_matrix_kinetic_order
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
 
     We check some conditions for our system::
 
-        sage: crn.are_deficiencies_zero()
+        sage: rn.are_deficiencies_zero()
         True
-        sage: crn.is_weakly_reversible()
+        sage: rn.is_weakly_reversible()
         True
-        sage: crn(a=2, b=1, c=1).has_robust_cbe()
+        sage: rn(a=2, b=1, c=1).has_robust_cbe()
         True
-        sage: crn.has_robust_cbe() # random order
+        sage: rn.has_robust_cbe() # random order
         [{a > 0, a - c > 0, b > 0}]
-        sage: crn.has_at_most_one_cbe() # random order
+        sage: rn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
 
     We remove one component and a reaction of our system::
 
-        sage: crn.remove_complex(3)
-        sage: crn.remove_complex(4)
-        sage: crn.remove_reaction(1, 0)
-        sage: crn.remove_species(E)
-        sage: crn
+        sage: rn.remove_complex(3)
+        sage: rn.remove_complex(4)
+        sage: rn.remove_reaction(1, 0)
+        sage: rn.remove_species(E)
+        sage: rn
         Reaction network with 3 complexes and 3 reactions.
-        sage: crn.plot()
+        sage: rn.plot()
         Graphics object consisting of 10 graphics primitives
-        sage: crn.is_weakly_reversible()
+        sage: rn.is_weakly_reversible()
         True
-        sage: crn.has_at_most_one_cbe() # random order
+        sage: rn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
 
     If a species is not specified, it will be ignored::
 
-        sage: crn.add_complex(4, E)
-        sage: crn.add_reaction(1, 4)
-        sage: crn
+        sage: rn.add_complex(4, E)
+        sage: rn.add_reaction(1, 4)
+        sage: rn
         Reaction network with 4 complexes and 4 reactions.
-        sage: crn.species
+        sage: rn.species
         [A, B, C, D]
-        sage: crn.plot()
+        sage: rn.plot()
         Graphics object consisting of 13 graphics primitives
 
     To overwrite complexes we add them as usual::
 
-        sage: crn.add_species(E)
-        sage: crn.add_complex(4, E)
-        sage: crn
+        sage: rn.add_species(E)
+        sage: rn.add_complex(4, E)
+        sage: rn
         Reaction network with 4 complexes and 4 reactions.
-        sage: crn.species
+        sage: rn.species
         [A, B, C, D, E]
-        sage: crn.plot()
+        sage: rn.plot()
         Graphics object consisting of 13 graphics primitives
     """
     def __init__(self, species: list) -> None:

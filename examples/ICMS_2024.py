@@ -87,30 +87,30 @@ and labels for the stoichiometric and kinetic-order coefficients::
     sage: var('a, b, c')
     (a, b, c)
     sage: species = var('A, B, C, D, E')
-    sage: crn = ReactionNetwork(species)
-    sage: crn.add_complex(0, A + B, a * A + b * B)
-    sage: crn.add_complex(1, C)
-    sage: crn.add_complex(2, D, c * A + D)
-    sage: crn.add_complex(3, A)
-    sage: crn.add_complex(4, E)
-    sage: crn.add_reaction(0, 1)
-    sage: crn.add_reaction(1, 0, var("h"))
-    sage: crn.add_reaction(1, 2)
-    sage: crn.add_reaction(2, 0)
-    sage: crn.add_reaction(3, 4)
-    sage: crn.add_reaction(4, 3)
-    sage: crn
+    sage: rn = ReactionNetwork(species)
+    sage: rn.add_complex(0, A + B, a * A + b * B)
+    sage: rn.add_complex(1, C)
+    sage: rn.add_complex(2, D, c * A + D)
+    sage: rn.add_complex(3, A)
+    sage: rn.add_complex(4, E)
+    sage: rn.add_reaction(0, 1)
+    sage: rn.add_reaction(1, 0, var("h"))
+    sage: rn.add_reaction(1, 2)
+    sage: rn.add_reaction(2, 0)
+    sage: rn.add_reaction(3, 4)
+    sage: rn.add_reaction(4, 3)
+    sage: rn
     Reaction network with 5 complexes and 6 reactions.
 
 The incidence and source matrix are given by::
 
-    sage: crn.incidence_matrix
+    sage: rn.incidence_matrix
     [-1  1  0  1  0  0]
     [ 1 -1 -1  0  0  0]
     [ 0  0  1 -1  0  0]
     [ 0  0  0  0 -1  1]
     [ 0  0  0  0  1 -1]
-    sage: crn.source_matrix
+    sage: rn.source_matrix
     [1 0 0 0 0 0]
     [0 1 1 0 0 0]
     [0 0 0 1 0 0]
@@ -122,7 +122,7 @@ By introducing reaction rates, we obtain the Laplacian matrix::
     sage: var('k12, k21, k23, k31, k45, k54')
     (k12, k21, k23, k31, k45, k54)
     sage: k = [k12, k21, k23, k31, k45, k54]
-    sage: A_k = crn.incidence_matrix * diagonal_matrix(k) * crn.source_matrix.T
+    sage: A_k = rn.incidence_matrix * diagonal_matrix(k) * rn.source_matrix.T
     sage: A_k
     [      -k12        k21        k31          0          0]
     [       k12 -k21 - k23          0          0          0]
@@ -132,14 +132,14 @@ By introducing reaction rates, we obtain the Laplacian matrix::
 
 We compute required matrices::
 
-    sage: Y = crn.matrix_of_complexes_stoichiometric
+    sage: Y = rn.matrix_of_complexes_stoichiometric
     sage: Y
     [1 0 0 1 0]
     [1 0 0 0 0]
     [0 1 0 0 0]
     [0 0 1 0 0]
     [0 0 0 0 1]
-    sage: Yt = crn.matrix_of_complexes_kinetic_order
+    sage: Yt = rn.matrix_of_complexes_kinetic_order
     sage: Yt
     [a 0 c 1 0]
     [b 0 0 0 0]
@@ -160,22 +160,22 @@ The associated ODE system for the concentrations :math:`x` is given by::
 
 To study CBE, we consider the stoichiometric and the kinetic-order matrices::
 
-    sage: crn.matrix_stoichiometric
+    sage: rn.matrix_stoichiometric
     [-1  1  0  1 -1  1]
     [-1  1  0  1  0  0]
     [ 1 -1 -1  0  0  0]
     [ 0  0  1 -1  0  0]
     [ 0  0  0  0  1 -1]
-    sage: crn.matrix_kinetic_order
+    sage: rn.matrix_kinetic_order
     [   -a     a     c a - c    -1     1]
     [   -b     b     0     b     0     0]
     [    1    -1    -1     0     0     0]
     [    0     0     1    -1     0     0]
     [    0     0     0     0     1    -1]
-    sage: crn.kernel_matrix_stoichiometric
+    sage: rn.kernel_matrix_stoichiometric
     [1 0 1 1 1]
     [0 1 1 1 0]
-    sage: crn.kernel_matrix_kinetic_order
+    sage: rn.kernel_matrix_kinetic_order
     [    1     0     a a - c     1]
     [    0     1     b     b     0]
 
