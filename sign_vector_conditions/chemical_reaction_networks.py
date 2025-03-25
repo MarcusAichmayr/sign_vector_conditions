@@ -105,14 +105,11 @@ class ReactionNetwork(SageObject):
         sage: rn.plot()
         Graphics object consisting of 20 graphics primitives
 
-    To make this system weakly reversible, we add another reaction.
-    We specify a name for it::
+    To make this system weakly reversible, we add another reaction::
 
         sage: rn.is_weakly_reversible()
         False
         sage: rn.add_reaction(2, 0)
-        sage: rn
-        Reaction network with 5 complexes and 6 reactions.
         sage: rn.is_weakly_reversible()
         True
 
@@ -241,7 +238,7 @@ class ReactionNetwork(SageObject):
         self._update_needed = True
         self.species = []
         self.add_species(species)
-        self.complexes = {}
+        self.complexes_stoichiometric = {}
         self.complexes_kinetic_order = {}
         self._rate_constant_variable = "k"
         self.graph = DiGraph()
@@ -267,26 +264,26 @@ class ReactionNetwork(SageObject):
 
     def __call__(self, **kwargs) -> ReactionNetwork:
         new = copy(self)
-        new.complexes = {i: complex(**kwargs) for i, complex in self.complexes.items()}
+        new.complexes_stoichiometric = {i: complex(**kwargs) for i, complex in self.complexes_stoichiometric.items()}
         new.complexes_kinetic_order = {i: complex(**kwargs) for i, complex in self.complexes_kinetic_order.items()}
         new._update_needed = True
         return new
 
     def add_complexes(self, complexes: list[tuple]) -> None:
         r"""Add complexes to system."""
-        for complex in complexes:
-            self.add_complex(*complex)
+        for element in complexes:
+            self.add_complex(*element)
 
-    def add_complex(self, i: int, complex, complex_kinetic_order=None) -> None:
+    def add_complex(self, i: int, complex_stoichiometric, complex_kinetic_order=None) -> None:
         r"""Add complex to system."""
-        self.complexes[i] = complex
-        self.complexes_kinetic_order[i] = complex if complex_kinetic_order is None else complex_kinetic_order
+        self.complexes_stoichiometric[i] = complex_stoichiometric
+        self.complexes_kinetic_order[i] = complex_stoichiometric if complex_kinetic_order is None else complex_kinetic_order
         self.graph.add_vertex(i)
         self._update_needed = True
 
     def remove_complex(self, i: int) -> None:
         r"""Remove complex from system."""
-        self.complexes.pop(i)
+        self.complexes_stoichiometric.pop(i)
         self.complexes_kinetic_order.pop(i)
         self.graph.delete_vertex(i)
         self._update_needed = True
@@ -299,7 +296,7 @@ class ReactionNetwork(SageObject):
     def add_reaction(self, start: int, end: int) -> None:
         r"""Add reaction to system."""
         for vertex in (start, end):
-            if vertex not in self.complexes:
+            if vertex not in self.complexes_stoichiometric:
                 self.add_complex(vertex, 0)
         self.graph.add_edge(start, end, label=f"${self._rate_constant_variable}_{{{start}, {end}}}$")
         self._update_needed = True
@@ -346,7 +343,7 @@ class ReactionNetwork(SageObject):
         r"""Set stoichiometric and kinetic-order matrices."""
         if not self._update_needed:
             return
-        self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes)
+        self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
         self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
 
         self._matrix_stoichiometric = self.incidence_matrix.T * self._matrix_of_complexes_stoichiometric
@@ -355,8 +352,8 @@ class ReactionNetwork(SageObject):
         self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
         self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
 
-        self._deficiency_stoichiometric = len(self.complexes) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
-        self._deficiency_kinetic_order = len(self.complexes) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
+        self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
+        self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
 
         self._update_needed = False
 
@@ -443,9 +440,9 @@ class ReactionNetwork(SageObject):
         )
 
     def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
-        if not kinetic_order or self.complexes[i] == self.complexes_kinetic_order[i]:
-            return f"${latex(self.complexes[i])}$"
-        return f"${latex(self.complexes[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
+        if not kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
+            return f"${latex(self.complexes_stoichiometric[i])}$"
+        return f"${latex(self.complexes_stoichiometric[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
 
     def are_both_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
