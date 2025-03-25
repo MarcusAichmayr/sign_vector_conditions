@@ -13,6 +13,7 @@ r"""Class for setting up chemical reaction networks with mass-action kinetics.""
 from __future__ import annotations
 
 from copy import copy
+from collections.abc import Iterable
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
@@ -92,9 +93,7 @@ class ReactionNetwork(SageObject):
 
         sage: var('c')
         c
-        sage: var('D, E')
-        (D, E)
-        sage: rn.add_species(D, E)
+        sage: rn.add_species(var('D, E'))
         sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
         sage: rn.reactions
@@ -239,7 +238,9 @@ class ReactionNetwork(SageObject):
 
         - ``species`` -- a list of species.
         """
-        self.species = species if isinstance(species, list) else list(species)
+        self._update_needed = True
+        self.species = []
+        self.add_species(species)
         self.complexes = {}
         self.complexes_kinetic_order = {}
         self._rate_constant_variable = "k"
@@ -254,8 +255,6 @@ class ReactionNetwork(SageObject):
 
         self._deficiency_stoichiometric = 0
         self._deficiency_kinetic_order = 0
-
-        self._update_needed = True
 
     def _repr_(self) -> str:
         return f"Reaction network with {self.graph.num_verts()} complexes and {self.graph.num_edges()} reactions."
@@ -325,16 +324,22 @@ class ReactionNetwork(SageObject):
         r"""Return rate constants."""
         return tuple(var(f"{self._rate_constant_variable}_{start}_{end}") for start, end in self.reactions)
 
-    def add_species(self, *species) -> None:
+    def add_species(self, species) -> None:
         r"""Add one or more species."""
-        for s in species:
-            self.species.append(s)
+        if isinstance(species, Iterable):
+            for s in species:
+                self.species.append(s)
+        else:
+            self.species.append(species)
         self._update_needed = True
 
-    def remove_species(self, *species) -> None:
+    def remove_species(self, species) -> None:
         r"""Remove one or more species."""
-        for s in species:
-            self.species.remove(s)
+        if isinstance(species, Iterable):
+            for s in species:
+                self.species.remove(s)
+        else:
+            self.species.remove(species)
         self._update_needed = True
 
     def _update(self) -> None:
