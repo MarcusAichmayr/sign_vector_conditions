@@ -263,8 +263,6 @@ class ReactionNetwork(SageObject):
         self._matrix_kinetic_order = None
         self._matrix_stoichiometric_reduced = None
         self._matrix_kinetic_order_reduced = None
-        self._kernel_matrix_stoichiometric = None # TODO remove member
-        self._kernel_matrix_kinetic_order = None # TODO remove member
 
         self._deficiency_stoichiometric = 0
         self._deficiency_kinetic_order = 0
@@ -367,11 +365,6 @@ class ReactionNetwork(SageObject):
         self._deficiency_stoichiometric = len(self.complexes) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
         self._deficiency_kinetic_order = len(self.complexes) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
 
-        try:
-            self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric_reduced)
-            self._kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
-        except ValueError:
-            print("TODO what should we do, when no zero minor?")
         self._update_needed = False
 
     def _matrix_from_complexes(self, complexes: list):
@@ -417,12 +410,14 @@ class ReactionNetwork(SageObject):
     @property
     def matrix_stoichiometric_as_kernel(self):
         r"""Return the kernel matrix of the stoichiometric matrix."""
-        return self._get('_kernel_matrix_stoichiometric')
+        self._update()
+        return kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric_reduced)
 
     @property
     def matrix_kinetic_order_as_kernel(self):
         r"""Return the kernel matrix of the kinetic-order matrix."""
-        return self._get('_kernel_matrix_kinetic_order')
+        self._update()
+        return kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
 
     @property
     def incidence_matrix(self):
@@ -491,22 +486,22 @@ class ReactionNetwork(SageObject):
     def has_robust_cbe(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
         self._check_network_conditions()
-        return condition_closure_minors(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
+        return condition_closure_minors(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
 
     def has_at_most_one_cbe(self):
         r"""Check whether there is at most one positive CBE."""
         self._check_network_conditions()
-        return condition_uniqueness_minors(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
+        return condition_uniqueness_minors(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
 
     def _condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_faces(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
+        return condition_faces(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
 
     def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_nondegenerate(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
+        return condition_nondegenerate(self.matrix_stoichiometric_as_kernel(), self.matrix_kinetic_order_as_kernel())
 
     def has_exactly_one_cbe(self) -> bool:
         r"""Check whether there is exactly one positive CBE."""
