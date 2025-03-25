@@ -99,8 +99,8 @@ class ReactionNetwork(SageObject):
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
         sage: rn.reactions
         [(0, 1), (1, 0), (1, 2), (3, 4), (4, 3)]
-        sage: rn.rate_constants
-        [k_0_1, k_1_0, k_1_2, k_3_4, k_4_3]
+        sage: rn.rate_constants()
+        (k_0_1, k_1_0, k_1_2, k_3_4, k_4_3)
         sage: rn
         Reaction network with 5 complexes and 5 reactions.
         sage: rn.plot()
@@ -230,8 +230,8 @@ class ReactionNetwork(SageObject):
     We can set the rate constant variable to a different name::
 
         sage: rn.set_rate_constant_variable("t")
-        sage: rn.rate_constants
-        [t_0_1, t_1_2, t_1_4, t_2_0]
+        sage: rn.rate_constants()
+        (t_0_1, t_1_2, t_1_4, t_2_0)
         sage: rn.plot()
         Graphics object consisting of 13 graphics primitives
     """
@@ -342,10 +342,9 @@ class ReactionNetwork(SageObject):
         for edge in self.graph.edges():
             self.graph.set_edge_label(edge[0], edge[1], f"${variable}_{{{edge[0]}, {edge[1]}}}$")
 
-    @property
-    def rate_constants(self) -> list:
+    def rate_constants(self) -> tuple:
         r"""Return rate constants."""
-        return [var(f"{self._rate_constant_variable}_{start}_{end}") for start, end in self.reactions]
+        return tuple(var(f"{self._rate_constant_variable}_{start}_{end}") for start, end in self.reactions)
 
     def add_species(self, *species) -> None:
         r"""Add one or more species."""
