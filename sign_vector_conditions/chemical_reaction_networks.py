@@ -487,29 +487,39 @@ class ReactionNetwork(SageObject):
         r"""Return whether each component of the system is strongly connected."""
         return all(g.is_strongly_connected() for g in self.graph.connected_components_subgraphs())
 
+    def _check_network_conditions(self):
+        r"""Perform common network checks for uniqueness and existence of CBE."""
+        self._update_matrices()
+        if self.deficiency_stoichiometric() != 0:
+            raise ValueError(f"Stoichiometric deficiency should be zero and not {self.deficiency_stoichiometric()}!")
+        if self.deficiency_kinetic_order() != 0:
+            raise ValueError(f"Kinetic-order deficiency should be zero and not {self.deficiency_kinetic_order()}!")
+        if not self.is_weakly_reversible():
+            raise ValueError("Network is not weakly reversible!")
+
     def has_robust_cbe(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
-        self._update_matrices()
+        self._check_network_conditions()
         return condition_closure_minors(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
 
     def has_at_most_one_cbe(self):
         r"""Check whether there is at most one positive CBE."""
-        self._update_matrices()
+        self._check_network_conditions()
         return condition_uniqueness_minors(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
 
     def _condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
-        self._update_matrices()
+        self._check_network_conditions()
         return condition_faces(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
 
     def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
-        self._update_matrices()
+        self._check_network_conditions()
         return condition_nondegenerate(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
 
     def has_exactly_one_cbe(self) -> bool:
         r"""Check whether there is exactly one positive CBE."""
-        self._update_matrices()
+        self._check_network_conditions()
         at_most_one = self.has_at_most_one_cbe()
         if at_most_one not in [True, False]:
             raise ValueError("Method does not support variables!")
