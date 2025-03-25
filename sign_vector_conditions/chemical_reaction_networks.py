@@ -52,15 +52,21 @@ class ReactionNetwork(SageObject):
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
         sage: crn.matrix_of_complexes_stoichiometric
-        [1 1 0]
-        [0 0 1]
+        [1 0]
+        [1 0]
+        [0 1]
         sage: crn.matrix_of_complexes_kinetic_order
-        [a b 0]
-        [0 0 1]
+        [a 0]
+        [b 0]
+        [0 1]
         sage: crn.matrix_stoichiometric
-        [-1 -1  1]
+        [-1  1]
+        [-1  1]
+        [ 1 -1]
         sage: crn.matrix_kinetic_order
-        [-a -b  1]
+        [-a  a]
+        [-b  b]
+        [ 1 -1]
         sage: crn.kernel_matrix_stoichiometric
         [1 0 1]
         [0 1 1]
@@ -126,25 +132,29 @@ class ReactionNetwork(SageObject):
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
         sage: crn.matrix_of_complexes_stoichiometric
-        [1 1 0 0 0]
-        [0 0 1 0 0]
-        [0 0 0 1 0]
+        [1 0 0 1 0]
         [1 0 0 0 0]
+        [0 1 0 0 0]
+        [0 0 1 0 0]
         [0 0 0 0 1]
         sage: crn.matrix_of_complexes_kinetic_order
-        [a b 0 0 0]
+        [a 0 c 1 0]
+        [b 0 0 0 0]
+        [0 1 0 0 0]
         [0 0 1 0 0]
-        [c 0 0 1 0]
-        [1 0 0 0 0]
         [0 0 0 0 1]
         sage: crn.matrix_stoichiometric
-        [-1 -1  1  0  0]
-        [ 0  0 -1  1  0]
-        [-1  0  0  0  1]
+        [-1  1  0  1 -1  1]
+        [-1  1  0  1  0  0]
+        [ 1 -1 -1  0  0  0]
+        [ 0  0  1 -1  0  0]
+        [ 0  0  0  0  1 -1]
         sage: crn.matrix_kinetic_order
-        [-a -b  1  0  0]
-        [ c  0 -1  1  0]
-        [-1  0  0  0  1]
+        [   -a     a     c a - c    -1     1]
+        [   -b     b     0     b     0     0]
+        [    1    -1    -1     0     0     0]
+        [    0     0     1    -1     0     0]
+        [    0     0     0     0     1    -1]
         sage: crn.kernel_matrix_stoichiometric
         [1 0 1 1 1]
         [0 1 1 1 0]
@@ -320,10 +330,8 @@ class ReactionNetwork(SageObject):
         self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes)
         self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
 
-        product = self.incidence_matrix.T * self._matrix_of_complexes_stoichiometric
-        self._matrix_stoichiometric = product.matrix_from_rows(product.pivot_rows())
-        product = self.incidence_matrix.T * self._matrix_of_complexes_kinetic_order
-        self._matrix_kinetic_order = product.matrix_from_rows(product.pivot_rows())
+        self._matrix_stoichiometric = self.incidence_matrix.T * self._matrix_of_complexes_stoichiometric
+        self._matrix_kinetic_order = self.incidence_matrix.T * self._matrix_of_complexes_kinetic_order
 
         try:
             self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric)
