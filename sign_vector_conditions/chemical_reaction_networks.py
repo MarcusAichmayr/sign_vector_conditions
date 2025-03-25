@@ -352,7 +352,6 @@ class ReactionNetwork(SageObject):
         self._update_needed = True
 
     def _update(self) -> None:
-        r"""Set stoichiometric and kinetic-order matrices."""
         if not self._update_needed:
             return
         self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
@@ -391,12 +390,12 @@ class ReactionNetwork(SageObject):
 
     @property
     def matrix_stoichiometric(self) -> matrix:
-        r"""Return the stoichiometric matrix."""
+        r"""Return the stoichiometric matrix where the columns correspond to the reactions."""
         return self._get('_matrix_stoichiometric').T
 
     @property
     def matrix_kinetic_order(self) -> matrix:
-        r"""Return the kinetic-order matrix."""
+        r"""Return the kinetic-order matrix where the columns correspond to the reactions."""
         return self._get('_matrix_kinetic_order').T
 
     @property
