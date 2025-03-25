@@ -469,10 +469,6 @@ class ReactionNetwork(SageObject):
             return f"${latex(self.complexes[i])}$"
         return f"${latex(self.complexes[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
 
-    def edge_labels(self):
-        # TODO remove? doctest?
-        return self.graph.edge_labels()
-
     def deficiency_stoichiometric(self):
         r"""Return the stoichiometric deficiency."""
         self._update_matrices()
