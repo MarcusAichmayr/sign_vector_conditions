@@ -276,17 +276,8 @@ class ReactionNetwork(SageObject):
 
     def __copy__(self) -> ReactionNetwork:
         new = ReactionNetwork(self.species)
-        new.complexes = self.complexes.copy()
-        new.complexes_kinetic_order = self.complexes_kinetic_order.copy()
-        new.graph = self.graph.copy()
-        new._matrix_stoichiometric = self._matrix_stoichiometric
-        new._matrix_kinetic_order = self._matrix_kinetic_order
-        new._kernel_matrix_stoichiometric = self._kernel_matrix_stoichiometric
-        new._kernel_matrix_kinetic_order = self._kernel_matrix_kinetic_order
-
-        # TODO copy all members by iterating over vars
-
-        new._update_needed = False
+        for attribute in vars(self):
+            setattr(new, attribute, copy(getattr(self, attribute)))
         return new
 
     def __call__(self, **kwargs) -> ReactionNetwork:
