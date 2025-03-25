@@ -17,6 +17,7 @@ from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
+from sage.calculus.var import var
 
 from elementary_vectors import kernel_matrix_using_elementary_vectors
 
@@ -97,7 +98,9 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
         sage: rn.reactions
-        [(0, 1, '$k_{0, 1}$'), (1, 0, '$k_{1, 0}$'), (1, 2, '$k_{1, 2}$'), (3, 4, '$k_{3, 4}$'), (4, 3, '$k_{4, 3}$')]
+        [(0, 1), (1, 0), (1, 2), (3, 4), (4, 3)]
+        sage: rn.rate_constants
+        [k_0_1, k_1_0, k_1_2, k_3_4, k_4_3]
         sage: rn
         Reaction network with 5 complexes and 5 reactions.
         sage: rn.plot()
@@ -108,7 +111,7 @@ class ReactionNetwork(SageObject):
 
         sage: rn.is_weakly_reversible()
         False
-        sage: rn.add_reaction(2, 0, "h")
+        sage: rn.add_reaction(2, 0)
         sage: rn
         Reaction network with 5 complexes and 6 reactions.
         sage: rn.is_weakly_reversible()
@@ -223,6 +226,14 @@ class ReactionNetwork(SageObject):
         [A, B, C, D, E]
         sage: rn.plot()
         Graphics object consisting of 13 graphics primitives
+
+    We can set the rate constant variable to a different name::
+
+        sage: rn.set_rate_constant_variable("t")
+        sage: rn.rate_constants
+        [t_0_1, t_1_2, t_1_4, t_2_0]
+        sage: rn.plot()
+        Graphics object consisting of 13 graphics primitives
     """
     def __init__(self, species: list) -> None:
         r"""
@@ -235,6 +246,7 @@ class ReactionNetwork(SageObject):
         self.species = species if isinstance(species, list) else list(species)
         self.complexes = {}
         self.complexes_kinetic_order = {}
+        self._rate_constant_variable = "k"
         self.graph = DiGraph()
 
         self._matrix_of_complexes_stoichiometric = None
@@ -306,14 +318,12 @@ class ReactionNetwork(SageObject):
         for reaction in reactions:
             self.add_reaction(*reaction)
 
-    def add_reaction(self, start: int, end: int, label: str = None) -> None:
+    def add_reaction(self, start: int, end: int) -> None:
         r"""Add reaction to system."""
         for vertex in (start, end):
             if vertex not in self.complexes:
                 self.add_complex(vertex, 0)
-        if label is None:
-            label = f"$k_{{{start}, {end}}}$"
-        self.graph.add_edge(start, end, label)
+        self.graph.add_edge(start, end, label=f"${self._rate_constant_variable}_{{{start}, {end}}}$")
         self._update_needed = True
 
     def remove_reaction(self, start: int, end: int) -> None:
@@ -324,7 +334,18 @@ class ReactionNetwork(SageObject):
     @property
     def reactions(self) -> list:
         r"""Return reactions."""
-        return self.graph.edges()
+        return [(start, end) for start, end, _ in self.graph.edges()]
+
+    def set_rate_constant_variable(self, variable: str) -> None:
+        r"""Set rate constant variable."""
+        self._rate_constant_variable = variable
+        for edge in self.graph.edges():
+            self.graph.set_edge_label(edge[0], edge[1], f"${variable}_{{{edge[0]}, {edge[1]}}}$")
+
+    @property
+    def rate_constants(self) -> list:
+        r"""Return rate constants."""
+        return [var(f"{self._rate_constant_variable}_{start}_{end}") for start, end in self.reactions]
 
     def add_species(self, *species) -> None:
         r"""Add one or more species."""
