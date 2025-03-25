@@ -284,18 +284,7 @@ class ReactionNetwork(SageObject):
         new = copy(self)
         new.complexes = {i: complex(**kwargs) for i, complex in self.complexes.items()}
         new.complexes_kinetic_order = {i: complex(**kwargs) for i, complex in self.complexes_kinetic_order.items()}
-        for attribute in [
-            "_matrix_of_complexes_stoichiometric",
-            "_matrix_of_complexes_kinetic_order",
-            "_matrix_stoichiometric",
-            "_matrix_kinetic_order",
-            "_matrix_stoichiometric_reduced",
-            "_matrix_kinetic_order_reduced",
-            "_kernel_matrix_stoichiometric",
-            "_kernel_matrix_kinetic_order",
-        ]:
-            attr = getattr(self, attribute)
-            setattr(new, attribute, attr(**kwargs) if callable(attr) else attr)
+        new._update_needed = True
         return new
 
     def add_complexes(self, complexes: list[tuple]) -> None:
