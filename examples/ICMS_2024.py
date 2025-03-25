@@ -94,7 +94,7 @@ and labels for the stoichiometric and kinetic-order coefficients::
     sage: rn.add_complex(3, A)
     sage: rn.add_complex(4, E)
     sage: rn.add_reaction(0, 1)
-    sage: rn.add_reaction(1, 0, var("h"))
+    sage: rn.add_reaction(1, 0)
     sage: rn.add_reaction(1, 2)
     sage: rn.add_reaction(2, 0)
     sage: rn.add_reaction(3, 4)
