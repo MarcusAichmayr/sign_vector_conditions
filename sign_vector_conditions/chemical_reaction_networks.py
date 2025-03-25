@@ -80,11 +80,11 @@ class ReactionNetwork(SageObject):
         True
         sage: crn.is_weakly_reversible()
         True
-        sage: crn(a=2, b=1).has_robust_CBE()
+        sage: crn(a=2, b=1).has_robust_cbe()
         True
-        sage: crn.has_robust_CBE()
+        sage: crn.has_robust_cbe()
         [{a > 0, b > 0}]
-        sage: crn.has_at_most_1_CBE()
+        sage: crn.has_at_most_one_cbe()
         [{a >= 0, b >= 0}]
 
     We extend our network by adding further complexes and reactions::
@@ -155,6 +155,18 @@ class ReactionNetwork(SageObject):
         [    1    -1    -1     0     0     0]
         [    0     0     1    -1     0     0]
         [    0     0     0     0     1    -1]
+        sage: crn.matrix_stoichiometric_reduced
+        [-1  0 -1]
+        [-1  0  0]
+        [ 1 -1  0]
+        [ 0  1  0]
+        [ 0  0  1]
+        sage: crn.matrix_kinetic_order_reduced
+        [-a  c -1]
+        [-b  0  0]
+        [ 1 -1  0]
+        [ 0  1  0]
+        [ 0  0  1]
         sage: crn.kernel_matrix_stoichiometric
         [1 0 1 1 1]
         [0 1 1 1 0]
@@ -168,11 +180,11 @@ class ReactionNetwork(SageObject):
         True
         sage: crn.is_weakly_reversible()
         True
-        sage: crn(a=2, b=1, c=1).has_robust_CBE()
+        sage: crn(a=2, b=1, c=1).has_robust_cbe()
         True
-        sage: crn.has_robust_CBE() # random order
+        sage: crn.has_robust_cbe() # random order
         [{a > 0, a - c > 0, b > 0}]
-        sage: crn.has_at_most_1_CBE() # random order
+        sage: crn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
 
     We remove one component and a reaction of our system::
@@ -187,7 +199,7 @@ class ReactionNetwork(SageObject):
         Graphics object consisting of 10 graphics primitives
         sage: crn.is_weakly_reversible()
         True
-        sage: crn.has_at_most_1_CBE() # random order
+        sage: crn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
 
     If a species is not specified, it will be ignored::
@@ -229,8 +241,10 @@ class ReactionNetwork(SageObject):
         self._matrix_of_complexes_kinetic_order = None
         self._matrix_stoichiometric = None
         self._matrix_kinetic_order = None
-        self._kernel_matrix_stoichiometric = None
-        self._kernel_matrix_kinetic_order = None
+        self._matrix_stoichiometric_reduced = None
+        self._matrix_kinetic_order_reduced = None
+        self._kernel_matrix_stoichiometric = None # TODO remove member
+        self._kernel_matrix_kinetic_order = None # TODO remove member
 
         self._update_needed = True
 
@@ -259,6 +273,8 @@ class ReactionNetwork(SageObject):
             "_matrix_of_complexes_kinetic_order",
             "_matrix_stoichiometric",
             "_matrix_kinetic_order",
+            "_matrix_stoichiometric_reduced",
+            "_matrix_kinetic_order_reduced",
             "_kernel_matrix_stoichiometric",
             "_kernel_matrix_kinetic_order",
         ]:
@@ -333,9 +349,12 @@ class ReactionNetwork(SageObject):
         self._matrix_stoichiometric = self.incidence_matrix.T * self._matrix_of_complexes_stoichiometric
         self._matrix_kinetic_order = self.incidence_matrix.T * self._matrix_of_complexes_kinetic_order
 
+        self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
+        self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
+
         try:
-            self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric)
-            self._kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order)
+            self._kernel_matrix_stoichiometric = kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric_reduced)
+            self._kernel_matrix_kinetic_order = kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
         except ValueError:
             print("TODO what should we do, when no zero minor?")
         self._update_needed = False
@@ -369,6 +388,16 @@ class ReactionNetwork(SageObject):
     def matrix_kinetic_order(self):
         r"""Return the kinetic-order matrix."""
         return self._get_matrix('_matrix_kinetic_order').T
+
+    @property
+    def matrix_stoichiometric_reduced(self):
+        r"""Return the reduced stoichiometric matrix."""
+        return self._get_matrix('_matrix_stoichiometric_reduced').T
+
+    @property
+    def matrix_kinetic_order_reduced(self):
+        r"""Return the reduced kinetic-order matrix."""
+        return self._get_matrix('_matrix_kinetic_order_reduced').T
 
     @property
     def kernel_matrix_stoichiometric(self):
@@ -428,12 +457,12 @@ class ReactionNetwork(SageObject):
         r"""Return whether each component of the system is strongly connected."""
         return all(g.is_strongly_connected() for g in self.graph.connected_components_subgraphs())
 
-    def has_robust_CBE(self):
+    def has_robust_cbe(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
         self._update_matrices()
         return condition_closure_minors(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
 
-    def has_at_most_1_CBE(self):
+    def has_at_most_one_cbe(self):
         r"""Check whether there is at most one positive CBE."""
         self._update_matrices()
         return condition_uniqueness_minors(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
