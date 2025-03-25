@@ -207,11 +207,7 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix, kinetic_order_matri
         sage: condition_uniqueness_sign_vectors(A, B)
         True
     """
-    if stoichiometric_matrix.ncols() != kinetic_order_matrix.ncols():
-        raise ValueError("Matrices have different number of columns.")
-
     covectors = covectors_from_matrix(stoichiometric_matrix, dual=True)
-
     counter = 0
     for covector in covectors_from_matrix(kinetic_order_matrix, dual=False):
         if covector in covectors:
@@ -227,9 +223,9 @@ def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
 
     INPUT:
 
-    - ``stoichiometric_matrix`` -- a matrix
+    - ``stoichiometric_matrix`` -- a matrix with maximal rank
 
-    - ``kinetic_order_matrix`` -- a matrix
+    - ``kinetic_order_matrix`` -- a matrix with maximal rank
 
     OUTPUT:
     Return whether there exists at most one equilibrium.
@@ -300,11 +296,6 @@ def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
         [b == 0, a < 0],
         [b < 0, a < 0]]
     """
-    stoichiometric_matrix = stoichiometric_matrix.matrix_from_rows(stoichiometric_matrix.pivot_rows())
-    kinetic_order_matrix = kinetic_order_matrix.matrix_from_rows(kinetic_order_matrix.pivot_rows())
-    if stoichiometric_matrix.dimensions() != kinetic_order_matrix.dimensions():
-        raise ValueError("Matrices must have same rank and number of columns.")
-
     positive_product_found = False
     negative_product_found = False
     symbolic_expressions = set()

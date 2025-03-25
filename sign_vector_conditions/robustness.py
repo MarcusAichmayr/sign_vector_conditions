@@ -141,9 +141,9 @@ def condition_closure_minors(stoichiometric_matrix, kinetic_order_matrix):
 
     INPUT:
 
-    - ``stoichiometric_matrix`` -- a matrix
+    - ``stoichiometric_matrix`` -- a matrix with maximal rank
 
-    - ``kinetic_order_matrix`` -- a matrix
+    - ``kinetic_order_matrix`` -- a matrix with maximal rank
 
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
@@ -155,11 +155,6 @@ def condition_closure_minors(stoichiometric_matrix, kinetic_order_matrix):
         The matrices need to have the same rank and number of columns.
         Otherwise, a ``ValueError`` is raised.
     """
-    stoichiometric_matrix = stoichiometric_matrix.matrix_from_rows(stoichiometric_matrix.pivot_rows())
-    kinetic_order_matrix = kinetic_order_matrix.matrix_from_rows(kinetic_order_matrix.pivot_rows())
-    if stoichiometric_matrix.dimensions() != kinetic_order_matrix.dimensions():
-        raise ValueError("Matrices must have same rank and number of columns.")
-
     positive_found = False
     negative_found = False
     symbolic_pairs = set()

@@ -264,9 +264,9 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
 
     INPUT:
 
-    - ``stoichiometric_matrix`` -- a matrix with ``n`` columns
+    - ``stoichiometric_matrix`` -- a matrix
 
-    - ``kinetic_order_matrix`` -- a matrix with ``n`` columns
+    - ``kinetic_order_matrix`` -- a matrix
 
     - ``certify`` -- a boolean (default: ``False``)
 
@@ -357,7 +357,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
         certificate_support_condition = []
 
     def recursive_degenerate(
-        non_negative_cocircuits, kernel_matrix, indices, lower_bounds, upper_bounds
+        non_negative_cocircuits, matrix_old, indices, lower_bounds, upper_bounds
     ):
         r"""
         Recursive function.
@@ -366,7 +366,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
 
         - ``non_negative_cocircuits`` -- a list of positive sign vectors
 
-        - ``kernel_matrix`` -- a matrix
+        - ``matrix_old`` -- a matrix
 
         - ``indices`` -- a list of indices
 
@@ -387,10 +387,10 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
 
             intervals = Intervals.from_bounds(lower_bounds_new, upper_bounds_new)
             indices_new = indices + [covector.support()]
-            kernel_matrix_new = matrix(
-                kernel_matrix.rows() + equal_entries_lists(length, covector.support())
+            matrix_new = matrix(
+                matrix_old.rows() + equal_entries_lists(length, covector.support())
             ).echelon_form()
-            evs = ElementaryVectors(kernel_matrix_new)
+            evs = ElementaryVectors(matrix_new)
 
             if exists_vector(evs.generator(dual=False), intervals):
                 if certify:
@@ -425,7 +425,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
                     certificates_partial_cover.append(indices_new)
                 recursive_degenerate(
                     copy(non_negative_cocircuits),
-                    kernel_matrix_new,
+                    matrix_new,
                     indices_new,
                     lower_bounds_new,
                     upper_bounds_new,

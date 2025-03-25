@@ -486,22 +486,22 @@ class ReactionNetwork(SageObject):
     def has_robust_cbe(self):
         r"""Check whether there is a unique positive CBE with regards to small perturbations."""
         self._check_network_conditions()
-        return condition_closure_minors(self._matrix_stoichiometric, self._matrix_kinetic_order)
+        return condition_closure_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
     def has_at_most_one_cbe(self):
         r"""Check whether there is at most one positive CBE."""
         self._check_network_conditions()
-        return condition_uniqueness_minors(self._matrix_stoichiometric, self._matrix_kinetic_order)
+        return condition_uniqueness_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
     def _condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_faces(self._matrix_stoichiometric, self._matrix_kinetic_order)
+        return condition_faces(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
     def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_nondegenerate(self._matrix_stoichiometric, self._matrix_kinetic_order)
+        return condition_nondegenerate(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
     def has_exactly_one_cbe(self) -> bool:
         r"""Check whether there is exactly one positive CBE."""
