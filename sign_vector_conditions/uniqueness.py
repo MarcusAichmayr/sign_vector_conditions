@@ -210,13 +210,15 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix, kinetic_order_matri
     if stoichiometric_matrix.ncols() != kinetic_order_matrix.ncols():
         raise ValueError("Matrices have different number of columns.")
 
-    return (
-        len(
-            covectors_from_matrix(stoichiometric_matrix, dual=True).intersection(
-                covectors_from_matrix(kinetic_order_matrix, dual=False)
-            )
-        ) == 1
-    )
+    covectors = covectors_from_matrix(stoichiometric_matrix, dual=True)
+
+    counter = 0
+    for covector in covectors_from_matrix(kinetic_order_matrix, dual=False):
+        if covector in covectors:
+            counter += 1
+            if counter > 1:
+                return False
+    return True
 
 
 def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
