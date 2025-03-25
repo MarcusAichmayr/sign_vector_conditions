@@ -67,10 +67,10 @@ class ReactionNetwork(SageObject):
         [-a  a]
         [-b  b]
         [ 1 -1]
-        sage: rn.kernel_matrix_stoichiometric
+        sage: rn.matrix_stoichiometric_as_kernel
         [1 0 1]
         [0 1 1]
-        sage: rn.kernel_matrix_kinetic_order
+        sage: rn.matrix_kinetic_order_as_kernel
         [1 0 a]
         [0 1 b]
 
@@ -167,10 +167,10 @@ class ReactionNetwork(SageObject):
         [ 1 -1  0]
         [ 0  1  0]
         [ 0  0  1]
-        sage: rn.kernel_matrix_stoichiometric
+        sage: rn.matrix_stoichiometric_as_kernel
         [1 0 1 1 1]
         [0 1 1 1 0]
-        sage: rn.kernel_matrix_kinetic_order
+        sage: rn.matrix_kinetic_order_as_kernel
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
 
@@ -400,12 +400,12 @@ class ReactionNetwork(SageObject):
         return self._get_matrix('_matrix_kinetic_order_reduced').T
 
     @property
-    def kernel_matrix_stoichiometric(self):
+    def matrix_stoichiometric_as_kernel(self):
         r"""Return the kernel matrix of the stoichiometric matrix."""
         return self._get_matrix('_kernel_matrix_stoichiometric')
 
     @property
-    def kernel_matrix_kinetic_order(self):
+    def matrix_kinetic_order_as_kernel(self):
         r"""Return the kernel matrix of the kinetic-order matrix."""
         return self._get_matrix('_kernel_matrix_kinetic_order')
 
