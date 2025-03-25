@@ -423,6 +423,7 @@ class ReactionNetwork(SageObject):
         r"""Plot the reaction network."""
         return self.graph.plot(
             vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
+            layout="circular",
             edge_labels=True,
             # edge_labels_background="transparent",
             vertex_colors="white",
