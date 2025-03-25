@@ -97,7 +97,7 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
         sage: rn.reactions
-        [(0, 1, '$k_{01}$'), (1, 0, '$k_{10}$'), (1, 2, '$k_{12}$'), (3, 4, '$k_{34}$'), (4, 3, '$k_{43}$')]
+        [(0, 1, '$k_{0, 1}$'), (1, 0, '$k_{1, 0}$'), (1, 2, '$k_{1, 2}$'), (3, 4, '$k_{3, 4}$'), (4, 3, '$k_{4, 3}$')]
         sage: rn
         Reaction network with 5 complexes and 5 reactions.
         sage: rn.plot()
@@ -312,8 +312,7 @@ class ReactionNetwork(SageObject):
             if vertex not in self.complexes:
                 self.add_complex(vertex, 0)
         if label is None:
-            label = f"$k_{{{start}{end}}}$"
-            # label = var(f"k_{start}{end}")
+            label = f"$k_{{{start}, {end}}}$"
         self.graph.add_edge(start, end, label)
         self._update_needed = True
 
