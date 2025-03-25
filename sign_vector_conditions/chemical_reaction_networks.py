@@ -189,6 +189,12 @@ class ReactionNetwork(SageObject):
         [{a > 0, a - c > 0, b > 0}]
         sage: rn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
+        sage: rn.has_exactly_one_cbe()
+        Traceback (most recent call last):
+        ...
+        ValueError: Method does not support variables!
+        sage: rn(a=2, b=1, c=1).has_exactly_one_cbe()
+        True
 
     We remove one component and a reaction of our system::
 
@@ -495,12 +501,24 @@ class ReactionNetwork(SageObject):
         self._update_matrices()
         return condition_uniqueness_minors(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
 
-    def condition_faces(self) -> bool:
+    def _condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         self._update_matrices()
         return condition_faces(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
 
-    def are_subspaces_nondegenerate(self) -> bool:
+    def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         self._update_matrices()
         return condition_nondegenerate(self._kernel_matrix_stoichiometric, self._kernel_matrix_kinetic_order)
+
+    def has_exactly_one_cbe(self) -> bool:
+        r"""Check whether there is exactly one positive CBE."""
+        self._update_matrices()
+        at_most_one = self.has_at_most_one_cbe()
+        if at_most_one not in [True, False]:
+            raise ValueError("Method does not support variables!")
+        return (
+            at_most_one
+            and self._condition_faces()
+            and self._are_subspaces_nondegenerate()
+        )
