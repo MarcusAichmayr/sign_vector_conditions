@@ -151,6 +151,17 @@ class Complex(SageObject):
         True
         sage: A in 3 * B
         False
+        sage: s = a * A - B
+        sage: s
+        a*A - B
+        sage: s(a=0)
+        -B
+        sage: s(a=1)
+        A - B
+        sage: (a * A)(a=0)
+        0
+        sage: A(a=1)
+        A
     """
     def __init__(self, species_dict: dict[Species]) -> None:
         self.species_dict = {}
@@ -190,6 +201,12 @@ class Complex(SageObject):
 
     def __copy__(self) -> Complex:
         return Complex(self.species_dict)
+
+    def __call__(self, **kwargs):
+        return Complex({
+            key: (value(**kwargs) if callable(value) else value)
+            for key, value in self.species_dict.items()
+        })
 
     def _to_species(self) -> Species:
         if len(self.species_dict) != 1:
@@ -241,6 +258,10 @@ class Complex(SageObject):
     def __pos__(self) -> Complex:
         return copy(self)
 
+    def involved_species(self) -> set[Species]:
+        r"""Return the species involved in the complex."""
+        return set(self.species_dict.keys())
+
 
 class ReactionNetwork(SageObject):
     r"""
@@ -253,8 +274,9 @@ class ReactionNetwork(SageObject):
         sage: from sign_vector_conditions import *
         sage: var('a, b')
         (a, b)
-        sage: species = var('A, B, C')
-        sage: rn = ReactionNetwork(species)
+        sage: species('A, B, C')
+        (A, B, C)
+        sage: rn = ReactionNetwork()
         sage: rn.add_complex(0, A + B, a * A + b * B)
         sage: rn.add_complex(1, C)
         sage: rn.add_reactions([(0, 1), (1, 0)])
@@ -305,7 +327,8 @@ class ReactionNetwork(SageObject):
 
         sage: var('c')
         c
-        sage: rn.add_species(var('D, E'))
+        sage: species('D, E')
+        (D, E)
         sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
         sage: rn.reactions
@@ -411,7 +434,6 @@ class ReactionNetwork(SageObject):
         sage: rn.remove_complex(3)
         sage: rn.remove_complex(4)
         sage: rn.remove_reaction(1, 0)
-        sage: rn.remove_species(E)
         sage: rn
         Reaction network with 3 complexes and 3 reactions.
         sage: rn.plot()
@@ -421,20 +443,9 @@ class ReactionNetwork(SageObject):
         sage: rn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
 
-    If a species is not specified, it will be ignored::
-
-        sage: rn.add_complex(4, E)
-        sage: rn.add_reaction(1, 4)
-        sage: rn
-        Reaction network with 4 complexes and 4 reactions.
-        sage: rn.species
-        [A, B, C, D]
-        sage: rn.plot()
-        Graphics object consisting of 13 graphics primitives
-
     To overwrite complexes we add them as usual::
 
-        sage: rn.add_species(E)
+        sage: rn.add_complex(4, 0)
         sage: rn.add_complex(4, E)
         sage: rn
         Reaction network with 4 complexes and 4 reactions.
@@ -451,7 +462,7 @@ class ReactionNetwork(SageObject):
         sage: rn.plot()
         Graphics object consisting of 13 graphics primitives
     """
-    def __init__(self, species: list) -> None:
+    def __init__(self) -> None:
         r"""
         A (chemical) reaction network with (generalized) mass-action kinetics.
 
@@ -460,12 +471,13 @@ class ReactionNetwork(SageObject):
         - ``species`` -- a list of species.
         """
         self._update_needed: bool = True
-        self.species: list = []
-        self.add_species(species)
-        self.complexes_stoichiometric: set = {}
-        self.complexes_kinetic_order: set = {}
         self._rate_constant_variable: str = "k"
+
         self.graph: DiGraph = DiGraph()
+        self.complexes_stoichiometric: dict[Complex] = {}
+        self.complexes_kinetic_order: dict[Complex] = {}
+
+        self._species: list[Species] = []
 
         self._matrix_of_complexes_stoichiometric = None
         self._matrix_of_complexes_kinetic_order = None
@@ -481,7 +493,7 @@ class ReactionNetwork(SageObject):
         return f"Reaction network with {self.graph.num_verts()} complexes and {self.graph.num_edges()} reactions."
 
     def __copy__(self) -> ReactionNetwork:
-        new = ReactionNetwork(self.species)
+        new = ReactionNetwork()
         for attribute in vars(self):
             setattr(new, attribute, copy(getattr(self, attribute)))
         return new
@@ -545,27 +557,14 @@ class ReactionNetwork(SageObject):
         r"""Return rate constants."""
         return tuple(var(f"{self._rate_constant_variable}_{start}_{end}") for start, end in self.reactions)
 
-    def add_species(self, species) -> None:
-        r"""Add one or more species."""
-        if isinstance(species, Iterable):
-            for s in species:
-                self.species.append(s)
-        else:
-            self.species.append(species)
-        self._update_needed = True
-
-    def remove_species(self, species) -> None:
-        r"""Remove one or more species."""
-        if isinstance(species, Iterable):
-            for s in species:
-                self.species.remove(s)
-        else:
-            self.species.remove(species)
-        self._update_needed = True
-
     def _update(self) -> None:
         if not self._update_needed:
             return
+        self._species = sorted(
+            set.union(*[complex.involved_species() for complex in self.complexes_stoichiometric.values()]).union(
+                set.union(*[complex.involved_species() for complex in self.complexes_kinetic_order.values()])
+            )
+        )
         self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
         self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
 
@@ -585,10 +584,12 @@ class ReactionNetwork(SageObject):
         return getattr(self, element)
 
     def _matrix_from_complexes(self, complexes: list) -> matrix:
-        return matrix(
-            [0 if complex == 0 else complex.coefficient(s) for s in self.species]
-            for _, complex in sorted(complexes.items())
-        )
+        return matrix([complex[s] for s in self._species] for _, complex in sorted(complexes.items()))
+
+    @property
+    def species(self) -> list[Species]:
+        r"""Return the species of the reaction network."""
+        return self._get("_species")
 
     @property
     def matrix_of_complexes_stoichiometric(self) -> matrix:
