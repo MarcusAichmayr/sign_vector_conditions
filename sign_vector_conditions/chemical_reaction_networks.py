@@ -85,7 +85,8 @@ class Species(SageObject):
         return self.name
 
     def _latex_(self) -> str:
-        return rf"\mathcal{{{self.name}}}"
+        return self.name
+        # return rf"\mathcal{{{self.name}}}"
 
     def __eq__(self, other) -> bool:
         return self.name == other.name
@@ -218,8 +219,8 @@ class Complex(SageObject):
         if value == -1:
             return f"-{species_str}"
         if "+" in str(value) or " - " in str(value):
-            return f"({value}) {species_str}"
-        return f"{value} {species_str}"
+            return rf"({latex(value)}) \, {species_str}"
+        return rf"{latex(value)} \, {species_str}"
 
     def __str__(self) -> str:
         return self._repr_()
