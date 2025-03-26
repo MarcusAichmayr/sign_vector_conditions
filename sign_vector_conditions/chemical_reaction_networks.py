@@ -461,6 +461,8 @@ class ReactionNetwork(SageObject):
         sage: rn.remove_reaction(1, 0)
         sage: rn
         Reaction network with 3 complexes and 3 reactions.
+        sage: rn.species
+        [A, B, C, D]
         sage: rn.plot()
         Graphics object consisting of 10 graphics primitives
         sage: rn.is_weakly_reversible()
@@ -468,24 +470,13 @@ class ReactionNetwork(SageObject):
         sage: rn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
 
-    To overwrite complexes we add them as usual::
-
-        sage: rn.add_complex(4, 0)
-        sage: rn.add_complex(4, E)
-        sage: rn
-        Reaction network with 4 complexes and 4 reactions.
-        sage: rn.species
-        [A, B, C, D, E]
-        sage: rn.plot()
-        Graphics object consisting of 13 graphics primitives
-
-    We can set the rate constant variable to a different name::
+    We can change the names of the rate constants::
 
         sage: rn.set_variable_for_rate_constants("t")
         sage: rn.rate_constants()
-        (t_0_1, t_1_2, t_1_4, t_2_0)
+        (t_0_1, t_1_2, t_2_0)
         sage: rn.plot()
-        Graphics object consisting of 13 graphics primitives
+        Graphics object consisting of 10 graphics primitives
     """
     def __init__(self) -> None:
         r"""
