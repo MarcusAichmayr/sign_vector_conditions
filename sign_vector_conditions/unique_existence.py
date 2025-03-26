@@ -119,9 +119,9 @@ Depending on this parameter, the chemical reaction network has a unique equilibr
     [ 0  0  1 -1  0  0]
     sage: S = W.right_kernel_matrix()
     sage: S
-    [ 1  0  0  0  0  1]
-    [ 0  1  0  0  0 -1]
-    [ 0  0  1  1  2  0]
+    [1 1 0 0 0 0]
+    [0 0 1 1 2 0]
+    [1 0 0 0 0 1]
     sage: from elementary_vectors.functions import kernel_matrix_using_elementary_vectors
     sage: St = kernel_matrix_using_elementary_vectors(Wt) # prevents division by ``a``
     sage: St
