@@ -85,7 +85,7 @@ class Species(SageObject):
         return self.name
 
     def _latex_(self) -> str:
-        return f"\\mathcal{{{self.name}}}"
+        return rf"\mathcal{{{self.name}}}"
 
     def __eq__(self, other) -> bool:
         return self.name == other.name
@@ -186,6 +186,20 @@ class Complex(SageObject):
             first = False
         return result[3:]
 
+    def _latex_(self) -> str:
+        if len(self.species_dict) == 0:
+            return "0"
+        result = ""
+        first = True
+        for key, _ in sorted(self.species_dict.items()):
+            summand = self._latex_coefficient(key)
+            if str(summand)[0] == "-" and not first:
+                result += f" - {summand[1:]}"
+            else:
+                result += f" + {summand}"
+            first = False
+        return result[3:]
+
     def _repr_coefficient(self, key: Species) -> str:
         value = self.species_dict[key]
         if value == 1:
@@ -195,6 +209,17 @@ class Complex(SageObject):
         if "+" in str(value) or " - " in str(value):
             return f"({value})*{key}"
         return f"{value}*{key}"
+
+    def _latex_coefficient(self, key: Species) -> str:
+        value = self.species_dict[key]
+        species_str = latex(key)
+        if value == 1:
+            return species_str
+        if value == -1:
+            return f"-{species_str}"
+        if "+" in str(value) or " - " in str(value):
+            return f"({value}) {species_str}"
+        return f"{value} {species_str}"
 
     def __str__(self) -> str:
         return self._repr_()
