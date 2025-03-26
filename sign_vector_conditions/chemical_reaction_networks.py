@@ -12,6 +12,8 @@ r"""Class for setting up chemical reaction networks with mass-action kinetics.""
 
 from __future__ import annotations
 
+import inspect
+
 from copy import copy
 from collections.abc import Iterable
 from sage.calculus.var import var
@@ -28,6 +30,216 @@ from elementary_vectors import kernel_matrix_using_elementary_vectors
 from .uniqueness import condition_uniqueness_minors
 from .unique_existence import condition_faces, condition_nondegenerate
 from .robustness import condition_closure_minors
+
+
+def species(names: str):
+    r"""
+    Define species from a string of names.
+
+    EXAMPLES::
+
+        sage: from sign_vector_conditions import *
+        sage: species("A")
+        A
+        sage: A
+        A
+        sage: species("B, C, D")
+        (B, C, D)
+        sage: B
+        B
+        sage: C
+        C
+        sage: species("A,B,C")
+        (A, B, C)
+        sage: species("A B C")
+        (A, B, C)
+    """
+    names = names.strip()
+    if ',' in names:
+        names_list = [s.strip() for s in names.split(',') if s.strip()]
+    elif ' ' in names:
+        names_list = [s.strip() for s in names.split()]
+    else:
+        names_list = [names] if names else []
+
+    caller_globals = inspect.currentframe().f_back.f_globals
+
+    def define_species_globally(name: str) -> Complex:
+        complex = Complex({Species(name): 1})
+        caller_globals[name] = complex
+        return complex
+
+    if len(names_list) == 1:
+        return define_species_globally(names_list[0])
+    return tuple(define_species_globally(name) for name in names_list)
+
+
+class Species(SageObject):
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def _repr_(self) -> str:
+        return self.name
+
+    def __str__(self) -> str:
+        return self.name
+
+    def _latex_(self) -> str:
+        return f"\\mathcal{{{self.name}}}"
+
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __lt__(self, other) -> bool:
+        return self.name < other.name
+
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+
+class Complex(SageObject):
+    r"""
+    A complex involving species.
+
+    EXAMPLES::
+
+        sage: from sign_vector_conditions import *
+        sage: species("A, B, C")
+        (A, B, C)
+        sage: A + B
+        A + B
+        sage: 2 * A + 3 * B
+        2*A + 3*B
+        sage: var('a')
+        a
+        sage: 2 * a * A
+        2*a*A
+        sage: (2 + a) * A
+        (a + 2)*A
+
+    TESTS::
+
+        sage: A*B
+        Traceback (most recent call last):
+        ...
+        TypeError: Cannot multiply species by species.
+        sage: B + A
+        A + B
+        sage: A * 2
+        2*A
+        sage: 0 * A
+        0
+        sage: 1 * A
+        A
+        sage: A + 0
+        A
+        sage: A + 1
+        Traceback (most recent call last):
+        ...
+        TypeError: Cannot add <class 'sage.rings.integer.Integer'> to species.
+        sage: -A
+        -A
+        sage: (-a - 1) * A
+        (-a - 1)*A
+        sage: A - B
+        A - B
+        sage: A - 2 * B
+        A - 2*B
+        sage: (2 * A + 3 * B)[A]
+        2
+        sage: A in 2 * A + B
+        True
+        sage: A in 3 * B
+        False
+    """
+    def __init__(self, species_dict: dict[Species]) -> None:
+        self.species_dict = {}
+        for key, value in species_dict.items():
+            if not isinstance(key, Species):
+                raise TypeError(f"Key {key} is not a Species")
+            if value == 0:
+                continue
+            self.species_dict[key] = value
+
+    def _repr_(self) -> str:
+        if len(self.species_dict) == 0:
+            return "0"
+        result = ""
+        first = True
+        for key, _ in sorted(self.species_dict.items()):
+            summand = self._repr_coefficient(key)
+            if str(summand)[0] == "-" and not first:
+                result += f" - {summand[1:]}"
+            else:
+                result += f" + {summand}"
+            first = False
+        return result[3:]
+
+    def _repr_coefficient(self, key: Species) -> str:
+        value = self.species_dict[key]
+        if value == 1:
+            return str(key)
+        if value == -1:
+            return f"-{key}"
+        if "+" in str(value) or " - " in str(value):
+            return f"({value})*{key}"
+        return f"{value}*{key}"
+
+    def __str__(self) -> str:
+        return self._repr_()
+
+    def __copy__(self) -> Complex:
+        return Complex(self.species_dict)
+
+    def _to_species(self) -> Species:
+        if len(self.species_dict) != 1:
+            raise ValueError("Complex must contain exactly one species.")
+        return next(iter(self.species_dict.keys()))
+
+    def __contains__(self, species) -> bool:
+        if isinstance(species, Species):
+            return species in self.species_dict
+        if isinstance(species, Complex):
+            return species._to_species() in self.species_dict
+        return False
+
+    def __getitem__(self, species) -> int:
+        if isinstance(species, Species):
+            return self.species_dict.get(species, 0)
+        if isinstance(species, Complex):
+            return self.species_dict.get(species._to_species(), 0)
+        raise TypeError(f"Cannot get {type(species)} from species.")
+
+    def __add__(self, other) -> Complex:
+        if other == 0:
+            return copy(self)
+        if not isinstance(other, Complex):
+            raise TypeError(f"Cannot add {type(other)} to species.")
+        species_dict = self.species_dict.copy()
+        for key, value in other.species_dict.items():
+            if key in species_dict:
+                species_dict[key] += value
+            else:
+                species_dict[key] = value
+        return Complex(species_dict)
+
+    def __sub__(self, other) -> Complex:
+        return self + (-other)
+
+    def __mul__(self, other) -> Complex:
+        if isinstance(other, Complex):
+            raise TypeError("Cannot multiply species by species.")
+        species_dict = {key: value * other for key, value in self.species_dict.items()}
+        return Complex(species_dict)
+
+    def __rmul__(self, other) -> Complex:
+        return self.__mul__(other)
+
+    def __neg__(self) -> Complex:
+        return -1 * self
+
+    def __pos__(self) -> Complex:
+        return copy(self)
 
 
 class ReactionNetwork(SageObject):
