@@ -477,6 +477,30 @@ class ReactionNetwork(SageObject):
         (t_0_1, t_1_2, t_2_0)
         sage: rn.plot()
         Graphics object consisting of 10 graphics primitives
+
+    ::
+
+        sage: A, B, C = species("H_2, O_2, H_2O")
+        sage: var('a')
+        a
+        sage: rn = ReactionNetwork()
+        sage: rn.add_complex(0, 2 * A + B, 2 * a * A + a * B)
+        sage: rn.add_complex(1, 2 * C)
+        sage: rn.species
+        [H_2, H_2O, O_2]
+        sage: rn.add_reactions([(0, 1), (1, 0)])
+        sage: rn.plot()
+        Graphics object consisting of 8 graphics primitives
+
+    ::
+
+        sage: fox, rabbit = species("Fox, Rabbit")
+        sage: rn = ReactionNetwork()
+        sage: rn.add_complex(0, rabbit + fox)
+        sage: rn.add_complex(1, 2 * fox)
+        sage: rn.add_reactions([(0, 1), (1, 0)])
+        sage: rn.plot()
+        Graphics object consisting of 8 graphics primitives
     """
     def __init__(self) -> None:
         r"""
