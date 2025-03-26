@@ -55,9 +55,9 @@ def species(names: str):
         (A, B, C)
     """
     names = names.strip()
-    if ',' in names:
-        names_list = [s.strip() for s in names.split(',') if s.strip()]
-    elif ' ' in names:
+    if "," in names:
+        names_list = [s.strip() for s in names.split(",") if s.strip()]
+    elif " " in names:
         names_list = [s.strip() for s in names.split()]
     else:
         names_list = [names] if names else []
@@ -110,7 +110,7 @@ class Complex(SageObject):
         A + B
         sage: 2 * A + 3 * B
         2*A + 3*B
-        sage: var('a')
+        sage: var("a")
         a
         sage: 2 * a * A
         2*a*A
@@ -297,9 +297,9 @@ class ReactionNetwork(SageObject):
     We define a chemical reaction network with generalized mass-action kinetics involving 5 complexes and 2 connected components::
 
         sage: from sign_vector_conditions import *
-        sage: var('a, b')
+        sage: var("a, b")
         (a, b)
-        sage: species('A, B, C')
+        sage: species("A, B, C")
         (A, B, C)
         sage: rn = ReactionNetwork()
         sage: rn.add_complex(0, A + B, a * A + b * B)
@@ -350,9 +350,9 @@ class ReactionNetwork(SageObject):
 
     We extend our network by adding further complexes and reactions::
 
-        sage: var('c')
+        sage: var("c")
         c
-        sage: species('D, E')
+        sage: species("D, E")
         (D, E)
         sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
@@ -610,22 +610,22 @@ class ReactionNetwork(SageObject):
     @property
     def matrix_of_complexes_stoichiometric(self) -> matrix:
         r"""Return the matrix that decodes the stoichiometric complexes of the reaction network."""
-        return self._get('_matrix_of_complexes_stoichiometric').T
+        return self._get("_matrix_of_complexes_stoichiometric").T
 
     @property
     def matrix_of_complexes_kinetic_order(self) -> matrix:
         r"""Return the matrix that decodes the kinetic-order complexes of the reaction network."""
-        return self._get('_matrix_of_complexes_kinetic_order').T
+        return self._get("_matrix_of_complexes_kinetic_order").T
 
     @property
     def matrix_stoichiometric(self) -> matrix:
         r"""Return the stoichiometric matrix where the columns correspond to the reactions."""
-        return self._get('_matrix_stoichiometric').T
+        return self._get("_matrix_stoichiometric").T
 
     @property
     def matrix_kinetic_order(self) -> matrix:
         r"""Return the kinetic-order matrix where the columns correspond to the reactions."""
-        return self._get('_matrix_kinetic_order').T
+        return self._get("_matrix_kinetic_order").T
 
     @property
     def matrix_stoichiometric_as_kernel(self) -> matrix:
@@ -667,12 +667,12 @@ class ReactionNetwork(SageObject):
     @property
     def deficiency_stoichiometric(self):
         r"""Return the stoichiometric deficiency."""
-        return self._get('_deficiency_stoichiometric')
+        return self._get("_deficiency_stoichiometric")
 
     @property
     def deficiency_kinetic_order(self):
         r"""Return the kinetic-order deficiency."""
-        return self._get('_deficiency_kinetic_order')
+        return self._get("_deficiency_kinetic_order")
 
     def plot(
             self,
