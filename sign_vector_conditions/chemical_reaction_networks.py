@@ -473,7 +473,7 @@ class ReactionNetwork(SageObject):
 
     We can change the names of the rate constants::
 
-        sage: rn.set_variable_for_rate_constants("t")
+        sage: rn.set_rate_constant_variable("t")
         sage: rn.rate_constants()
         (t_0_1, t_1_2, t_2_0)
         sage: rn.plot()
@@ -575,7 +575,7 @@ class ReactionNetwork(SageObject):
         for vertex in (start, end):
             if vertex not in self.complexes_stoichiometric:
                 self.add_complex(vertex, 0)
-        self.graph.add_edge(start, end, label=f"${self._rate_constant_variable}_{{{start}, {end}}}$")
+        self.graph.add_edge(start, end)
         self._update_needed = True
 
     def remove_reaction(self, start: int, end: int) -> None:
@@ -588,15 +588,47 @@ class ReactionNetwork(SageObject):
         r"""Return reactions."""
         return [(start, end) for start, end, _ in self.graph.edges()]
 
-    def set_variable_for_rate_constants(self, variable: str) -> None:
-        r"""Set rate constant variable."""
-        self._rate_constant_variable = variable
-        for edge in self.graph.edges():
-            self.graph.set_edge_label(edge[0], edge[1], f"${variable}_{{{edge[0]}, {edge[1]}}}$")
-
     def rate_constants(self) -> tuple:
         r"""Return rate constants."""
-        return tuple(var(f"{self._rate_constant_variable}_{start}_{end}") for start, end in self.reactions)
+        return tuple(self._rate_constant(*edge) for edge in self.reactions)
+
+    def _rate_constant(self, start: int, end: int):
+        return var(
+            f"{self._rate_constant_variable}_{start}_{end}",
+            latex_name=f"{self._rate_constant_variable}_{{{start}, {end}}}"
+        )
+
+    def set_rate_constant_variable(self, variable: str) -> None:
+        r"""Set rate constant variable."""
+        self._rate_constant_variable = variable
+
+    def _update_edge_labels(self) -> None:
+        for edge in self.reactions:
+            # plot does not use latex representation for edge labels
+            # f-string would mess up braces
+            self.graph.set_edge_label(*edge, "$" + latex(self._rate_constant(*edge)) + "$")
+
+    def plot(
+            self,
+            kinetic_order: bool = True,
+            layout="circular",
+            edge_labels=False,
+            vertex_colors="white",
+            vertex_size=5000,
+            **kwargs
+        ):
+        r"""Plot the reaction network."""
+        if edge_labels:
+            self._update_edge_labels()
+        return self.graph.plot(
+            vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
+            layout=layout,
+            edge_labels=edge_labels,
+            # edge_labels_background="transparent",
+            vertex_colors=vertex_colors,
+            vertex_size=vertex_size,
+            **kwargs
+        )
 
     def _update(self) -> None:
         if not self._update_needed:
@@ -698,26 +730,6 @@ class ReactionNetwork(SageObject):
     def deficiency_kinetic_order(self):
         r"""Return the kinetic-order deficiency."""
         return self._get("_deficiency_kinetic_order")
-
-    def plot(
-            self,
-            kinetic_order: bool = True,
-            layout="circular",
-            edge_labels=False,
-            vertex_colors="white",
-            vertex_size=5000,
-            **kwargs
-        ):
-        r"""Plot the reaction network."""
-        return self.graph.plot(
-            vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
-            layout=layout,
-            edge_labels=edge_labels,
-            # edge_labels_background="transparent",
-            vertex_colors=vertex_colors,
-            vertex_size=vertex_size,
-            **kwargs
-        )
 
     def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
         if not kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
