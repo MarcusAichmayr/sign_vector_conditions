@@ -9,7 +9,7 @@ Conditions from [MHR19]_ for chemical reaction networks.
 .. autosummary::
     :toctree: generated
 
-    chemical_reaction_networks
+    reaction_networks
     uniqueness
     unique_existence
     robustness
@@ -28,7 +28,7 @@ Conditions from [MHR19]_ for chemical reaction networks.
 
 from __future__ import absolute_import
 
-from .chemical_reaction_networks import ReactionNetwork, species
+from .reaction_networks import ReactionNetwork, species
 from .uniqueness import condition_uniqueness_sign_vectors, condition_uniqueness_minors
 from .unique_existence import condition_faces, condition_nondegenerate, condition_degenerate
 from .robustness import condition_closure_sign_vectors, condition_closure_minors

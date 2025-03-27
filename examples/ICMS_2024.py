@@ -79,7 +79,7 @@ For further examples on elementary vectors, solvability of linear inequality sys
 Chemical reaction networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See :func:`sign_vector_conditions.chemical_reaction_networks.ReactionNetwork`
+See :func:`sign_vector_conditions.reaction_networks.ReactionNetwork`
 for a user-friendly class to define chemical reaction networks.
 
 Several sign vector conditions for chemical reaction networks are implemented
