@@ -313,7 +313,7 @@ class ReactionNetwork(SageObject):
         sage: rn
         Reaction network with 2 complexes and 2 reactions.
         sage: rn.plot()
-        Graphics object consisting of 8 graphics primitives
+        Graphics object consisting of 6 graphics primitives
 
     We describe the stoichiometric and kinetic-order subspaces using matrices::
 
@@ -368,7 +368,7 @@ class ReactionNetwork(SageObject):
         sage: rn
         Reaction network with 5 complexes and 5 reactions.
         sage: rn.plot()
-        Graphics object consisting of 20 graphics primitives
+        Graphics object consisting of 15 graphics primitives
 
     To make this system weakly reversible, we add another reaction::
 
@@ -469,7 +469,7 @@ class ReactionNetwork(SageObject):
         sage: rn.species
         [A, B, C, D]
         sage: rn.plot()
-        Graphics object consisting of 10 graphics primitives
+        Graphics object consisting of 7 graphics primitives
         sage: rn.is_weakly_reversible()
         True
         sage: rn.has_at_most_one_cbe() # random order
@@ -480,14 +480,14 @@ class ReactionNetwork(SageObject):
         sage: rn.set_rate_constant_variable(var("tau"))
         sage: rn.rate_constants()
         (tau_0_1, tau_1_2, tau_2_0)
-        sage: rn.plot()
+        sage: rn.plot(edge_labels=True)
         Graphics object consisting of 10 graphics primitives
         sage: var("k", latex_name=r"\kappa")
         k
         sage: rn.set_rate_constant_variable(k)
         sage: rn.rate_constants()
         (k_0_1, k_1_2, k_2_0)
-        sage: rn.plot()
+        sage: rn.plot(edge_labels=True)
         Graphics object consisting of 10 graphics primitives
 
     ::
@@ -502,7 +502,7 @@ class ReactionNetwork(SageObject):
         [H_2, H_2O, O_2]
         sage: rn.add_reactions([(0, 1), (1, 0)])
         sage: rn.plot()
-        Graphics object consisting of 8 graphics primitives
+        Graphics object consisting of 6 graphics primitives
 
     ::
 
@@ -512,7 +512,7 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complex(1, 2 * fox)
         sage: rn.add_reactions([(0, 1), (1, 0)])
         sage: rn.plot()
-        Graphics object consisting of 8 graphics primitives
+        Graphics object consisting of 6 graphics primitives
     """
     def __init__(self) -> None:
         r"""
