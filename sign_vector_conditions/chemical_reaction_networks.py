@@ -376,13 +376,13 @@ class ReactionNetwork(SageObject):
 
     We compute the incidence and source matrices of the directed graph::
 
-        sage: rn.incidence_matrix
+        sage: rn.incidence_matrix()
         [-1  1  0  1  0  0]
         [ 1 -1 -1  0  0  0]
         [ 0  0  1 -1  0  0]
         [ 0  0  0  0 -1  1]
         [ 0  0  0  0  1 -1]
-        sage: rn.source_matrix
+        sage: rn.source_matrix()
         [1 0 0 0 0 0]
         [0 1 1 0 0 0]
         [0 0 0 1 0 0]
@@ -641,8 +641,8 @@ class ReactionNetwork(SageObject):
         self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
         self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
 
-        self._matrix_stoichiometric = self.incidence_matrix.T * self._matrix_of_complexes_stoichiometric
-        self._matrix_kinetic_order = self.incidence_matrix.T * self._matrix_of_complexes_kinetic_order
+        self._matrix_stoichiometric = self.incidence_matrix().T * self._matrix_of_complexes_stoichiometric
+        self._matrix_kinetic_order = self.incidence_matrix().T * self._matrix_of_complexes_kinetic_order
 
         self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
         self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
@@ -696,19 +696,17 @@ class ReactionNetwork(SageObject):
         self._update()
         return kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
 
-    @property
-    def incidence_matrix(self) -> matrix:
+    def incidence_matrix(self, **kwargs) -> matrix:
         r"""Return the incidence matrix of the graph."""
-        return self.graph.incidence_matrix()
+        return self.graph.incidence_matrix(**kwargs)
 
-    @property
-    def source_matrix(self) -> matrix:
+    def source_matrix(self, **kwargs) -> matrix:
         r"""Return the source matrix of the graph."""
-        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix)
+        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix(**kwargs))
 
     def laplacian_matrix(self) -> matrix:
         r"""Return the Laplacian matrix of the graph."""
-        return self.incidence_matrix * diagonal_matrix(self.rate_constants()) * self.source_matrix.T
+        return self.incidence_matrix() * diagonal_matrix(self.rate_constants()) * self.source_matrix().T
 
     def differential_equation(self):
         r"""Return the differential equation of the system."""
