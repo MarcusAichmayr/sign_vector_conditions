@@ -193,45 +193,6 @@ class Complex(SageObject):
                 continue
             self.species_dict[key] = value
 
-    def _repr_(self) -> str:
-        return self._format_repr_(self._repr_coefficient)
-
-    def _latex_(self) -> str:
-        return self._format_repr_(self._latex_coefficient)
-
-    def _format_repr_(self, coefficient_function) -> str:
-        if not self.species_dict:
-            return "0"
-        terms = []
-        for key, _ in sorted(self.species_dict.items()):
-            summand = coefficient_function(key)
-            if not terms:
-                terms.append(summand)
-            elif str(summand)[0] == "-":
-                terms.append(f"- {summand[1:]}")
-            else:
-                terms.append(f"+ {summand}")
-        return " ".join(terms)
-
-    def _repr_coefficient(self, key: Species) -> str:
-        return self._format_coefficient(key, str)
-
-    def _latex_coefficient(self, key: Species) -> str:
-        return self._format_coefficient(key, latex)
-
-    def _format_coefficient(self, key: Species, formatter) -> str:
-        value = self.species_dict[key]
-        formatted_key = formatter(key)
-        formatted_value = formatter(value)
-        
-        if value == 1:
-            return formatted_key
-        if value == -1:
-            return f"-{formatted_key}"
-        if "+" in str(value) or " - " in str(value):
-            return f"({formatted_value})*{formatted_key}" if formatter == str else rf"({formatted_value}) \, {formatted_key}"
-        return f"{formatted_value}*{formatted_key}" if formatter == str else rf"{formatted_value} \, {formatted_key}"
-
     def __str__(self) -> str:
         return self._repr_()
 
@@ -243,11 +204,6 @@ class Complex(SageObject):
             key: (value(**kwargs) if callable(value) else value)
             for key, value in self.species_dict.items()
         })
-
-    def _to_species(self) -> Species:
-        if len(self.species_dict) != 1:
-            raise ValueError("Complex must contain exactly one species.")
-        return next(iter(self.species_dict.keys()))
 
     def __contains__(self, species) -> bool:
         if isinstance(species, Species):
@@ -293,6 +249,50 @@ class Complex(SageObject):
 
     def __pos__(self) -> Complex:
         return copy(self)
+
+    def _repr_(self) -> str:
+        return self._format_repr_(self._repr_coefficient)
+
+    def _latex_(self) -> str:
+        return self._format_repr_(self._latex_coefficient)
+
+    def _format_repr_(self, coefficient_function) -> str:
+        if not self.species_dict:
+            return "0"
+        terms = []
+        for key, _ in sorted(self.species_dict.items()):
+            summand = coefficient_function(key)
+            if not terms:
+                terms.append(summand)
+            elif str(summand)[0] == "-":
+                terms.append(f"- {summand[1:]}")
+            else:
+                terms.append(f"+ {summand}")
+        return " ".join(terms)
+
+    def _repr_coefficient(self, key: Species) -> str:
+        return self._format_coefficient(key, str)
+
+    def _latex_coefficient(self, key: Species) -> str:
+        return self._format_coefficient(key, latex)
+
+    def _format_coefficient(self, key: Species, formatter) -> str:
+        value = self.species_dict[key]
+        formatted_key = formatter(key)
+        formatted_value = formatter(value)
+        
+        if value == 1:
+            return formatted_key
+        if value == -1:
+            return f"-{formatted_key}"
+        if "+" in str(value) or " - " in str(value):
+            return f"({formatted_value})*{formatted_key}" if formatter == str else rf"({formatted_value}) \, {formatted_key}"
+        return f"{formatted_value}*{formatted_key}" if formatter == str else rf"{formatted_value} \, {formatted_key}"
+
+    def _to_species(self) -> Species:
+        if len(self.species_dict) != 1:
+            raise ValueError("Complex must contain exactly one species.")
+        return next(iter(self.species_dict.keys()))
 
     def involved_species(self) -> set[Species]:
         r"""Return the species involved in the complex."""
@@ -605,77 +605,6 @@ class ReactionNetwork(SageObject):
         r"""Return reactions."""
         return [(start, end) for start, end, _ in self.graph.edges()]
 
-    def rate_constants(self) -> tuple:
-        r"""Return rate constants."""
-        return tuple(self._rate_constant(*edge) for edge in self.reactions)
-
-    def _rate_constant(self, start: int, end: int):
-        return var(
-            f"{self._rate_constant_variable}_{start}_{end}",
-            latex_name=f"{latex(self._rate_constant_variable)}_{{{start}, {end}}}"
-        )
-
-    def set_rate_constant_variable(self, variable) -> None:
-        r"""Set rate constant variable."""
-        self._rate_constant_variable = variable
-
-    def _update_edge_labels(self) -> None:
-        for edge in self.reactions:
-            # plot does not use latex representation for edge labels
-            # f-string would mess up braces
-            self.graph.set_edge_label(*edge, "$" + latex(self._rate_constant(*edge)) + "$")
-
-    def plot(
-            self,
-            kinetic_order: bool = True,
-            layout="circular",
-            edge_labels=False,
-            vertex_colors="white",
-            vertex_size=5000,
-            **kwargs
-        ):
-        r"""Plot the reaction network."""
-        if edge_labels:
-            self._update_edge_labels()
-        return self.graph.plot(
-            vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
-            layout=layout,
-            edge_labels=edge_labels,
-            # edge_labels_background="transparent",
-            vertex_colors=vertex_colors,
-            vertex_size=vertex_size,
-            **kwargs
-        )
-
-    def _update(self) -> None:
-        if not self._update_needed:
-            return
-        self._species = sorted(
-            set.union(*[complex.involved_species() for complex in self.complexes_stoichiometric.values()]).union(
-                set.union(*[complex.involved_species() for complex in self.complexes_kinetic_order.values()])
-            )
-        )
-        self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
-        self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
-
-        self._matrix_stoichiometric = self.incidence_matrix().T * self._matrix_of_complexes_stoichiometric
-        self._matrix_kinetic_order = self.incidence_matrix().T * self._matrix_of_complexes_kinetic_order
-
-        self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
-        self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
-
-        self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
-        self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
-
-        self._update_needed = False
-
-    def _get(self, element: str):
-        self._update()
-        return getattr(self, element)
-
-    def _matrix_from_complexes(self, complexes: list) -> matrix:
-        return matrix([complex[s] for s in self._species] for _, complex in sorted(complexes.items()))
-
     @property
     def species(self) -> list[Species]:
         r"""Return the species of the reaction network."""
@@ -713,6 +642,16 @@ class ReactionNetwork(SageObject):
         self._update()
         return kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
 
+    @property
+    def deficiency_stoichiometric(self):
+        r"""Return the stoichiometric deficiency."""
+        return self._get("_deficiency_stoichiometric")
+
+    @property
+    def deficiency_kinetic_order(self):
+        r"""Return the kinetic-order deficiency."""
+        return self._get("_deficiency_kinetic_order")
+
     def incidence_matrix(self, **kwargs) -> matrix:
         r"""Return the incidence matrix of the graph."""
         return self.graph.incidence_matrix(**kwargs)
@@ -736,20 +675,81 @@ class ReactionNetwork(SageObject):
             )
         )
 
-    @property
-    def deficiency_stoichiometric(self):
-        r"""Return the stoichiometric deficiency."""
-        return self._get("_deficiency_stoichiometric")
+    def plot(
+            self,
+            kinetic_order: bool = True,
+            layout="circular",
+            edge_labels=False,
+            vertex_colors="white",
+            vertex_size=5000,
+            **kwargs
+        ):
+        r"""Plot the reaction network."""
+        if edge_labels:
+            self._update_edge_labels()
+        return self.graph.plot(
+            vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
+            layout=layout,
+            edge_labels=edge_labels,
+            # edge_labels_background="transparent",
+            vertex_colors=vertex_colors,
+            vertex_size=vertex_size,
+            **kwargs
+        )
 
-    @property
-    def deficiency_kinetic_order(self):
-        r"""Return the kinetic-order deficiency."""
-        return self._get("_deficiency_kinetic_order")
+    def _update_edge_labels(self) -> None:
+        for edge in self.reactions:
+            # plot does not use latex representation for edge labels
+            # f-string would mess up braces
+            self.graph.set_edge_label(*edge, "$" + latex(self._rate_constant(*edge)) + "$")
 
     def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
         if not kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
             return f"${latex(self.complexes_stoichiometric[i])}$"
         return f"${latex(self.complexes_stoichiometric[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
+
+    def rate_constants(self) -> tuple:
+        r"""Return rate constants."""
+        return tuple(self._rate_constant(*edge) for edge in self.reactions)
+
+    def _rate_constant(self, start: int, end: int):
+        return var(
+            f"{self._rate_constant_variable}_{start}_{end}",
+            latex_name=f"{latex(self._rate_constant_variable)}_{{{start}, {end}}}"
+        )
+
+    def set_rate_constant_variable(self, variable) -> None:
+        r"""Set rate constant variable."""
+        self._rate_constant_variable = variable
+
+    def _update(self) -> None:
+        if not self._update_needed:
+            return
+        self._species = sorted(
+            set.union(*[complex.involved_species() for complex in self.complexes_stoichiometric.values()]).union(
+                set.union(*[complex.involved_species() for complex in self.complexes_kinetic_order.values()])
+            )
+        )
+        self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
+        self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
+
+        self._matrix_stoichiometric = self.incidence_matrix().T * self._matrix_of_complexes_stoichiometric
+        self._matrix_kinetic_order = self.incidence_matrix().T * self._matrix_of_complexes_kinetic_order
+
+        self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
+        self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
+
+        self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
+        self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
+
+        self._update_needed = False
+
+    def _get(self, element: str):
+        self._update()
+        return getattr(self, element)
+
+    def _matrix_from_complexes(self, complexes: list) -> matrix:
+        return matrix([complex[s] for s in self._species] for _, complex in sorted(complexes.items()))
 
     def are_both_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
