@@ -477,9 +477,16 @@ class ReactionNetwork(SageObject):
 
     We can change the names of the rate constants::
 
-        sage: rn.set_rate_constant_variable("t")
+        sage: rn.set_rate_constant_variable(var("tau"))
         sage: rn.rate_constants()
-        (t_0_1, t_1_2, t_2_0)
+        (tau_0_1, tau_1_2, tau_2_0)
+        sage: rn.plot()
+        Graphics object consisting of 10 graphics primitives
+        sage: var("k", latex_name=r"\kappa")
+        k
+        sage: rn.set_rate_constant_variable(k)
+        sage: rn.rate_constants()
+        (k_0_1, k_1_2, k_2_0)
         sage: rn.plot()
         Graphics object consisting of 10 graphics primitives
 
@@ -516,7 +523,7 @@ class ReactionNetwork(SageObject):
         - ``species`` -- a list of species.
         """
         self._update_needed: bool = True
-        self._rate_constant_variable: str = "k"
+        self._rate_constant_variable = var("k")
 
         self.graph: DiGraph = DiGraph()
         self.complexes_stoichiometric: dict[Complex] = {}
@@ -599,10 +606,10 @@ class ReactionNetwork(SageObject):
     def _rate_constant(self, start: int, end: int):
         return var(
             f"{self._rate_constant_variable}_{start}_{end}",
-            latex_name=f"{self._rate_constant_variable}_{{{start}, {end}}}"
+            latex_name=f"{latex(self._rate_constant_variable)}_{{{start}, {end}}}"
         )
 
-    def set_rate_constant_variable(self, variable: str) -> None:
+    def set_rate_constant_variable(self, variable) -> None:
         r"""Set rate constant variable."""
         self._rate_constant_variable = variable
 
