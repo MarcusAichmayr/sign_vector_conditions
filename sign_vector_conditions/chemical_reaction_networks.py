@@ -180,12 +180,14 @@ class Complex(SageObject):
         first = True
         for key, _ in sorted(self.species_dict.items()):
             summand = self._repr_coefficient(key)
-            if str(summand)[0] == "-" and not first:
+            if first:
+                result += summand
+            elif str(summand)[0] == "-":
                 result += f" - {summand[1:]}"
             else:
                 result += f" + {summand}"
             first = False
-        return result[3:]
+        return result
 
     def _latex_(self) -> str:
         if len(self.species_dict) == 0:
@@ -194,12 +196,14 @@ class Complex(SageObject):
         first = True
         for key, _ in sorted(self.species_dict.items()):
             summand = self._latex_coefficient(key)
-            if str(summand)[0] == "-" and not first:
+            if first:
+                result += summand
+            elif str(summand)[0] == "-":
                 result += f" - {summand[1:]}"
             else:
                 result += f" + {summand}"
             first = False
-        return result[3:]
+        return result
 
     def _repr_coefficient(self, key: Species) -> str:
         value = self.species_dict[key]
