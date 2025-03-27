@@ -163,6 +163,26 @@ class Complex(SageObject):
         0
         sage: A(a=1)
         A
+
+    TESTS::
+
+        sage: from sign_vector_conditions import *
+        sage: species("A, B, C")
+        (A, B, C)
+        sage: 2 * A + 3 * B
+        2*A + 3*B
+        sage: (2 * A + 3 * B)._latex_()
+        '2 \\, A + 3 \\, B'
+        sage: (A - B)._latex_()
+        'A - B'
+        sage: (A + B)._latex_()
+        'A + B'
+        sage: (2 * A - 3 * B)._latex_()
+        '2 \\, A - 3 \\, B'
+        sage: (A)._latex_()
+        'A'
+        sage: (0 * A)._latex_()
+        '0'
     """
     def __init__(self, species_dict: dict[Species]) -> None:
         self.species_dict = {}
@@ -174,57 +194,43 @@ class Complex(SageObject):
             self.species_dict[key] = value
 
     def _repr_(self) -> str:
-        if len(self.species_dict) == 0:
-            return "0"
-        result = ""
-        first = True
-        for key, _ in sorted(self.species_dict.items()):
-            summand = self._repr_coefficient(key)
-            if first:
-                result += summand
-            elif str(summand)[0] == "-":
-                result += f" - {summand[1:]}"
-            else:
-                result += f" + {summand}"
-            first = False
-        return result
+        return self._format_repr_(self._repr_coefficient)
 
     def _latex_(self) -> str:
-        if len(self.species_dict) == 0:
+        return self._format_repr_(self._latex_coefficient)
+
+    def _format_repr_(self, coefficient_function) -> str:
+        if not self.species_dict:
             return "0"
-        result = ""
-        first = True
+        terms = []
         for key, _ in sorted(self.species_dict.items()):
-            summand = self._latex_coefficient(key)
-            if first:
-                result += summand
+            summand = coefficient_function(key)
+            if not terms:
+                terms.append(summand)
             elif str(summand)[0] == "-":
-                result += f" - {summand[1:]}"
+                terms.append(f"- {summand[1:]}")
             else:
-                result += f" + {summand}"
-            first = False
-        return result
+                terms.append(f"+ {summand}")
+        return " ".join(terms)
 
     def _repr_coefficient(self, key: Species) -> str:
-        value = self.species_dict[key]
-        if value == 1:
-            return str(key)
-        if value == -1:
-            return f"-{key}"
-        if "+" in str(value) or " - " in str(value):
-            return f"({value})*{key}"
-        return f"{value}*{key}"
+        return self._format_coefficient(key, str)
 
     def _latex_coefficient(self, key: Species) -> str:
+        return self._format_coefficient(key, latex)
+
+    def _format_coefficient(self, key: Species, formatter) -> str:
         value = self.species_dict[key]
-        species_str = latex(key)
+        formatted_key = formatter(key)
+        formatted_value = formatter(value)
+        
         if value == 1:
-            return species_str
+            return formatted_key
         if value == -1:
-            return f"-{species_str}"
+            return f"-{formatted_key}"
         if "+" in str(value) or " - " in str(value):
-            return rf"({latex(value)}) \, {species_str}"
-        return rf"{latex(value)} \, {species_str}"
+            return f"({formatted_value})*{formatted_key}" if formatter == str else rf"({formatted_value}) \, {formatted_key}"
+        return f"{formatted_value}*{formatted_key}" if formatter == str else rf"{formatted_value} \, {formatted_key}"
 
     def __str__(self) -> str:
         return self._repr_()
