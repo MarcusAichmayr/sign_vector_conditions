@@ -703,7 +703,7 @@ class ReactionNetwork(SageObject):
             self,
             kinetic_order: bool = True,
             layout="circular",
-            edge_labels=True,
+            edge_labels=False,
             vertex_colors="white",
             vertex_size=5000,
             **kwargs
