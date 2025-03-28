@@ -15,7 +15,6 @@ from __future__ import annotations
 import inspect
 
 from copy import copy
-from collections.abc import Iterable
 from sage.calculus.var import var
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
@@ -280,7 +279,7 @@ class Complex(SageObject):
         value = self.species_dict[key]
         formatted_key = formatter(key)
         formatted_value = formatter(value)
-        
+
         if value == 1:
             return formatted_key
         if value == -1:
@@ -678,13 +677,59 @@ class ReactionNetwork(SageObject):
     def plot(
             self,
             kinetic_order: bool = True,
-            layout="circular",
+            layout="spring",
             edge_labels=False,
             vertex_colors="white",
-            vertex_size=5000,
+            vertex_size=6000,
             **kwargs
         ):
-        r"""Plot the reaction network."""
+        r"""
+        Plot the reaction network.
+
+        This method visualizes the reaction network as a directed graph.
+        The vertices represent complexes, and the edges represent reactions.
+        The layout, labels, and other visual properties can be customized.
+
+        INPUT:
+
+        - ``kinetic_order`` (bool, default: True):
+          If True, displays both stoichiometric and kinetic-order complexes
+          for each vertex. If False, only stoichiometric complexes are shown.
+
+        - ``layout`` (str, default: "spring"):
+          Specifies the layout of the graph. Common options include
+          "circular" and "spring".
+
+        - ``edge_labels`` (bool, default: False):
+          If True, displays the rate constants as labels on the edges.
+
+        - ``vertex_colors`` (str or list, default: "white"):
+          Specifies the color of the vertices. Can be a single color or a
+          list of colors corresponding to each vertex.
+
+        - ``vertex_size`` (int, default: 6000):
+          Specifies the size of the vertices in the plot.
+
+        - ``**kwargs``:
+          Additional keyword arguments passed to the underlying graph plotting
+          function.
+
+        OUTPUT:
+
+        - A graphical representation of the reaction network.
+
+        EXAMPLES::
+
+            sage: from sign_vector_conditions import *
+            sage: species("A, B, C")
+            (A, B, C)
+            sage: rn = ReactionNetwork()
+            sage: rn.add_complex(0, A + B)
+            sage: rn.add_complex(1, C)
+            sage: rn.add_reactions([(0, 1), (1, 0)])
+            sage: rn.plot()
+            Graphics object consisting of 6 graphics primitives
+        """
         if edge_labels:
             self._update_edge_labels()
         return self.graph.plot(
@@ -706,7 +751,7 @@ class ReactionNetwork(SageObject):
     def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
         if not kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
             return f"${latex(self.complexes_stoichiometric[i])}$"
-        return f"${latex(self.complexes_stoichiometric[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
+        return f"${latex(self.complexes_stoichiometric[i])}$\n${latex(self.complexes_kinetic_order[i])}$"
 
     def rate_constants(self) -> tuple[var]:
         r"""Return rate constants."""
