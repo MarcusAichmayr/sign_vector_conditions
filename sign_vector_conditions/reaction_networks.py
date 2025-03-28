@@ -524,7 +524,7 @@ class ReactionNetwork(SageObject):
         - ``species`` -- a list of species.
         """
         self._update_needed: bool = True
-        self._rate_constant_variable = var("k")
+        self._rate_constant_variable: var = var("k")
 
         self.graph: DiGraph = DiGraph()
         self.complexes_stoichiometric: Dict[int, Complex] = {}
@@ -767,11 +767,25 @@ class ReactionNetwork(SageObject):
     def _update(self) -> None:
         if not self._update_needed:
             return
+        self._update_species()
+        self._update_matrices()
+        self._compute_deficiencies()
+        self._update_needed = False
+
+    def _update_species(self) -> None:
         self._species = sorted(
-            set.union(*[complex.involved_species() for complex in self.complexes_stoichiometric.values()]).union(
-                set.union(*[complex.involved_species() for complex in self.complexes_kinetic_order.values()])
+            set(
+                species
+                for complex in self.complexes_stoichiometric.values()
+                for species in complex.involved_species()
+            ).union(
+                species
+                for complex in self.complexes_kinetic_order.values()
+                for species in complex.involved_species()
             )
         )
+
+    def _update_matrices(self) -> None:
         self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
         self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
         self._matrix_stoichiometric = self.incidence_matrix().T * self._matrix_of_complexes_stoichiometric
@@ -779,10 +793,9 @@ class ReactionNetwork(SageObject):
         self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
         self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
 
+    def _compute_deficiencies(self) -> None:
         self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
         self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
-
-        self._update_needed = False
 
     def _get(self, element: str):
         self._update()
