@@ -531,6 +531,8 @@ class ReactionNetwork(SageObject):
         0
         sage: rn.deficiency_kinetic_order
         0
+        sage: rn.connected_components()
+        [[0, 1, 2], [3, 4]]
         sage: rn.is_weakly_reversible()
         True
         sage: rn(a=2, b=1, c=1).has_robust_cbe()
@@ -718,6 +720,10 @@ class ReactionNetwork(SageObject):
     def deficiency_kinetic_order(self) -> int:
         r"""Return the kinetic-order deficiency."""
         return self._get("_deficiency_kinetic_order")
+
+    def connected_components(self) -> List[List[int]]:
+        r"""Return the connected components of the reaction network."""
+        return self.graph.connected_components()
 
     def incidence_matrix(self, **kwargs) -> matrix:
         r"""Return the incidence matrix of the graph."""
