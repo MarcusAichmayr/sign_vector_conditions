@@ -674,6 +674,20 @@ class ReactionNetwork(SageObject):
             )
         )
 
+    def rate_constants(self) -> tuple[var]:
+        r"""Return rate constants."""
+        return tuple(self._rate_constant(*edge) for edge in self.reactions)
+
+    def _rate_constant(self, start: int, end: int):
+        return var(
+            f"{self._rate_constant_variable}_{start}_{end}",
+            latex_name=f"{latex(self._rate_constant_variable)}_{{{start}, {end}}}"
+        )
+
+    def set_rate_constant_variable(self, variable) -> None:
+        r"""Set rate constant variable."""
+        self._rate_constant_variable = variable
+
     def plot(
             self,
             kinetic_order: bool = True,
@@ -752,20 +766,6 @@ class ReactionNetwork(SageObject):
         if not kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
             return f"${latex(self.complexes_stoichiometric[i])}$"
         return f"${latex(self.complexes_stoichiometric[i])}$\n${latex(self.complexes_kinetic_order[i])}$"
-
-    def rate_constants(self) -> tuple[var]:
-        r"""Return rate constants."""
-        return tuple(self._rate_constant(*edge) for edge in self.reactions)
-
-    def _rate_constant(self, start: int, end: int):
-        return var(
-            f"{self._rate_constant_variable}_{start}_{end}",
-            latex_name=f"{latex(self._rate_constant_variable)}_{{{start}, {end}}}"
-        )
-
-    def set_rate_constant_variable(self, variable) -> None:
-        r"""Set rate constant variable."""
-        self._rate_constant_variable = variable
 
     def _update(self) -> None:
         if not self._update_needed:
