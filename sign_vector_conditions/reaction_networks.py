@@ -365,6 +365,8 @@ class ReactionNetwork(SageObject):
     - `add_complex`, `remove_complex`: Add or remove complexes from the network.
     - `add_reaction`, `remove_reaction`: Add or remove reactions between complexes.
     - `plot`: Visualize the reaction network as a directed graph.
+    - `stoichiometric_matrix`, `kinetic_order_matrix`: Get the stoichiometric and kinetic-order matrices.
+    - `has_robust_cbe`, `has_at_most_one_cbe`, `has_exactly_one_cbe`: Check conditions for unique positive CBE.
 
     EXAMPLES:
 
