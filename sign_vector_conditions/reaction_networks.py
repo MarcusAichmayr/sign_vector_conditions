@@ -15,7 +15,7 @@ from __future__ import annotations
 import inspect
 
 from copy import copy
-from typing import NamedTuple
+from typing import NamedTuple, Tuple, List, Dict, Union
 from sage.calculus.var import var
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
@@ -177,7 +177,7 @@ class Complex(SageObject):
         sage: (0 * A)._latex_()
         '0'
     """
-    def __init__(self, species_dict: dict[Species]) -> None:
+    def __init__(self, species_dict: Dict[Species, Union[int, float, var]]) -> None:
         self.species_dict = {}
         for key, value in species_dict.items():
             if not isinstance(key, Species):
@@ -192,20 +192,20 @@ class Complex(SageObject):
     def __copy__(self) -> Complex:
         return Complex(self.species_dict)
 
-    def __call__(self, **kwargs):
+    def __call__(self, **kwargs) -> Complex:
         return Complex({
             key: (value(**kwargs) if callable(value) else value)
             for key, value in self.species_dict.items()
         })
 
-    def __contains__(self, species) -> bool:
+    def __contains__(self, species: Union[Species, Complex]) -> bool:
         if isinstance(species, Species):
             return species in self.species_dict
         if isinstance(species, Complex):
             return species._to_species() in self.species_dict
         return False
 
-    def __getitem__(self, species) -> int:
+    def __getitem__(self, species: Union[Species, Complex]) -> Union[int, float]:
         if isinstance(species, Species):
             return self.species_dict.get(species, 0)
         if isinstance(species, Complex):
@@ -530,10 +530,10 @@ class ReactionNetwork(SageObject):
         self._rate_constant_variable = var("k")
 
         self.graph: DiGraph = DiGraph()
-        self.complexes_stoichiometric: dict[Complex] = {}
-        self.complexes_kinetic_order: dict[Complex] = {}
+        self.complexes_stoichiometric: Dict[int, Complex] = {}
+        self.complexes_kinetic_order: Dict[int, Complex] = {}
 
-        self._species: list[Species] = []
+        self._species: List[Species] = []
 
         self._matrix_of_complexes_stoichiometric = None
         self._matrix_of_complexes_kinetic_order = None
@@ -561,12 +561,12 @@ class ReactionNetwork(SageObject):
         new._update_needed = True
         return new
 
-    def add_complexes(self, complexes: list[tuple]) -> None:
+    def add_complexes(self, complexes: List[Tuple[int, Complex, Union[Complex, None]]]) -> None:
         r"""Add complexes to system."""
         for element in complexes:
             self.add_complex(*element)
 
-    def add_complex(self, i: int, complex_stoichiometric: Complex, complex_kinetic_order: Complex = None) -> None:
+    def add_complex(self, i: int, complex_stoichiometric: Complex, complex_kinetic_order: Union[Complex, None] = None) -> None:
         r"""Add complex to system."""
         self.complexes_stoichiometric[i] = complex_stoichiometric
         self.complexes_kinetic_order[i] = complex_stoichiometric if complex_kinetic_order is None else complex_kinetic_order
@@ -580,7 +580,7 @@ class ReactionNetwork(SageObject):
         self.graph.delete_vertex(i)
         self._update_needed = True
 
-    def add_reactions(self, reactions: list[tuple[int, int]]) -> None:
+    def add_reactions(self, reactions: List[Tuple[int, int]]) -> None:
         r"""Add reactions to system."""
         for reaction in reactions:
             self.add_reaction(*reaction)
@@ -599,12 +599,12 @@ class ReactionNetwork(SageObject):
         self._update_needed = True
 
     @property
-    def reactions(self) -> list:
+    def reactions(self) -> List[Tuple[int, int]]:
         r"""Return reactions."""
         return [(start, end) for start, end, _ in self.graph.edges()]
 
     @property
-    def species(self) -> tuple[Complex, ...]:
+    def species(self) -> Tuple[Complex, ...]:
         r"""Return the species of the reaction network as a tuple of complexes."""
         self._update()
         return tuple(Complex.from_species(s) for s in self._species)
@@ -642,12 +642,12 @@ class ReactionNetwork(SageObject):
         return kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
 
     @property
-    def deficiency_stoichiometric(self):
+    def deficiency_stoichiometric(self) -> int:
         r"""Return the stoichiometric deficiency."""
         return self._get("_deficiency_stoichiometric")
 
     @property
-    def deficiency_kinetic_order(self):
+    def deficiency_kinetic_order(self) -> int:
         r"""Return the kinetic-order deficiency."""
         return self._get("_deficiency_kinetic_order")
 
@@ -663,7 +663,7 @@ class ReactionNetwork(SageObject):
         r"""Return the Laplacian matrix of the graph."""
         return self.incidence_matrix() * diagonal_matrix(self.rate_constants()) * self.source_matrix().T
 
-    def differential_equation(self):
+    def differential_equation(self) -> vector:
         r"""Return the differential equation of the system."""
         self._update()
         x = vector(var(f"x_{i}") for i in range(len(self.complexes_stoichiometric)))
@@ -674,29 +674,29 @@ class ReactionNetwork(SageObject):
             )
         )
 
-    def rate_constants(self) -> tuple[var]:
+    def rate_constants(self) -> Tuple[var, ...]:
         r"""Return rate constants."""
         return tuple(self._rate_constant(*edge) for edge in self.reactions)
 
-    def _rate_constant(self, start: int, end: int):
+    def _rate_constant(self, start: int, end: int) -> var:
         return var(
             f"{self._rate_constant_variable}_{start}_{end}",
             latex_name=f"{latex(self._rate_constant_variable)}_{{{start}, {end}}}"
         )
 
-    def set_rate_constant_variable(self, variable) -> None:
+    def set_rate_constant_variable(self, variable: var) -> None:
         r"""Set rate constant variable."""
         self._rate_constant_variable = variable
 
     def plot(
             self,
             kinetic_order: bool = True,
-            layout="spring",
-            edge_labels=False,
-            vertex_colors="white",
-            vertex_size=6000,
+            layout: str = "spring",
+            edge_labels: bool = False,
+            vertex_colors: Union[str, List[str]] = "white",
+            vertex_size: int = 6000,
             **kwargs
-        ):
+        ) -> None:
         r"""
         Plot the reaction network.
 
@@ -791,7 +791,7 @@ class ReactionNetwork(SageObject):
         self._update()
         return getattr(self, element)
 
-    def _matrix_from_complexes(self, complexes: dict[int, Complex]) -> matrix:
+    def _matrix_from_complexes(self, complexes: Dict[int, Complex]) -> matrix:
         return matrix([complex[s] for s in self._species] for _, complex in sorted(complexes.items()))
 
     def are_both_deficiencies_zero(self) -> bool:
