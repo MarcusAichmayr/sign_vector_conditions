@@ -829,13 +829,18 @@ class ReactionNetwork(SageObject):
             raise ValueError("The network is not weakly reversible. Ensure all components are strongly connected.")
 
     def has_robust_cbe(self) -> bool:
-        r"""Check whether there is a unique positive CBE with regards to small perturbations."""
+        r"""
+        Check whether there is a unique positive CBE in every stoichiometric class,
+        for all rate constants and for all small perturbations of the kinetic orders.
+        """
         self._check_network_conditions()
         return condition_closure_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
     def has_at_most_one_cbe(self) -> bool:
-        r"""Check whether there is at most one positive CBE."""
-        self._check_network_conditions()
+        r"""
+        Check whether there is at most one positive CBE in every stoichiometric class,
+        for all rate constants.
+        """
         return condition_uniqueness_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
     def _condition_faces(self) -> bool:
@@ -849,7 +854,14 @@ class ReactionNetwork(SageObject):
         return condition_nondegenerate(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
 
     def has_exactly_one_cbe(self) -> bool:
-        r"""Check whether there is exactly one positive CBE."""
+        r"""
+        Check whether there is a unique positive CBE in every stoichiometric class
+        and for all rate constants.
+
+        .. NOTE::
+
+            This method does not support symbolic expressions (variables) in the complexes.
+        """
         self._check_network_conditions()
         at_most_one = self.has_at_most_one_cbe()
         if at_most_one not in [True, False]:
