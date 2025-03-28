@@ -15,6 +15,7 @@ from __future__ import annotations
 import inspect
 
 from copy import copy
+from typing import NamedTuple
 from sage.calculus.var import var
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
@@ -73,10 +74,13 @@ def species(names: str):
     return tuple(define_species_globally(name) for name in names_list)
 
 
-class Species(SageObject):
-    def __init__(self, name: str) -> None:
-        self.name = name
+class Species(NamedTuple):
+    r"""
+    Auxiliary class for species.
 
+    To define complexes, use the :func:`species` function.
+    """
+    name: str
     def _repr_(self) -> str:
         return self.name
 
@@ -85,16 +89,6 @@ class Species(SageObject):
 
     def _latex_(self) -> str:
         return self.name
-        # return rf"\mathcal{{{self.name}}}"
-
-    def __eq__(self, other) -> bool:
-        return self.name == other.name
-
-    def __lt__(self, other) -> bool:
-        return self.name < other.name
-
-    def __hash__(self) -> int:
-        return hash(self.name)
 
 
 class Complex(SageObject):
@@ -119,7 +113,7 @@ class Complex(SageObject):
 
     TESTS::
 
-        sage: A*B
+        sage: A * B
         Traceback (most recent call last):
         ...
         TypeError: Cannot multiply species by species.
@@ -296,6 +290,11 @@ class Complex(SageObject):
     def involved_species(self) -> set[Species]:
         r"""Return the species involved in the complex."""
         return set(self.species_dict.keys())
+
+    @staticmethod
+    def from_species(species: Species) -> Complex:
+        r"""Return a complex from a species."""
+        return Complex({species: 1})
 
 
 class ReactionNetwork(SageObject):
@@ -605,9 +604,10 @@ class ReactionNetwork(SageObject):
         return [(start, end) for start, end, _ in self.graph.edges()]
 
     @property
-    def species(self) -> list[Species]:
+    def species(self) -> list[Complex]:
         r"""Return the species of the reaction network."""
-        return self._get("_species")
+        self._update()
+        return [Complex.from_species(s) for s in self._species]
 
     @property
     def matrix_of_complexes_stoichiometric(self) -> matrix:
