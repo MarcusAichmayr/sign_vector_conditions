@@ -1,4 +1,37 @@
-r"""Class for setting up chemical reaction networks with mass-action kinetics."""
+r"""
+Module for setting up reaction networks.
+
+This module provides tools for defining species, complexes, and reaction networks
+with (generalized) mass-action kinetics. It includes functionality for analyzing
+reaction networks, such as checking weak reversibility, computing deficiencies,
+and verifying conditions for unique positive complex-balanced equilibria (CBE).
+
+Key Classes and Functions:
+- :class:`ReactionNetwork`: Represents a chemical reaction network.
+- :func:`species`: Utility function for defining species.
+
+For detailed examples and usage, see :class:`ReactionNetwork`.
+
+EXAMPLES:
+
+We define species for a reaction network::
+
+    sage: from sign_vector_conditions import *
+    sage: A, B, C = species("A, B, C")
+    sage: rn = ReactionNetwork()
+    sage: rn.add_complex(0, A + B)
+    sage: rn.add_complex(1, C)
+    sage: rn.add_reactions([(0, 1), (1, 0)])
+    sage: rn.plot()
+    Graphics object consisting of 6 graphics primitives
+
+We can analyze the reaction network::
+
+    sage: rn.is_weakly_reversible()
+    True
+    sage: rn.deficiency_stoichiometric
+    0
+"""
 
 #############################################################################
 #  Copyright (C) 2025                                                       #
@@ -36,6 +69,8 @@ def species(names: str):
     r"""
     Define species from a string of names.
 
+    See :class:`Complex` for operations and more details.
+
     EXAMPLES::
 
         sage: from sign_vector_conditions import *
@@ -43,8 +78,10 @@ def species(names: str):
         A
         sage: A
         A
-        sage: species("B, C, D")
-        (B, C, D)
+        sage: species("A, B, C")
+        (A, B, C)
+        sage: A
+        A
         sage: B
         B
         sage: C
@@ -92,21 +129,31 @@ class Complex(SageObject):
     r"""
     A complex involving species.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    First, we define some species::
 
         sage: from sign_vector_conditions import *
         sage: species("A, B, C")
         (A, B, C)
+
+    Usual operations like addition and multiplication are supported::
+
         sage: A + B
         A + B
         sage: 2 * A + 3 * B
         2*A + 3*B
+
+    Symbolic expressions are also supported::
+
         sage: var("a")
         a
         sage: 2 * a * A
         2*a*A
         sage: (2 + a) * A
         (a + 2)*A
+        sage: a * (A + B)
+        a*A + a*B
 
     TESTS::
 
@@ -154,11 +201,10 @@ class Complex(SageObject):
         sage: A(a=1)
         A
 
-    TESTS::
+    We test the latex representation::
 
-        sage: from sign_vector_conditions import *
-        sage: species("A, B, C")
-        (A, B, C)
+        sage: species("A, B")
+        (A, B)
         sage: 2 * A + 3 * B
         2*A + 3*B
         sage: (2 * A + 3 * B)._latex_()
@@ -296,11 +342,33 @@ class Complex(SageObject):
 
 class ReactionNetwork(SageObject):
     r"""
-    A (chemical) reaction networks with (generalized) mass-action kinetics.
+    A reaction network with (generalized) mass-action kinetics.
+
+    This class represents a reaction network, where complexes are connected
+    by directed reactions. It supports generalized mass-action kinetics, allowing
+    for symbolic rate constants and kinetic orders.
+
+    The `ReactionNetwork` class provides tools for:
+    - Adding and removing complexes and reactions.
+    - Computing stoichiometric and kinetic-order matrices.
+    - Analyzing network properties, such as weak reversibility and deficiencies.
+    - Checking conditions for unique positive complex-balanced equilibria (CBE).
+    - Visualizing the reaction network as a directed graph.
+
+    Key Attributes:
+    - `graph`: The directed graph representing the reaction network.
+    - `complexes_stoichiometric`: A dictionary mapping complex indices to stoichiometric complexes.
+    - `complexes_kinetic_order`: A dictionary mapping complex indices to kinetic-order complexes.
+    - `species`: A tuple of all species involved in the network.
+
+    Key Methods:
+    - `add_complex`, `remove_complex`: Add or remove complexes from the network.
+    - `add_reaction`, `remove_reaction`: Add or remove reactions between complexes.
+    - `plot`: Visualize the reaction network as a directed graph.
 
     EXAMPLES:
 
-    We define a chemical reaction network with generalized mass-action kinetics involving 5 complexes and 2 connected components::
+    We define a reaction network with two complexes involving variables in the kinetic orders::
 
         sage: from sign_vector_conditions import *
         sage: var("a, b")
@@ -316,7 +384,7 @@ class ReactionNetwork(SageObject):
         sage: rn.plot()
         Graphics object consisting of 6 graphics primitives
 
-    We describe the stoichiometric and kinetic-order subspaces using matrices::
+    We describe the reaction network using matrices::
 
         sage: rn.matrix_of_complexes_stoichiometric
         [1 0]
@@ -326,6 +394,9 @@ class ReactionNetwork(SageObject):
         [a 0]
         [b 0]
         [0 1]
+
+    The stoichiometric and kinetic-order matrices are given by::
+
         sage: rn.matrix_stoichiometric
         [-1  1]
         [-1  1]
@@ -362,14 +433,15 @@ class ReactionNetwork(SageObject):
         (D, E)
         sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
-        sage: rn.reactions
-        [(0, 1), (1, 0), (1, 2), (3, 4), (4, 3)]
-        sage: rn.rate_constants()
-        (k_0_1, k_1_0, k_1_2, k_3_4, k_4_3)
         sage: rn
         Reaction network with 5 complexes and 5 reactions.
         sage: rn.plot()
         Graphics object consisting of 15 graphics primitives
+
+    The network involves the following species::
+
+        sage: rn.species
+        (A, B, C, D, E)
 
     To make this system weakly reversible, we add another reaction::
 
@@ -378,6 +450,16 @@ class ReactionNetwork(SageObject):
         sage: rn.add_reaction(2, 0)
         sage: rn.is_weakly_reversible()
         True
+
+    Now, our network consists of 6 reactions::
+
+        sage: rn.reactions
+        [(0, 1), (1, 0), (1, 2), (2, 0), (3, 4), (4, 3)]
+
+    The corresponding rate constants are::
+
+        sage: rn.rate_constants()
+        (k_0_1, k_1_0, k_1_2, k_2_0, k_3_4, k_4_3)
 
     We compute the incidence and source matrices of the directed graph::
 
@@ -393,6 +475,9 @@ class ReactionNetwork(SageObject):
         [0 0 0 1 0 0]
         [0 0 0 0 1 0]
         [0 0 0 0 0 1]
+
+    The Laplacian matrix involving the rate constants is given by::
+
         sage: rn.laplacian_matrix()
         [        -k_0_1          k_1_0          k_2_0              0              0]
         [         k_0_1 -k_1_0 - k_1_2              0              0              0]
@@ -406,7 +491,7 @@ class ReactionNetwork(SageObject):
          k_1_2*x_0^b - k_2_0*x_1,
          k_3_4*x_2 - k_4_3*x_4)
 
-    We describe the stoichiometric and kinetic-order subspaces using matrices::
+    The network is described by the following matrices::
 
         sage: rn.matrix_of_complexes_stoichiometric
         [1 0 0 1 0]
@@ -467,27 +552,12 @@ class ReactionNetwork(SageObject):
         sage: rn.remove_reaction(1, 0)
         sage: rn
         Reaction network with 3 complexes and 3 reactions.
-        sage: rn.species
-        (A, B, C, D)
-        sage: rn.plot()
-        Graphics object consisting of 7 graphics primitives
-        sage: rn.is_weakly_reversible()
-        True
-        sage: rn.has_at_most_one_cbe() # random order
-        [{a >= 0, a - c >= 0, b >= 0}]
 
     We can change the names of the rate constants::
 
         sage: rn.set_rate_constant_variable(var("tau"))
         sage: rn.rate_constants()
         (tau_0_1, tau_1_2, tau_2_0)
-        sage: rn.plot(edge_labels=True)
-        Graphics object consisting of 10 graphics primitives
-        sage: var("k", latex_name=r"\kappa")
-        k
-        sage: rn.set_rate_constant_variable(k)
-        sage: rn.rate_constants()
-        (k_0_1, k_1_2, k_2_0)
         sage: rn.plot(edge_labels=True)
         Graphics object consisting of 10 graphics primitives
 
@@ -682,7 +752,38 @@ class ReactionNetwork(SageObject):
         )
 
     def set_rate_constant_variable(self, variable: var) -> None:
-        r"""Set rate constant variable."""
+        r"""
+        Set rate constant variable.
+        This method allows you to set a custom variable for the rate constants.
+
+        EXAMPLES::
+
+            sage: from sign_vector_conditions import *
+            sage: species("A, B, C")
+            (A, B, C)
+            sage: rn = ReactionNetwork()
+            sage: rn.add_complexes([(0, A + B), (1, C)])
+            sage: rn.add_reactions([(0, 1), (1, 0)])
+            sage: rn.rate_constants()
+            (k_0_1, k_1_0)
+            sage: rn.plot(edge_labels=True)
+            Graphics object consisting of 8 graphics primitives
+
+        You can also use a variable with a LaTeX name::
+
+            sage: rn.set_rate_constant_variable(var("tau"))
+            sage: rn.rate_constants()
+            (tau_0_1, tau_1_0)
+            sage: rn.plot(edge_labels=True)
+            Graphics object consisting of 8 graphics primitives
+            sage: var("k", latex_name=r"\kappa")
+            k
+            sage: rn.set_rate_constant_variable(k)
+            sage: rn.rate_constants()
+            (k_0_1, k_1_0)
+            sage: rn.plot(edge_labels=True)
+            Graphics object consisting of 8 graphics primitives
+        """
         self._rate_constant_variable = variable
 
     def plot(
