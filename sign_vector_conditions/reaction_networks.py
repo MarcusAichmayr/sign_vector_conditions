@@ -471,7 +471,7 @@ class ReactionNetwork(SageObject):
         sage: rn
         Reaction network with 3 complexes and 3 reactions.
         sage: rn.species
-        [A, B, C, D]
+        (A, B, C, D)
         sage: rn.plot()
         Graphics object consisting of 7 graphics primitives
         sage: rn.is_weakly_reversible()
@@ -503,7 +503,7 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complex(0, 2 * A + B, 2 * a * A + a * B)
         sage: rn.add_complex(1, 2 * C)
         sage: rn.species
-        [H_2, H_2O, O_2]
+        (H_2, H_2O, O_2)
         sage: rn.add_reactions([(0, 1), (1, 0)])
         sage: rn.plot()
         Graphics object consisting of 6 graphics primitives
@@ -604,10 +604,10 @@ class ReactionNetwork(SageObject):
         return [(start, end) for start, end, _ in self.graph.edges()]
 
     @property
-    def species(self) -> list[Complex]:
-        r"""Return the species of the reaction network."""
+    def species(self) -> tuple[Complex, ...]:
+        r"""Return the species of the reaction network as a tuple of complexes."""
         self._update()
-        return [Complex.from_species(s) for s in self._species]
+        return tuple(Complex.from_species(s) for s in self._species)
 
     @property
     def matrix_of_complexes_stoichiometric(self) -> matrix:
