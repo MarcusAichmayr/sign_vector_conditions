@@ -78,12 +78,9 @@ class Species(NamedTuple):
     r"""
     Auxiliary class for species.
 
-    To define complexes, use the :func:`species` function.
+    To compute with species, use the :func:`species` function.
     """
     name: str
-    def _repr_(self) -> str:
-        return self.name
-
     def __str__(self) -> str:
         return self.name
 
