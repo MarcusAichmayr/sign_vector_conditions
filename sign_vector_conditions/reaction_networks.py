@@ -379,6 +379,12 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complex(0, A + B, a * A + b * B)
         sage: rn.add_complex(1, C)
         sage: rn.add_reactions([(0, 1), (1, 0)])
+        sage: rn.complexes_stoichiometric
+        {0: A + B, 1: C}
+        sage: rn.complexes_kinetic_order
+        {0: a*A + b*B, 1: C}
+        sage: rn.species
+        (A, B, C)
         sage: rn
         Reaction network with 2 complexes and 2 reactions.
         sage: rn.plot()
@@ -437,11 +443,6 @@ class ReactionNetwork(SageObject):
         Reaction network with 5 complexes and 5 reactions.
         sage: rn.plot()
         Graphics object consisting of 15 graphics primitives
-
-    The network involves the following species::
-
-        sage: rn.species
-        (A, B, C, D, E)
 
     To make this system weakly reversible, we add another reaction::
 
