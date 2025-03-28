@@ -403,18 +403,18 @@ class ReactionNetwork(SageObject):
 
     The stoichiometric and kinetic-order matrices are given by::
 
-        sage: rn.matrix_stoichiometric
+        sage: rn.stoichiometric_matrix
         [-1  1]
         [-1  1]
         [ 1 -1]
-        sage: rn.matrix_kinetic_order
+        sage: rn.kinetic_order_matrix
         [-a  a]
         [-b  b]
         [ 1 -1]
-        sage: rn.matrix_stoichiometric_as_kernel
+        sage: rn.stoichiometric_matrix_as_kernel
         [1 0 1]
         [0 1 1]
-        sage: rn.matrix_kinetic_order_as_kernel
+        sage: rn.kinetic_order_matrix_as_kernel
         [1 0 a]
         [0 1 b]
 
@@ -506,22 +506,22 @@ class ReactionNetwork(SageObject):
         [0 1 0 0 0]
         [0 0 1 0 0]
         [0 0 0 0 1]
-        sage: rn.matrix_stoichiometric
+        sage: rn.stoichiometric_matrix
         [-1  1  0  1 -1  1]
         [-1  1  0  1  0  0]
         [ 1 -1 -1  0  0  0]
         [ 0  0  1 -1  0  0]
         [ 0  0  0  0  1 -1]
-        sage: rn.matrix_kinetic_order
+        sage: rn.kinetic_order_matrix
         [   -a     a     c a - c    -1     1]
         [   -b     b     0     b     0     0]
         [    1    -1    -1     0     0     0]
         [    0     0     1    -1     0     0]
         [    0     0     0     0     1    -1]
-        sage: rn.matrix_stoichiometric_as_kernel
+        sage: rn.stoichiometric_matrix_as_kernel
         [1 0 1 1 1]
         [0 1 1 1 0]
-        sage: rn.matrix_kinetic_order_as_kernel
+        sage: rn.kinetic_order_matrix_as_kernel
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
 
@@ -605,10 +605,10 @@ class ReactionNetwork(SageObject):
 
         self._matrix_of_complexes_stoichiometric = None
         self._matrix_of_complexes_kinetic_order = None
-        self._matrix_stoichiometric = None
-        self._matrix_kinetic_order = None
-        self._matrix_stoichiometric_reduced = None
-        self._matrix_kinetic_order_reduced = None
+        self._stoichiometric_matrix = None
+        self._kinetic_order_matrix = None
+        self._stoichiometric_matrix_reduced = None
+        self._kinetic_order_matrix_reduced = None
 
         self._deficiency_stoichiometric: int = 0
         self._deficiency_kinetic_order: int = 0
@@ -688,26 +688,26 @@ class ReactionNetwork(SageObject):
         return self._get("_matrix_of_complexes_kinetic_order").T
 
     @property
-    def matrix_stoichiometric(self) -> matrix:
+    def stoichiometric_matrix(self) -> matrix:
         r"""Return the stoichiometric matrix where the columns correspond to the reactions."""
-        return self._get("_matrix_stoichiometric").T
+        return self._get("_stoichiometric_matrix").T
 
     @property
-    def matrix_kinetic_order(self) -> matrix:
+    def kinetic_order_matrix(self) -> matrix:
         r"""Return the kinetic-order matrix where the columns correspond to the reactions."""
-        return self._get("_matrix_kinetic_order").T
+        return self._get("_kinetic_order_matrix").T
 
     @property
-    def matrix_stoichiometric_as_kernel(self) -> matrix:
+    def stoichiometric_matrix_as_kernel(self) -> matrix:
         r"""Return the kernel matrix of the stoichiometric matrix."""
         self._update()
-        return kernel_matrix_using_elementary_vectors(self._matrix_stoichiometric_reduced)
+        return kernel_matrix_using_elementary_vectors(self._stoichiometric_matrix_reduced)
 
     @property
-    def matrix_kinetic_order_as_kernel(self) -> matrix:
+    def kinetic_order_matrix_as_kernel(self) -> matrix:
         r"""Return the kernel matrix of the kinetic-order matrix."""
         self._update()
-        return kernel_matrix_using_elementary_vectors(self._matrix_kinetic_order_reduced)
+        return kernel_matrix_using_elementary_vectors(self._kinetic_order_matrix_reduced)
 
     @property
     def deficiency_stoichiometric(self) -> int:
@@ -890,14 +890,16 @@ class ReactionNetwork(SageObject):
     def _update_matrices(self) -> None:
         self._matrix_of_complexes_stoichiometric = self._matrix_from_complexes(self.complexes_stoichiometric)
         self._matrix_of_complexes_kinetic_order = self._matrix_from_complexes(self.complexes_kinetic_order)
-        self._matrix_stoichiometric = self.incidence_matrix().T * self._matrix_of_complexes_stoichiometric
-        self._matrix_kinetic_order = self.incidence_matrix().T * self._matrix_of_complexes_kinetic_order
-        self._matrix_stoichiometric_reduced = self._matrix_stoichiometric.matrix_from_rows(self._matrix_stoichiometric.pivot_rows())
-        self._matrix_kinetic_order_reduced = self._matrix_kinetic_order.matrix_from_rows(self._matrix_kinetic_order.pivot_rows())
+
+        self._stoichiometric_matrix = self.incidence_matrix().T * self._matrix_of_complexes_stoichiometric
+        self._kinetic_order_matrix = self.incidence_matrix().T * self._matrix_of_complexes_kinetic_order
+
+        self._stoichiometric_matrix_reduced = self._stoichiometric_matrix.matrix_from_rows(self._stoichiometric_matrix.pivot_rows())
+        self._kinetic_order_matrix_reduced = self._kinetic_order_matrix.matrix_from_rows(self._kinetic_order_matrix.pivot_rows())
 
     def _compute_deficiencies(self) -> None:
-        self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_stoichiometric_reduced.nrows()
-        self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._matrix_kinetic_order_reduced.nrows()
+        self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._stoichiometric_matrix_reduced.nrows()
+        self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._kinetic_order_matrix_reduced.nrows()
 
     def _get(self, element: str):
         self._update()
@@ -936,24 +938,24 @@ class ReactionNetwork(SageObject):
         for all rate constants and for all small perturbations of the kinetic orders.
         """
         self._check_network_conditions()
-        return condition_closure_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
+        return condition_closure_minors(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def has_at_most_one_cbe(self) -> bool:
         r"""
         Check whether there is at most one positive CBE in every stoichiometric class,
         for all rate constants.
         """
-        return condition_uniqueness_minors(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
+        return condition_uniqueness_minors(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def _condition_faces(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_faces(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
+        return condition_faces(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_nondegenerate(self._matrix_stoichiometric_reduced, self._matrix_kinetic_order_reduced)
+        return condition_nondegenerate(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def has_exactly_one_cbe(self) -> bool:
         r"""
