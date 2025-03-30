@@ -26,8 +26,12 @@ setup(
         "Topic :: Scientific/Engineering :: Mathematics",
     ],  # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords=[
-        "chemical reaction networks",
-        "sign vector conditions, oriented matroids",
+        "reaction networks",
+        "equilibrium",
+        "robustness",
+        "generalized mass-action",
+        "sign vector conditions",
+        "oriented matroids",
     ],
     packages=["sign_vector_conditions", "examples"],
     setup_requires=["elementary_vectors>=1.2"],
