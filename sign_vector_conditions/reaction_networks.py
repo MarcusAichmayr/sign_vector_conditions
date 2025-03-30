@@ -7,7 +7,8 @@ reaction networks, such as checking weak reversibility, computing deficiencies,
 and verifying conditions for unique positive complex-balanced equilibria (CBE).
 
 Key Classes and Functions:
-- :class:`ReactionNetwork`: Represents a chemical reaction network.
+
+- :class:`ReactionNetwork`: Represents a reaction network.
 - :func:`species`: Utility function for defining species.
 
 For detailed examples and usage, see :class:`ReactionNetwork`.
@@ -65,9 +66,12 @@ from .unique_existence import condition_faces, condition_nondegenerate
 from .robustness import condition_closure_minors
 
 
-def species(names: str):
+def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
     r"""
     Define species from a string of names.
+
+    The string can contain species names separated by commas or spaces.
+    The function defines each species globally similar as :func:`var`.
 
     See :class:`Complex` for operations and more details.
 
@@ -90,6 +94,11 @@ def species(names: str):
         (A, B, C)
         sage: species("A B C")
         (A, B, C)
+        sage: A, B = species("H_2, O_2")
+        sage: A
+        H_2
+        sage: B
+        O_2
     """
     names = names.strip()
     if "," in names:
@@ -349,6 +358,7 @@ class ReactionNetwork(SageObject):
     for symbolic rate constants and kinetic orders.
 
     The `ReactionNetwork` class provides tools for:
+
     - Adding and removing complexes and reactions.
     - Computing stoichiometric and kinetic-order matrices.
     - Analyzing network properties, such as weak reversibility and deficiencies.
@@ -356,17 +366,19 @@ class ReactionNetwork(SageObject):
     - Visualizing the reaction network as a directed graph.
 
     Key Attributes:
+
     - `graph`: The directed graph representing the reaction network.
     - `complexes_stoichiometric`: A dictionary mapping complex indices to stoichiometric complexes.
     - `complexes_kinetic_order`: A dictionary mapping complex indices to kinetic-order complexes.
     - `species`: A tuple of all species involved in the network.
 
     Key Methods:
-    - `add_complex`, `remove_complex`: Add or remove complexes from the network.
-    - `add_reaction`, `remove_reaction`: Add or remove reactions between complexes.
-    - `plot`: Visualize the reaction network as a directed graph.
-    - `stoichiometric_matrix`, `kinetic_order_matrix`: Get the stoichiometric and kinetic-order matrices.
-    - `has_robust_cbe`, `has_at_most_one_cbe`, `has_exactly_one_cbe`: Check conditions for unique positive CBE.
+
+    - :func:`add_complex`, :func:`remove_complex`: Add or remove complexes from the network.
+    - :func:`add_reaction`, :func:`remove_reaction`: Add or remove reactions between complexes.
+    - :func:`plot`: Visualize the reaction network as a directed graph.
+    - :func:`stoichiometric_matrix`, :func:`kinetic_order_matrix`: Get the stoichiometric and kinetic-order matrices.
+    - :func:`has_robust_cbe`, :func:`has_at_most_one_cbe`, :func:`has_exactly_one_cbe`: Check conditions for unique positive CBE.
 
     EXAMPLES:
 
@@ -381,14 +393,16 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complex(0, A + B, a * A + b * B)
         sage: rn.add_complex(1, C)
         sage: rn.add_reactions([(0, 1), (1, 0)])
+        sage: rn
+        Reaction network with 2 complexes and 2 reactions.
         sage: rn.complexes_stoichiometric
         {0: A + B, 1: C}
         sage: rn.complexes_kinetic_order
         {0: a*A + b*B, 1: C}
+        sage: rn.reactions
+        [(0, 1), (1, 0)]
         sage: rn.species
         (A, B, C)
-        sage: rn
-        Reaction network with 2 complexes and 2 reactions.
         sage: rn.plot()
         Graphics object consisting of 6 graphics primitives
 
