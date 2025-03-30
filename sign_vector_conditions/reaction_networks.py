@@ -695,22 +695,38 @@ class ReactionNetwork(SageObject):
 
     @property
     def matrix_of_complexes_stoichiometric(self) -> matrix:
-        r"""Return the matrix that decodes the stoichiometric complexes of the reaction network."""
+        r"""
+        Return the matrix that decodes the stoichiometric complexes of the reaction network.
+
+        Each column stands for a complex, and each row stands for a species.
+        """
         return self._get("_matrix_of_complexes_stoichiometric").T
 
     @property
     def matrix_of_complexes_kinetic_order(self) -> matrix:
-        r"""Return the matrix that decodes the kinetic-order complexes of the reaction network."""
+        r"""
+        Return the matrix that decodes the kinetic-order complexes of the reaction network.
+
+        Each column stands for a complex, and each row stands for a species.
+        """
         return self._get("_matrix_of_complexes_kinetic_order").T
 
     @property
     def stoichiometric_matrix(self) -> matrix:
-        r"""Return the stoichiometric matrix where the columns correspond to the reactions."""
+        r"""
+        Return the stoichiometric matrix where the columns correspond to the reactions.
+
+        Each columns stands for a reaction, and each row stands for a species.
+        """
         return self._get("_stoichiometric_matrix").T
 
     @property
     def kinetic_order_matrix(self) -> matrix:
-        r"""Return the kinetic-order matrix where the columns correspond to the reactions."""
+        r"""
+        Return the kinetic-order matrix where the columns correspond to the reactions.
+
+        Each columns stands for a reaction, and each row stands for a species.
+        """
         return self._get("_kinetic_order_matrix").T
 
     @property
