@@ -194,10 +194,6 @@ class Complex(SageObject):
         A - 2*B
         sage: (2 * A + 3 * B).get_coefficient(A)
         2
-        sage: A in 2 * A + B
-        True
-        sage: A in 3 * B
-        False
         sage: s = a * A - B
         sage: s
         a*A - B
@@ -250,14 +246,12 @@ class Complex(SageObject):
             for key, value in self.species_dict.items()
         })
 
-    def __contains__(self, species: Union[_Species, Complex]) -> bool:
-        if isinstance(species, _Species):
-            return species in self.species_dict
-        if isinstance(species, Complex):
-            return species._to_species() in self.species_dict
-        return False
-
     def get_coefficient(self, species: Union[_Species, Complex]) -> Union[int, float]:
+        r"""
+        Return the coefficient of the species in the complex.
+
+        If a species is not present, return 0.
+        """
         if isinstance(species, _Species):
             return self.species_dict.get(species, 0)
         if isinstance(species, Complex):
