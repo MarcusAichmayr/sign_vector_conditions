@@ -843,15 +843,16 @@ class ReactionNetwork(SageObject):
         self._kinetic_order_matrix_reduced = self._kinetic_order_matrix.matrix_from_rows(self._kinetic_order_matrix.pivot_rows())
 
     def _compute_deficiencies(self) -> None:
-        self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._stoichiometric_matrix_reduced.nrows()
-        self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - self.graph.connected_components_number() - self._kinetic_order_matrix_reduced.nrows()
+        connected_components_number = self.graph.connected_components_number()
+        self._deficiency_stoichiometric = len(self.complexes_stoichiometric) - connected_components_number - self._stoichiometric_matrix_reduced.nrows()
+        self._deficiency_kinetic_order = len(self.complexes_stoichiometric) - connected_components_number - self._kinetic_order_matrix_reduced.nrows()
 
     def _get(self, element: str):
         self._update()
         return getattr(self, element)
 
     def _matrix_from_complexes(self, complexes: Dict[int, Complex]) -> matrix:
-        return matrix([complex[s] for s in self._species] for _, complex in sorted(complexes.items()))
+        return matrix([complexes[v][s] for s in self._species] for v in self.graph.vertices())
 
     def plot(
             self,
