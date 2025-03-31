@@ -192,7 +192,7 @@ class Complex(SageObject):
         A - B
         sage: A - 2 * B
         A - 2*B
-        sage: (2 * A + 3 * B)[A]
+        sage: (2 * A + 3 * B).get_coefficient(A)
         2
         sage: A in 2 * A + B
         True
@@ -257,7 +257,7 @@ class Complex(SageObject):
             return species._to_species() in self.species_dict
         return False
 
-    def __getitem__(self, species: Union[_Species, Complex]) -> Union[int, float]:
+    def get_coefficient(self, species: Union[_Species, Complex]) -> Union[int, float]:
         if isinstance(species, _Species):
             return self.species_dict.get(species, 0)
         if isinstance(species, Complex):
@@ -852,7 +852,7 @@ class ReactionNetwork(SageObject):
         return getattr(self, element)
 
     def _matrix_from_complexes(self, complexes: Dict[int, Complex]) -> matrix:
-        return matrix([complexes[v][s] for s in self._species] for v in self.graph.vertices())
+        return matrix([complexes[v].get_coefficient(s) for s in self._species] for v in self.graph.vertices())
 
     def plot(
             self,
