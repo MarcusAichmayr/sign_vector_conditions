@@ -111,7 +111,7 @@ def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
     caller_globals = inspect.currentframe().f_back.f_globals
 
     def define_species_globally(name: str) -> Complex:
-        complex = Complex({Species(name): 1})
+        complex = Complex({_Species(name): 1})
         caller_globals[name] = complex
         return complex
 
@@ -120,7 +120,7 @@ def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
     return tuple(define_species_globally(name) for name in names_list)
 
 
-class Species(NamedTuple):
+class _Species(NamedTuple):
     r"""
     Auxiliary class for species.
 
@@ -229,11 +229,11 @@ class Complex(SageObject):
         sage: (0 * A)._latex_()
         '0'
     """
-    def __init__(self, species_dict: Dict[Species, Union[int, float, var]]) -> None:
+    def __init__(self, species_dict: Dict[_Species, Union[int, float, var]]) -> None:
         self.species_dict = {}
         for key, value in species_dict.items():
-            if not isinstance(key, Species):
-                raise TypeError(f"Key {key} is not a Species")
+            if not isinstance(key, _Species):
+                raise TypeError(f"Key {key} is not a _Species")
             if value == 0:
                 continue
             self.species_dict[key] = value
@@ -250,15 +250,15 @@ class Complex(SageObject):
             for key, value in self.species_dict.items()
         })
 
-    def __contains__(self, species: Union[Species, Complex]) -> bool:
-        if isinstance(species, Species):
+    def __contains__(self, species: Union[_Species, Complex]) -> bool:
+        if isinstance(species, _Species):
             return species in self.species_dict
         if isinstance(species, Complex):
             return species._to_species() in self.species_dict
         return False
 
-    def __getitem__(self, species: Union[Species, Complex]) -> Union[int, float]:
-        if isinstance(species, Species):
+    def __getitem__(self, species: Union[_Species, Complex]) -> Union[int, float]:
+        if isinstance(species, _Species):
             return self.species_dict.get(species, 0)
         if isinstance(species, Complex):
             return self.species_dict.get(species._to_species(), 0)
@@ -315,13 +315,13 @@ class Complex(SageObject):
                 terms.append(f"+ {summand}")
         return " ".join(terms)
 
-    def _repr_coefficient(self, key: Species) -> str:
+    def _repr_coefficient(self, key: _Species) -> str:
         return self._format_coefficient(key, str)
 
-    def _latex_coefficient(self, key: Species) -> str:
+    def _latex_coefficient(self, key: _Species) -> str:
         return self._format_coefficient(key, latex)
 
-    def _format_coefficient(self, key: Species, formatter) -> str:
+    def _format_coefficient(self, key: _Species, formatter) -> str:
         value = self.species_dict[key]
         formatted_key = formatter(key)
         formatted_value = formatter(value)
@@ -334,17 +334,17 @@ class Complex(SageObject):
             return f"({formatted_value})*{formatted_key}" if formatter == str else rf"({formatted_value}) \, {formatted_key}"
         return f"{formatted_value}*{formatted_key}" if formatter == str else rf"{formatted_value} \, {formatted_key}"
 
-    def _to_species(self) -> Species:
+    def _to_species(self) -> _Species:
         if len(self.species_dict) != 1:
             raise ValueError("Complex must contain exactly one species.")
         return next(iter(self.species_dict.keys()))
 
-    def involved_species(self) -> set[Species]:
+    def involved_species(self) -> set[_Species]:
         r"""Return the species involved in the complex."""
         return set(self.species_dict.keys())
 
     @staticmethod
-    def from_species(species: Species) -> Complex:
+    def from_species(species: _Species) -> Complex:
         r"""Return a complex from a species."""
         return Complex({species: 1})
 
@@ -609,7 +609,7 @@ class ReactionNetwork(SageObject):
         self.complexes_stoichiometric: Dict[int, Complex] = {}
         self.complexes_kinetic_order: Dict[int, Complex] = {}
 
-        self._species: List[Species] = []
+        self._species: List[_Species] = []
 
         self._matrix_of_complexes_stoichiometric = None
         self._matrix_of_complexes_kinetic_order = None
