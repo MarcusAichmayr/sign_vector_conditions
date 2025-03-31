@@ -570,15 +570,7 @@ class ReactionNetwork(SageObject):
         sage: rn
         Reaction network with 3 complexes and 3 reactions.
 
-    We can change the names of the rate constants::
-
-        sage: rn.set_rate_constant_variable(var("tau"))
-        sage: rn.rate_constants()
-        (tau_0_1, tau_1_2, tau_2_0)
-        sage: rn.plot(edge_labels=True)
-        Graphics object consisting of 10 graphics primitives
-
-    ::
+    Here is an example involving molecules::
 
         sage: A, B, C = species("H_2, O_2, H_2O")
         sage: var('a')
@@ -592,7 +584,7 @@ class ReactionNetwork(SageObject):
         sage: rn.plot()
         Graphics object consisting of 6 graphics primitives
 
-    ::
+    We can also define an ecosystem involving animals as species::
 
         sage: fox, rabbit = species("Fox, Rabbit")
         sage: rn = ReactionNetwork()
@@ -915,6 +907,17 @@ class ReactionNetwork(SageObject):
             sage: rn.add_complex(1, C)
             sage: rn.add_reactions([(0, 1), (1, 0)])
             sage: rn.plot()
+            Graphics object consisting of 6 graphics primitives
+
+        We can customize plotting::
+
+            sage: rn.plot(edge_labels=True)
+            Graphics object consisting of 8 graphics primitives
+            sage: rn.plot(kinetic_order=False)
+            Graphics object consisting of 6 graphics primitives
+            sage: rn.plot(vertex_size=3000)
+            Graphics object consisting of 6 graphics primitives
+            sage: rn.plot(layout="circular")
             Graphics object consisting of 6 graphics primitives
         """
         if edge_labels:
