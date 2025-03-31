@@ -138,6 +138,10 @@ class Complex(SageObject):
     r"""
     A complex involving species.
 
+    This class represents a linear combination of species with coefficients,
+    supporting various operations such as addition, subtraction, and scalar multiplication.
+    It also supports symbolic expressions and substitution of values for variables.
+
     EXAMPLES:
 
     First, we define some species::
@@ -164,7 +168,23 @@ class Complex(SageObject):
         sage: a * (A + B)
         a*A + a*B
 
-    TESTS::
+    Similar to polynomials, we can substitute values for variables in a complex::
+
+        sage: complex = a * A - B
+        sage: complex
+        a*A - B
+        sage: complex(a=0)
+        -B
+        sage: complex(a=1)
+        A - B
+        sage: (a * A)(a=0)
+        0
+        sage: A(a=1)
+        A
+
+    TESTS:
+
+    Operations with invalid types raise appropriate errors::
 
         sage: A * B
         Traceback (most recent call last):
@@ -194,19 +214,8 @@ class Complex(SageObject):
         A - 2*B
         sage: (2 * A + 3 * B).get_coefficient(A)
         2
-        sage: s = a * A - B
-        sage: s
-        a*A - B
-        sage: s(a=0)
-        -B
-        sage: s(a=1)
-        A - B
-        sage: (a * A)(a=0)
-        0
-        sage: A(a=1)
-        A
 
-    We test the latex representation::
+    LaTeX representation is supported for better visualization::
 
         sage: species("A, B")
         (A, B)
