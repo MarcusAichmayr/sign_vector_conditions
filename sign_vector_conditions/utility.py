@@ -264,13 +264,10 @@ def equal_entries_lists(length: int, indices: list[int]) -> list[list[int]]:
         return []
 
     one_position = indices[0]
-    return [
-        [
-            1 if i == one_position else (-1 if i == minus_one_position else 0)
-            for i in range(length)
-        ]
-        for minus_one_position in indices[1:]
-    ]
+    return [[
+        1 if i == one_position else (-1 if i == minus_one_position else 0)
+        for i in range(length)
+    ] for minus_one_position in indices[1:]]
 
 
 def non_negative_vectors(vectors) -> list:

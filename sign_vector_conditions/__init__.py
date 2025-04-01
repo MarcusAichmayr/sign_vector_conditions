@@ -1,20 +1,4 @@
-r"""
-Conditions from [MHR19]_ for chemical reaction networks.
-
-.. [MHR19] Müller, S.; Hofbauer, J., and Regensburger, G.:
-   "On the bijectivity of families of exponential/generalized polynomial maps".
-   In: SIAM Journal on Applied Algebra and Geometry 3.3 (2019),
-   pp. 412--438. doi: 10.1137/18M1178153.
-
-.. autosummary::
-    :toctree: generated
-
-    reaction_networks
-    uniqueness
-    unique_existence
-    robustness
-    utility
-"""
+r"""Sign vector conditions for reaction networks."""
 
 #############################################################################
 #  Copyright (C) 2025                                                       #

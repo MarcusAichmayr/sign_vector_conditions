@@ -1,10 +1,11 @@
 r"""
-Module for setting up reaction networks.
+Setting up reaction networks
 
 This module provides tools for defining species, complexes, and reaction networks
-with (generalized) mass-action kinetics. It includes functionality for analyzing
-reaction networks, such as checking weak reversibility, computing deficiencies,
-and verifying conditions for unique positive complex-balanced equilibria (CBE).
+with (generalized) mass-action kinetics.
+It includes functionality for analyzing reaction networks, such as checking weak reversibility,
+computing deficiencies, and verifying conditions
+for unique positive complex-balanced equilibria (CBE).
 
 Key Classes and Functions:
 
