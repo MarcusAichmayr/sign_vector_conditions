@@ -862,7 +862,7 @@ class ReactionNetwork(SageObject):
 
     def plot(
             self,
-            kinetic_order: bool = True,
+            kinetic_orders: bool = True,
             layout: str = "spring",
             edge_labels: bool = False,
             vertex_colors: Union[str, List[str]] = "white",
@@ -920,7 +920,7 @@ class ReactionNetwork(SageObject):
 
             sage: rn.plot(edge_labels=True)
             Graphics object consisting of 8 graphics primitives
-            sage: rn.plot(kinetic_order=False)
+            sage: rn.plot(kinetic_orders=False)
             Graphics object consisting of 6 graphics primitives
             sage: rn.plot(vertex_size=3000)
             Graphics object consisting of 6 graphics primitives
@@ -930,7 +930,7 @@ class ReactionNetwork(SageObject):
         if edge_labels:
             self._update_edge_labels()
         return self.graph.plot(
-            vertex_labels={i: self._vertex_label(i, kinetic_order=kinetic_order) for i in self.graph.vertices()},
+            vertex_labels={i: self._vertex_label(i, show_kinetic_order=kinetic_orders) for i in self.graph.vertices()},
             layout=layout,
             edge_labels=edge_labels,
             # edge_labels_background="transparent",
@@ -945,8 +945,8 @@ class ReactionNetwork(SageObject):
             # f-string would mess up braces
             self.graph.set_edge_label(*edge, "$" + latex(self._rate_constant(*edge)) + "$")
 
-    def _vertex_label(self, i: int, kinetic_order: bool = False) -> str:
-        if not kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
+    def _vertex_label(self, i: int, show_kinetic_order: bool = False) -> str:
+        if not show_kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
             return f"${latex(self.complexes_stoichiometric[i])}$"
         return f"${latex(self.complexes_stoichiometric[i])}$\n${latex(self.complexes_kinetic_order[i])}$"
 
@@ -984,8 +984,8 @@ class ReactionNetwork(SageObject):
 
     def has_at_most_one_cbe(self) -> bool:
         r"""
-        Check whether there is at most one positive CBE in every stoichiometric class,
-        for all rate constants.
+        Check whether there is at most one positive CBE in every stoichiometric class
+        and for all rate constants.
         """
         self._update()
         return condition_uniqueness_minors(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
