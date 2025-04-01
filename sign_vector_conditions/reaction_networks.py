@@ -557,6 +557,8 @@ class ReactionNetwork(SageObject):
         True
         sage: rn.has_robust_cbe() # random order
         [{a > 0, a - c > 0, b > 0}]
+        sage: rn(a=2, b=1, c=1).has_at_most_one_cbe()
+        True
         sage: rn.has_at_most_one_cbe() # random order
         [{a >= 0, a - c >= 0, b >= 0}]
         sage: rn.has_exactly_one_cbe()
@@ -985,6 +987,7 @@ class ReactionNetwork(SageObject):
         Check whether there is at most one positive CBE in every stoichiometric class,
         for all rate constants.
         """
+        self._update()
         return condition_uniqueness_minors(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def _condition_faces(self) -> bool:
