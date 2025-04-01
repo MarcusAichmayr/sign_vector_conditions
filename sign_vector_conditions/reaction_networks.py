@@ -398,7 +398,7 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complex(1, C)
         sage: rn.add_reactions([(0, 1), (1, 0)])
         sage: rn
-        Reaction network with 2 complexes and 2 reactions.
+        Reaction network with 2 complexes, 2 reactions and 3 species.
         sage: rn.complexes_stoichiometric
         {0: A + B, 1: C}
         sage: rn.complexes_kinetic_order
@@ -460,7 +460,7 @@ class ReactionNetwork(SageObject):
         sage: rn.add_complexes([(2, D, c * A + D), (3, A), (4, E)])
         sage: rn.add_reactions([(1, 2), (3, 4), (4, 3)])
         sage: rn
-        Reaction network with 5 complexes and 5 reactions.
+        Reaction network with 5 complexes, 5 reactions and 5 species.
         sage: rn.plot()
         Graphics object consisting of 15 graphics primitives
 
@@ -574,7 +574,7 @@ class ReactionNetwork(SageObject):
         sage: rn.remove_complex(4)
         sage: rn.remove_reaction(1, 0)
         sage: rn
-        Reaction network with 3 complexes and 3 reactions.
+        Reaction network with 3 complexes, 3 reactions and 4 species.
 
     Here is an example involving molecules::
 
@@ -628,7 +628,7 @@ class ReactionNetwork(SageObject):
         self._deficiency_kinetic_order: int = 0
 
     def _repr_(self) -> str:
-        return f"Reaction network with {self.graph.num_verts()} complexes and {self.graph.num_edges()} reactions."
+        return f"Reaction network with {self.graph.num_verts()} complexes, {self.graph.num_edges()} reactions and {len(self.species)} species."
 
     def __copy__(self) -> ReactionNetwork:
         new = ReactionNetwork()
