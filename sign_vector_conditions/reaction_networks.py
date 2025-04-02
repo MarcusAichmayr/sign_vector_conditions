@@ -361,7 +361,7 @@ class ReactionNetwork(SageObject):
     by directed reactions. It supports generalized mass-action kinetics, allowing
     for symbolic rate constants and kinetic orders.
 
-    The `ReactionNetwork` class provides tools for:
+    The ``ReactionNetwork`` class provides tools for:
 
     - Adding and removing complexes and reactions.
     - Computing stoichiometric and kinetic-order matrices.
@@ -371,10 +371,10 @@ class ReactionNetwork(SageObject):
 
     Key Attributes:
 
-    - `graph`: The directed graph representing the reaction network.
-    - `complexes_stoichiometric`: A dictionary mapping complex indices to stoichiometric complexes.
-    - `complexes_kinetic_order`: A dictionary mapping complex indices to kinetic-order complexes.
-    - `species`: A tuple of all species involved in the network.
+    - ``graph``: The directed graph representing the reaction network.
+    - ``complexes_stoichiometric``: A dictionary mapping complex indices to stoichiometric complexes.
+    - ``complexes_kinetic_order``: A dictionary mapping complex indices to kinetic-order complexes.
+    - ``species``: A tuple of all species involved in the network.
 
     Key Methods:
 
