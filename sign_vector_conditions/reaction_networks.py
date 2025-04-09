@@ -299,6 +299,26 @@ class Complex(SageObject):
     def __pos__(self) -> Complex:
         return copy(self)
 
+    def __eq__(self, other) -> bool:
+        r"""
+        Check equality of two complexes.
+
+        TESTS::
+
+            sage: from sign_vector_conditions import *
+            sage: species("A")
+            A
+            sage: var("a")
+            a
+            sage: complex1 = A
+            sage: complex2 = a * A
+            sage: complex1 == complex2(a=1)
+            True
+        """
+        if isinstance(other, Complex):
+            return self.species_dict == other.species_dict
+        return False
+
     def _repr_(self) -> str:
         return self._format_repr_(self._repr_coefficient)
 
