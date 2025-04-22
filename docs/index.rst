@@ -22,7 +22,7 @@ See [AMR24]_ for a more details.
     sign_vector_conditions.unique_existence
     sign_vector_conditions.robustness
 
-.. rubric:: Conference examples
+.. rubric:: Conferences and presentations
 
 .. autosummary::
     :toctree: generated
