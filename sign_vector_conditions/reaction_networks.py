@@ -525,7 +525,7 @@ class ReactionNetwork(SageObject):
         [             0          k_1_2         -k_2_0              0              0]
         [             0              0              0         -k_3_4          k_4_3]
         [             0              0              0          k_3_4         -k_4_3]
-        sage: rn.differential_equation()
+        sage: rn.ode_rhs()
         (-k_0_1*x_0^a*x_2^c*x_3 + k_1_0*x_0^b + k_2_0*x_1 - k_3_4*x_2 + k_4_3*x_4,
          -k_0_1*x_0^a*x_2^c*x_3 + k_1_0*x_0^b + k_2_0*x_1,
          k_0_1*x_0^a*x_2^c*x_3 - (k_1_0 + k_1_2)*x_0^b,
@@ -781,7 +781,7 @@ class ReactionNetwork(SageObject):
         r"""Return the Laplacian matrix of the graph."""
         return self.incidence_matrix() * diagonal_matrix(self.rate_constants()) * self.source_matrix().T
 
-    def differential_equation(self) -> vector:
+    def ode_rhs(self) -> vector:
         r"""Return the differential equation of the system."""
         self._update()
         x = vector(var(f"x_{i}") for i in range(len(self.complexes_stoichiometric)))
