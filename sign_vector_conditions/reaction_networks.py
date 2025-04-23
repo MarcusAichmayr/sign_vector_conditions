@@ -526,11 +526,11 @@ class ReactionNetwork(SageObject):
         [             0              0              0         -k_3_4          k_4_3]
         [             0              0              0          k_3_4         -k_4_3]
         sage: rn.ode_rhs()
-        (-k_0_1*x_0^a*x_2^c*x_3 + k_1_0*x_0^b + k_2_0*x_1 - k_3_4*x_2 + k_4_3*x_4,
-         -k_0_1*x_0^a*x_2^c*x_3 + k_1_0*x_0^b + k_2_0*x_1,
-         k_0_1*x_0^a*x_2^c*x_3 - (k_1_0 + k_1_2)*x_0^b,
-         k_1_2*x_0^b - k_2_0*x_1,
-         k_3_4*x_2 - k_4_3*x_4)
+        (-k_0_1*x_0^a*x_1^b + k_2_0*x_0^c*x_3 - k_3_4*x_0 + k_1_0*x_2 + k_4_3*x_4,
+         -k_0_1*x_0^a*x_1^b + k_2_0*x_0^c*x_3 + k_1_0*x_2,
+         k_0_1*x_0^a*x_1^b - (k_1_0 + k_1_2)*x_2,
+         -k_2_0*x_0^c*x_3 + k_1_2*x_2,
+         k_3_4*x_0 - k_4_3*x_4)
 
     The network is described by the following matrices::
 
@@ -784,11 +784,11 @@ class ReactionNetwork(SageObject):
     def ode_rhs(self) -> vector:
         r"""Return the right hand side of the ordinary differential equation of this system."""
         self._update()
-        x = vector(var(f"x_{i}") for i in range(len(self.complexes_stoichiometric)))
+        x = vector(var(f"x_{i}") for i in range(len(self.species)))
         return (
             self._matrix_of_complexes_stoichiometric.T * self.laplacian_matrix() * vector(
                 prod(xi ** yi for xi, yi in zip(x, y))
-                for y in self._matrix_of_complexes_kinetic_order.columns()
+                for y in self._matrix_of_complexes_kinetic_order.rows()
             )
         )
 
