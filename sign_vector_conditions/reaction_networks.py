@@ -782,7 +782,7 @@ class ReactionNetwork(SageObject):
         return self.incidence_matrix() * diagonal_matrix(self.rate_constants()) * self.source_matrix().T
 
     def ode_rhs(self) -> vector:
-        r"""Return the differential equation of the system."""
+        r"""Return the right hand side of the ordinary differential equation of this system."""
         self._update()
         x = vector(var(f"x_{i}") for i in range(len(self.complexes_stoichiometric)))
         return (
@@ -968,7 +968,7 @@ class ReactionNetwork(SageObject):
     def _vertex_label(self, i: int, show_kinetic_order: bool = False) -> str:
         if not show_kinetic_order or self.complexes_stoichiometric[i] == self.complexes_kinetic_order[i]:
             return f"${latex(self.complexes_stoichiometric[i])}$"
-        return f"${latex(self.complexes_stoichiometric[i])}$\n${latex(self.complexes_kinetic_order[i])}$"
+        return f"${latex(self.complexes_stoichiometric[i])}$\n$({latex(self.complexes_kinetic_order[i])})$"
 
     def are_both_deficiencies_zero(self) -> bool:
         r"""Return whether both deficiencies are zero."""
