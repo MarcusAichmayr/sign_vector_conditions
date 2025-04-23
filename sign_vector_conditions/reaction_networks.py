@@ -784,7 +784,7 @@ class ReactionNetwork(SageObject):
     def ode_rhs(self) -> vector:
         r"""Return the right hand side of the ordinary differential equation of this system."""
         self._update()
-        x = vector(var(f"x_{i}") for i in range(len(self.species)))
+        x = vector(var(f"x_{s}", latex_name=f"x_{{{s}}}") for s in self.species)
         return (
             self._matrix_of_complexes_stoichiometric.T * self.laplacian_matrix() * vector(
                 prod(xi ** yi for xi, yi in zip(x, y))
