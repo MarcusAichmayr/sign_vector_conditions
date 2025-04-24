@@ -526,11 +526,11 @@ class ReactionNetwork(SageObject):
         [             0              0              0         -k_3_4          k_4_3]
         [             0              0              0          k_3_4         -k_4_3]
         sage: rn.ode_rhs()
-        (-k_0_1*x_0^a*x_1^b + k_2_0*x_0^c*x_3 - k_3_4*x_0 + k_1_0*x_2 + k_4_3*x_4,
-         -k_0_1*x_0^a*x_1^b + k_2_0*x_0^c*x_3 + k_1_0*x_2,
-         k_0_1*x_0^a*x_1^b - (k_1_0 + k_1_2)*x_2,
-         -k_2_0*x_0^c*x_3 + k_1_2*x_2,
-         k_3_4*x_0 - k_4_3*x_4)
+        (-k_0_1*x_A^a*x_B^b + k_2_0*x_A^c*x_D - k_3_4*x_A + k_1_0*x_C + k_4_3*x_E,
+         -k_0_1*x_A^a*x_B^b + k_2_0*x_A^c*x_D + k_1_0*x_C,
+         k_0_1*x_A^a*x_B^b - (k_1_0 + k_1_2)*x_C,
+         -k_2_0*x_A^c*x_D + k_1_2*x_C,
+         k_3_4*x_A - k_4_3*x_E)
 
     The network is described by the following matrices::
 
