@@ -28,6 +28,7 @@ See [AMR24]_ for a more details.
     :toctree: generated
 
     examples.ICMS_2024
+    examples.MoRN_2025
 
 .. rubric:: References
 
