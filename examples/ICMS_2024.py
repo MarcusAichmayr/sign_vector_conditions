@@ -5,6 +5,7 @@ A SageMath Package for Elementary and Sign Vectors with Applications to Chemical
 --------------------------------------------------------------------------------------------------
 
 Here are the up-to-date examples appearing in [AMR24]_ for `ICMS 2024 <https://icms-conference.org/2024/>`_.
+The paper is also available at `ARXIV <https://arxiv.org/abs/2407.12660>`_.
 
 Elementary vectors
 ~~~~~~~~~~~~~~~~~~
