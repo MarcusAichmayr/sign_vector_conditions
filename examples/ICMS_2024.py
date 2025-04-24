@@ -4,9 +4,7 @@ Examples for ICMS 2024.
 A SageMath Package for Elementary and Sign Vectors with Applications to Chemical Reaction Networks
 --------------------------------------------------------------------------------------------------
 
-Here are the up-to-date examples appearing
-in TODO (link to extended abstract)
-for `ICMS 2024 <https://icms-conference.org/2024/>`_.
+Here are the up-to-date examples appearing in [AMR24]_ for `ICMS 2024 <https://icms-conference.org/2024/>`_.
 
 Elementary vectors
 ~~~~~~~~~~~~~~~~~~

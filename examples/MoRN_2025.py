@@ -146,7 +146,7 @@ Sign vector conditions
 Uniqueness and existence of complex-balanced equilibria (CBE)
 -------------------------------------------------------------
 
-Müller, S., Hofbauer, J., Regensburger, G.: On the bijectivity of families of exponential/generalized polynomial maps. SIAM Journal on Applied Algebra and Geometry 3, 412–438 (2019). https://doi.org/10.1137/18M1178153
+See [MHR19]_.
 
 Existence
 ^^^^^^^^^
@@ -183,10 +183,7 @@ To check this condition, we need sign vector conditions.
 There is also an involved nondegeneracy condition
 which we check using a recursive algorithm
 that certifies (un)solvability of linear inequality systems with elementary vectors.
-
-Marcus S. Aichmayr, Stefan Müller, and Georg Regensburger. “A SageMath package for elementary and sign vectors with applications to chemical reaction networks”.
-In: Mathematical software—ICMS 2024. Vol. 14749. Lecture Notes in Comput. Sci. Springer, Cham, 2024, pp. 155–164.
-https://doi.org/10.1007/978-3-031-64529-7_17.
+See [AMR24]_ for details.
 
 There is exactly one CBE::
 
