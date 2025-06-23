@@ -40,10 +40,10 @@ def non_negative_cocircuits_from_matrix(M, dual: bool = True) -> set:
         [ 2 -1 -1  0]
         sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
         sage: cocircuits_from_matrix(M)
-        {(--00), (000-), (0-+0), (+0+0), (++00), (-0-0), (000+), (0+-0)}
+        {(0+-0), (--00), (000+), (++00), (0-+0), (+0+0), (-0-0), (000-)}
         sage: from sign_vector_conditions.utility import non_negative_cocircuits_from_matrix
         sage: non_negative_cocircuits_from_matrix(M)
-        {(+0+0), (++00), (000+)}
+        {(+0+0), (000+), (++00)}
     """
     return set(X for X in cocircuits_from_matrix(M, dual=dual) if X > 0)
 
@@ -71,20 +71,47 @@ def non_negative_covectors_from_matrix(M, dual: bool = True) -> set:
         sage: from sign_vectors.oriented_matroids import covectors_from_matrix
         sage: covectors_from_matrix(M)
         {(0000),
-         (0-+0),
-         (0-+-),
-         (++++),
+         (++-0),
+         (--+0),
+         (000+),
          (--0+),
-         (000-),
-         (----),
-         (++0-),
+         (+-+-),
+         (-0-0),
          (+-++),
-         ...
+         (000-),
          (-+-0),
-         (--0-)}
+         (--0-),
+         (0-+0),
+         (++00),
+         (--++),
+         (+0+0),
+         (++--),
+         (--00),
+         (--+-),
+         (-0-+),
+         (++-+),
+         (---0),
+         (0+-0),
+         (-+-+),
+         (-0--),
+         (+++0),
+         (-+--),
+         (0-++),
+         (+-+0),
+         (0-+-),
+         (++0-),
+         (++0+),
+         (0+-+),
+         (---+),
+         (+0+-),
+         (+0++),
+         (++++),
+         (----),
+         (0+--),
+         (+++-)}
         sage: from sign_vector_conditions.utility import non_negative_covectors_from_matrix
         sage: non_negative_covectors_from_matrix(M)
-        {(+0+0), (+0++), (++00), (+++0), (000+), (++0+), (++++)}
+        {(++0+), (+0+0), (+++0), (000+), (+0++), (++00), (++++)}
     """
     cocircuits = [
         cocircuit

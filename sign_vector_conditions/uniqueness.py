@@ -19,18 +19,18 @@ For this purpose, we compute the corresponding oriented matroids::
     sage: cvS = covectors_from_matrix(S, dual=True, algorithm='fe')
     sage: cvS
     {(000),
-     (+-+),
-     (-+0),
-     (-+-),
-     (0-+),
-     (-++),
-     (+--),
      (0+-),
      (+-0),
-     (+0-),
+     (-+0),
+     (++-),
      (-0+),
      (--+),
-     (++-)}
+     (-++),
+     (+0-),
+     (0-+),
+     (+--),
+     (-+-),
+     (+-+)}
     sage: cvSt = covectors_from_matrix(St, dual=False, algorithm='fe')
     sage: cvSt
     {(000), (+0+), (-0-)}
@@ -83,10 +83,10 @@ Next, we compute the corresponding oriented matroids::
 
     sage: covectors_from_matrix(S, dual=True, algorithm='fe', separate=True)
     [{(000)},
-     {(-+0), (0-+), (0+-), (+-0), (+0-), (-0+)},
-     {(+-+), (-+-), (--+), (-++), (++-), (+--)}]
+     {(0+-), (+-0), (-+0), (0-+), (+0-), (-0+)},
+     {(++-), (--+), (-++), (+--), (-+-), (+-+)}]
     sage: covectors_from_matrix(St, dual=False, algorithm='fe', separate=True)
-    [{(000)}, {(+-+), (-+-)}]
+    [{(000)}, {(-+-), (+-+)}]
 
 Now, we check the condition from before::
 
@@ -274,7 +274,7 @@ def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
         [{-a >= 0, -b >= 0}]
         sage: conditions = condition_uniqueness_minors(S, St)[0]
         sage: conditions # random order
-        sage: (-a >= 0) in conditions and (-b >= 0) in conditions # 
+        sage: (-a >= 0) in conditions and (-b >= 0) in conditions #
         True
         sage: S = matrix([[a, 0, 1, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: St = matrix([[1, 0, 0, -1], [0, b, 1, 1], [0, 0, a, 1]])

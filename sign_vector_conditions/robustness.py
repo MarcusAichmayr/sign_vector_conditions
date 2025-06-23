@@ -20,7 +20,7 @@ we consider the topes of the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
     sage: topes_from_matrix(S, dual=False)
-    {(+0+-), (+0++), (-0--), (-0-+)}
+    {(-0-+), (-0--), (+0++), (+0+-)}
     sage: topes_from_matrix(St, dual=False)
     {(---+), (-+--), (++++), (----), (+-++), (+++-)}
 

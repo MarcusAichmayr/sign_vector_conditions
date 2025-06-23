@@ -211,24 +211,24 @@ We compute the elements with minimal-support in `ker P`::
 Next, we compute the sign vectors with minimal support::
 
     sage: cocircuits_from_matrix(P)
-    {(+-0+), (00+-), (+-+0), (00-+), (-+-0), (-+0-)}
+    {(00-+), (+-0+), (-+0-), (00+-), (-+-0), (+-+0)}
 
 The sign vectors of the corresponding oriented matroid are::
 
     sage: covectors = covectors_from_matrix(P)
     sage: covectors
     {(0000),
-     (+-0+),
      (00-+),
-     (+--+),
-     (-+-0),
-     (-+--),
      (-+-+),
+     (+-0+),
+     (+--+),
+     (-+0-),
+     (-+--),
      (00+-),
      (+-+0),
      (+-+-),
-     (-++-),
      (+-++),
-     (-+0-)}
+     (-+-0),
+     (-++-)}
     sage: plot_sign_vectors(covectors) # random
 """

@@ -29,16 +29,16 @@ corresponding to the matrices::
     sage: from sign_vectors.oriented_matroids import *
     sage: cc1 = cocircuits_from_matrix(S, dual=True)
     sage: cc1
-    {(+0+0), (0-0-), (-0-0), (0+0+)}
+    {(0+0+), (+0+0), (0-0-), (-0-0)}
     sage: cc2 = cocircuits_from_matrix(St, dual=True)
     sage: cc2
-    {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
+    {(---0), (-00+), (+00-), (+++0), (0+++), (0---)}
 
 Here, we are only interested in the positive cocircuits::
 
     sage: cc1p = [X for X in cc1 if X > 0]
     sage: cc1p
-    [(+0+0), (0+0+)]
+    [(0+0+), (+0+0)]
     sage: cc2p = [X for X in cc2 if X > 0]
     sage: cc2p
     [(+++0), (0+++)]
@@ -55,7 +55,7 @@ We need to check a third condition to verify surjectivity.
 For this purpose, we consider again the oriented matroid determined by ``S``::
 
     sage: covectors_from_matrix(S, dual=False)
-    {(0000), (+--+), (++--), (-0+0), (0-0+), (--++), (0+0-), (-++-), (+0-0)}
+    {(0000), (-++-), (+0-0), (0-0+), (+--+), (-0+0), (--++), (0+0-), (++--)}
 
 Since there are no nonnegative covectors, the chemical reaction network has at least one equilibrium.
 The package offers a function to check this condition condition::
@@ -79,10 +79,10 @@ Now, we check the face condition::
 
     sage: cc1 = cocircuits_from_matrix(S, dual=True)
     sage: cc1
-    {(+++0), (0+++), (+00-), (-00+), (0---), (---0)}
+    {(---0), (-00+), (+00-), (+++0), (0+++), (0---)}
     sage: cc2 = cocircuits_from_matrix(St, dual=True)
     sage: cc2
-    {(+0+0), (0-0-), (-0-0), (0+0+)}
+    {(0+0+), (+0+0), (0-0-), (-0-0)}
 
 Again, we are only interested in the positive cocircuits::
 
@@ -91,7 +91,7 @@ Again, we are only interested in the positive cocircuits::
     [(+++0), (0+++)]
     sage: cc2p = [X for X in cc2 if X > 0]
     sage: cc2p
-    [(+0+0), (0+0+)]
+    [(0+0+), (+0+0)]
 
 Therefore, the condition does not hold.
 We also apply the corresponding function from the package::
@@ -311,7 +311,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
         [ 0  1  0  1 -1]
         [ 0  0  1  0 -1]
         sage: condition_degenerate(S, St, certify=True)
-        (False, ([[[0, 2, 3]], [[1, 2, 3]]], [[[2, 4]]], []))
+        (False, ([[[1, 2, 3]], [[0, 2, 3]]], [[[2, 4]]], []))
 
     The certificate tells us that there is no vector in the row space of ``St``
     with positive support on the components ``0, 2, 3`` and ``1, 2, 3``.
