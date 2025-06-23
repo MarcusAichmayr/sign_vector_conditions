@@ -65,6 +65,7 @@ from elementary_vectors import kernel_matrix_using_elementary_vectors
 from .uniqueness import condition_uniqueness_minors
 from .unique_existence import condition_faces, condition_nondegenerate
 from .robustness import condition_closure_minors
+from .general_equilibria import condition_properness
 
 
 def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
@@ -1034,3 +1035,29 @@ class ReactionNetwork(SageObject):
         if at_most_one not in [True, False]:
             raise ValueError("Method does not support variables!")
         return at_most_one and self._condition_faces() and self._are_subspaces_nondegenerate()
+
+    def has_exactly_one_equilibrium(self) -> bool:
+        r"""
+        Check whether there is a unique positive equilibrium.
+
+        .. NOTE::
+
+            This method does not support symbolic expressions (variables) in the complexes.
+
+        EXAMPLES::
+
+            sage: from sign_vector_conditions import *
+            sage: rn = ReactionNetwork()
+            sage: species("X, Y")
+            (X, Y)
+            sage: rn.add_complexes([(0, 5 * X + Y), (1, 6 * X), (2, 4 * X + 3 * Y), (3, 5 * X + 6 * Y), (4, 2 * X + 3 * Y), (5, 4 * Y), (6, 4 * X + 2 * Y), (8, 3 * X + 3 * Y), (9, 2 * X + 5 * Y)])
+            sage: rn.add_reactions([(0, 1), (2, 3), (4, 5), (6, 2), (8, 9)])
+            sage: rn.has_exactly_one_equilibrium()
+            True
+        """
+        self._update()
+        at_most_one = self.has_at_most_one_cbe()
+        if at_most_one not in [True, False]:
+            raise ValueError("Method does not support variables!")
+
+        return at_most_one and condition_properness(self._stoichiometric_matrix.T, self._matrix_of_complexes_kinetic_order.T * self.source_matrix())
