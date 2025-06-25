@@ -207,9 +207,9 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix, kinetic_order_matri
         sage: condition_uniqueness_sign_vectors(A, B)
         True
     """
-    covectors = covectors_from_matrix(stoichiometric_matrix, dual=True)
+    covectors = covectors_from_matrix(stoichiometric_matrix, dual=False)
     counter = 0
-    for covector in covectors_from_matrix(kinetic_order_matrix, dual=False):
+    for covector in covectors_from_matrix(kinetic_order_matrix, dual=True):
         if covector in covectors:
             counter += 1
             if counter > 1:
