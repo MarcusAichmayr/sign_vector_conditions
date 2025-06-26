@@ -61,11 +61,12 @@ from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 
 from elementary_vectors import kernel_matrix_using_elementary_vectors
+from sign_vectors import sign_vector
 
 from .uniqueness import condition_uniqueness_minors
 from .unique_existence import condition_faces, condition_nondegenerate
 from .robustness import condition_closure_minors
-from .general_equilibria import condition_properness
+from .utility import non_negative_covectors_from_matrix
 
 
 def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
@@ -1047,17 +1048,56 @@ class ReactionNetwork(SageObject):
         EXAMPLES::
 
             sage: from sign_vector_conditions import *
-            sage: rn = ReactionNetwork()
             sage: species("X, Y")
             (X, Y)
+            sage: rn = ReactionNetwork()
+            sage: rn.add_complexes([(1, 2 * X + Y), (2, 2 * Y), (3, 3 * X + Y), (4, 4 * X), (5, 3 * X + 2 * Y), (6, 3 * X + 3 * Y), (7, 2 * X + 4 * Y)])
+            sage: rn.add_reactions([(1, 2), (3, 4), (5, 6), (6, 7)])
+            sage: rn.has_exactly_one_equilibrium()
+            True
+            sage: rn.remove_reaction(6, 7)
+            sage: rn.has_exactly_one_equilibrium()
+            True
+            sage: rn.remove_reaction(1, 2)
+            sage: rn.has_exactly_one_equilibrium()
+            False
+
+        ::
+
+            sage: rn = ReactionNetwork()
             sage: rn.add_complexes([(0, 5 * X + Y), (1, 6 * X), (2, 4 * X + 3 * Y), (3, 5 * X + 6 * Y), (4, 2 * X + 3 * Y), (5, 4 * Y), (6, 4 * X + 2 * Y), (8, 3 * X + 3 * Y), (9, 2 * X + 5 * Y)])
             sage: rn.add_reactions([(0, 1), (2, 3), (4, 5), (6, 2), (8, 9)])
             sage: rn.has_exactly_one_equilibrium()
             True
+            sage: rn.remove_reaction(0, 1)
+            sage: rn.has_exactly_one_equilibrium()
+            False
         """
         self._update()
-        at_most_one = self.has_at_most_one_cbe()
-        if at_most_one not in [True, False]:
-            raise ValueError("Method does not support variables!")
 
-        return at_most_one and condition_properness(self._stoichiometric_matrix.T, self._matrix_of_complexes_kinetic_order.T * self.source_matrix())
+        def matrix_with_one_row(A):
+            return A.insert_row(0, vector([1] * A.ncols()))
+
+        A = self._stoichiometric_matrix.T
+        B = self._matrix_of_complexes_kinetic_order.T * self.source_matrix()
+        A_bar = matrix_with_one_row(A)
+        B_bar = matrix_with_one_row(B)
+
+        first_condition = condition_uniqueness_minors(A_bar, B_bar)
+        if first_condition not in [True, False]:
+            raise ValueError("Method does not support variables!")
+        if not first_condition:
+            return False
+
+        covectors = non_negative_covectors_from_matrix(B_bar, dual=False)
+        all_positive_found = False
+        for face in non_negative_covectors_from_matrix(A, dual=True):
+            if face == 0:
+                continue
+            mirrored_face = sign_vector(1 if fe == 0 else 0 for fe in face)
+            if mirrored_face == 0:
+                all_positive_found = True
+                continue
+            if mirrored_face in covectors:
+                return False
+        return all_positive_found
