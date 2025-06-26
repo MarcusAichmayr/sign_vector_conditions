@@ -111,7 +111,7 @@ def non_negative_covectors_from_matrix(M, dual: bool = True) -> set:
          (+++-)}
         sage: from sign_vector_conditions.utility import non_negative_covectors_from_matrix
         sage: non_negative_covectors_from_matrix(M)
-        {(++0+), (+0+0), (+++0), (000+), (+0++), (++00), (++++)}
+        {(0000), (++00), (++0+), (+0+0), (+++0), (000+), (+0++), (++++)}
     """
     cocircuits = [
         cocircuit
@@ -121,7 +121,7 @@ def non_negative_covectors_from_matrix(M, dual: bool = True) -> set:
 
     if not cocircuits:
         raise ValueError("List of cocircuits is empty.")
-    output = set()
+    output = {zero_sign_vector(M.ncols())}
     new_elements = {zero_sign_vector(M.ncols())}
     while new_elements:
         covector1 = new_elements.pop()
