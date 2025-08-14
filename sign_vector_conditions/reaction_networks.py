@@ -66,7 +66,7 @@ from sign_vectors import sign_vector
 from .uniqueness import condition_uniqueness_minors
 from .unique_existence import condition_faces, condition_nondegenerate
 from .robustness import condition_closure_minors
-from .utility import non_negative_covectors_from_matrix
+from .utility import non_negative_covectors_from_matrix, non_negative_vectors_from_matrix
 
 
 def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
@@ -1089,9 +1089,9 @@ class ReactionNetwork(SageObject):
         if not first_condition:
             return False
 
-        covectors = non_negative_covectors_from_matrix(B_bar, dual=False)
+        covectors = non_negative_covectors_from_matrix(B_bar)
         all_positive_found = False
-        for face in non_negative_covectors_from_matrix(A, dual=True):
+        for face in non_negative_vectors_from_matrix(A):
             if face == 0:
                 continue
             mirrored_face = sign_vector(1 if fe == 0 else 0 for fe in face)

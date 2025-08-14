@@ -27,10 +27,10 @@ For this purpose, we compute the cocircuits of the oriented matroids
 corresponding to the matrices::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cc1 = cocircuits_from_matrix(S, dual=True)
+    sage: cc1 = OrientedMatroid(S).circuits()
     sage: cc1
     {(0+0+), (+0+0), (0-0-), (-0-0)}
-    sage: cc2 = cocircuits_from_matrix(St, dual=True)
+    sage: cc2 = OrientedMatroid(St).circuits()
     sage: cc2
     {(---0), (-00+), (+00-), (+++0), (0+++), (0---)}
 
@@ -54,7 +54,7 @@ to check whether this condition is fulfilled::
 We need to check a third condition to verify surjectivity.
 For this purpose, we consider again the oriented matroid determined by ``S``::
 
-    sage: covectors_from_matrix(S, dual=False)
+    sage: OrientedMatroid(S).covectors()
     {(0000), (-++-), (+0-0), (0-0+), (+--+), (-0+0), (--++), (0+0-), (++--)}
 
 Since there are no nonnegative covectors, the chemical reaction network has at least one equilibrium.
@@ -77,10 +77,10 @@ Because of symmetry, there is at most one equilibrium::
 
 Now, we check the face condition::
 
-    sage: cc1 = cocircuits_from_matrix(S, dual=True)
+    sage: cc1 = OrientedMatroid(S).circuits()
     sage: cc1
     {(---0), (-00+), (+00-), (+++0), (0+++), (0---)}
-    sage: cc2 = cocircuits_from_matrix(St, dual=True)
+    sage: cc2 = OrientedMatroid(St).circuits()
     sage: cc2
     {(0+0+), (+0+0), (0-0-), (-0-0)}
 
@@ -190,7 +190,7 @@ from sage.rings.infinity import Infinity
 from elementary_vectors.functions import ElementaryVectors
 from vectors_in_intervals import exists_vector, sign_vectors_in_intervals, vector_from_sign_vector, Intervals
 
-from .utility import non_negative_cocircuits_from_matrix, equal_entries_lists
+from .utility import non_negative_circuits_from_matrix, non_negative_cocircuits_from_matrix, equal_entries_lists
 
 
 def condition_faces(stoichiometric_matrix, kinetic_order_matrix) -> bool:
@@ -225,9 +225,9 @@ def condition_faces(stoichiometric_matrix, kinetic_order_matrix) -> bool:
         sage: condition_faces(S, St)
         True
     """
-    non_negative_cocircuits = non_negative_cocircuits_from_matrix(stoichiometric_matrix, dual=True)
+    non_negative_cocircuits = non_negative_circuits_from_matrix(stoichiometric_matrix)
 
-    for cocircuit1 in non_negative_cocircuits_from_matrix(kinetic_order_matrix, dual=True):
+    for cocircuit1 in non_negative_circuits_from_matrix(kinetic_order_matrix):
         if not any(cocircuit2 <= cocircuit1 for cocircuit2 in non_negative_cocircuits):
             return False
     return True
@@ -332,7 +332,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
     """
     if stoichiometric_matrix.ncols() != kinetic_order_matrix.ncols():
         raise ValueError("Matrices have different number of columns.")
-    non_negative_cocircuits = non_negative_cocircuits_from_matrix(stoichiometric_matrix, dual=False)
+    non_negative_cocircuits = non_negative_cocircuits_from_matrix(stoichiometric_matrix)
 
     if not non_negative_cocircuits:
         if certify:
@@ -348,7 +348,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
     upper_bounds_inf = [Infinity] * length
 
     kernel_matrix = kinetic_order_matrix
-    covectors_support_condition = non_negative_cocircuits_from_matrix(stoichiometric_matrix, dual=True)
+    covectors_support_condition = non_negative_circuits_from_matrix(stoichiometric_matrix)
 
     if certify:
         certificate = []

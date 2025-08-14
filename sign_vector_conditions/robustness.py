@@ -19,9 +19,9 @@ has a unique equilibrium for all rate constants and all small perturbations of `
 we consider the topes of the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: topes_from_matrix(S, dual=False)
+    sage: OrientedMatroid(S).topes()
     {(-0-+), (-0--), (+0++), (+0+-)}
-    sage: topes_from_matrix(St, dual=False)
+    sage: OrientedMatroid(St).topes()
     {(---+), (-+--), (++++), (----), (+-++), (+++-)}
 
 One can see that for every tope ``X`` of the oriented matroid corresponding to ``S`` there is a
@@ -105,7 +105,7 @@ For instance, the last set can be equivalently written as::
 
 from sage.combinat.combination import Combinations
 
-from sign_vectors.oriented_matroids import topes_from_matrix
+from sign_vectors.oriented_matroids import OrientedMatroid
 from .utility import closure_minors_utility
 from elementary_vectors.utility import is_symbolic
 
@@ -128,8 +128,8 @@ def condition_closure_sign_vectors(stoichiometric_matrix, kinetic_order_matrix) 
         This implementation is inefficient and should not be used for large examples.
         Instead, use :func:`~condition_closure_minors`.
     """
-    topes = topes_from_matrix(kinetic_order_matrix, dual=False)
-    for covector1 in topes_from_matrix(stoichiometric_matrix, dual=False):
+    topes = OrientedMatroid(kinetic_order_matrix).topes()
+    for covector1 in OrientedMatroid(stoichiometric_matrix).topes():
         if not any(covector1 <= covector2 for covector2 in topes):
             return False
     return True

@@ -14,11 +14,11 @@ from sage.functions.generalized import sign
 from sage.rings.integer_ring import ZZ
 
 from elementary_vectors.utility import is_symbolic
-from sign_vectors import sign_vector, zero_sign_vector
-from sign_vectors.oriented_matroids import cocircuits_from_matrix
+from sign_vectors import sign_vector, zero_sign_vector, SignVector
+from sign_vectors.oriented_matroids import cocircuits_from_matrix, circuits_from_matrix
 
 
-def non_negative_cocircuits_from_matrix(M, dual: bool = True) -> set:
+def non_negative_cocircuits_from_matrix(M) -> set[SignVector]:
     r"""
     Compute nonnegative cocircuits.
 
@@ -26,29 +26,69 @@ def non_negative_cocircuits_from_matrix(M, dual: bool = True) -> set:
 
     - ``M`` -- a matrix with real arguments.
 
-    - ``dual`` -- a boolean (default: ``True``)
+    OUTPUT:
+
+    Return a set of nonnegative cocircuits determined by the kernel of ``M``.
+
+    EXAMPLES::
+
+        sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
+        sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
+        sage: from sign_vector_conditions.utility import non_negative_cocircuits_from_matrix
+        sage: cocircuits_from_matrix(M)
+        {(0+-0), (--00), (0-+0), (000+), (++00), (+0+0), (-0-0), (000-)}
+        sage: non_negative_cocircuits_from_matrix(M)
+        {(+0+0), (000+), (++00)}
+    """
+    return set(X for X in cocircuits_from_matrix(M) if X > 0)
+
+
+def non_negative_circuits_from_matrix(M) -> set[SignVector]:
+    r"""
+    Compute all nonnegative circuits.
+
+    INPUT:
+
+    - ``M`` -- a matrix with real arguments.
 
     OUTPUT:
 
-    Return a set of nonnegative cocircuits determined by the kernel of ``M``. (default)
-    If ``dual`` is false, considers the row space of ``M``.
+    Return a set of nonnegative circuits determined by the kernel of ``M``.
 
     EXAMPLES::
 
         sage: M = matrix([[2, -1, -1, 0]])
-        sage: M
-        [ 2 -1 -1  0]
-        sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
-        sage: cocircuits_from_matrix(M)
+        sage: from sign_vector_conditions.utility import circuits_from_matrix
+        sage: from sign_vector_conditions.utility import non_negative_circuits_from_matrix
+        sage: circuits_from_matrix(M)
         {(0+-0), (--00), (000+), (++00), (0-+0), (+0+0), (-0-0), (000-)}
-        sage: from sign_vector_conditions.utility import non_negative_cocircuits_from_matrix
-        sage: non_negative_cocircuits_from_matrix(M)
+        sage: non_negative_circuits_from_matrix(M)
         {(+0+0), (000+), (++00)}
     """
-    return set(X for X in cocircuits_from_matrix(M, dual=dual) if X > 0)
+    return set(X for X in circuits_from_matrix(M) if X > 0)
 
 
-def non_negative_covectors_from_matrix(M, dual: bool = True) -> set:
+def non_negative_covectors_from_cocircuits(cocircuits: set[SignVector], length: int) -> set[SignVector]:
+    r"""Compute all nonnegative covectors from a set of cocircuits."""
+    if not cocircuits:
+        raise ValueError("List of cocircuits is empty.")
+    output = {zero_sign_vector(length)}
+    new_elements = {zero_sign_vector(length)}
+    while new_elements:
+        covector1 = new_elements.pop()
+        for covector2 in cocircuits:
+            if not covector2 >= 0:
+                continue
+            if covector2 <= covector1:
+                continue
+            composition = covector2.compose(covector1)
+            if composition not in output and composition >= 0:
+                output.add(composition)
+                new_elements.add(composition)
+    return output
+
+
+def non_negative_covectors_from_matrix(M) -> set[SignVector]:
     r"""
     Compute all nonnegative covectors.
 
@@ -56,20 +96,79 @@ def non_negative_covectors_from_matrix(M, dual: bool = True) -> set:
 
     - ``M`` -- a matrix
 
-    - ``dual`` -- a boolean (default: ``True``)
+    OUTPUT:
+
+    Return a set of nonnegative covectors determined by the kernel of ``M``.
+
+    EXAMPLES::
+
+        sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
+        sage: from sign_vectors.oriented_matroids import OrientedMatroid
+        sage: from sign_vector_conditions.utility import non_negative_covectors_from_matrix
+        sage: OrientedMatroid(M).covectors()
+        {(0000),
+         (++-0),
+         (--+0),
+         (000+),
+         (--0+),
+         (+-+-),
+         (-0-0),
+         (+-++),
+         (000-),
+         (-+-0),
+         (--0-),
+         (0-+0),
+         (++00),
+         (--++),
+         (+0+0),
+         (++--),
+         (--00),
+         (--+-),
+         (-0-+),
+         (++-+),
+         (---0),
+         (0+-0),
+         (-+-+),
+         (-0--),
+         (+++0),
+         (-+--),
+         (0-++),
+         (+-+0),
+         (0-+-),
+         (++0-),
+         (++0+),
+         (---+),
+         (+0+-),
+         (0+-+),
+         (+0++),
+         (++++),
+         (----),
+         (0+--),
+         (+++-)}
+        sage: non_negative_covectors_from_matrix(M)
+        {(0000), (++00), (++0+), (+0+0), (+++0), (000+), (+0++), (++++)}
+    """
+    return non_negative_covectors_from_cocircuits(cocircuits_from_matrix(M), M.ncols())
+
+
+def non_negative_vectors_from_matrix(M) -> set[SignVector]:
+    r"""
+    Compute all nonnegative covectors from a matrix.
+
+    INPUT:
+
+    - ``M`` -- a matrix with real arguments.
 
     OUTPUT:
 
-    Return a set of nonnegative covectors determined by the kernel of ``M``. (default)
-    If ``dual`` is false, considers the row space of ``M``.
+    Return a set of nonnegative covectors determined by the kernel of ``M``.
 
     EXAMPLES::
 
         sage: M = matrix([[2, -1, -1, 0]])
-        sage: M
-        [ 2 -1 -1  0]
-        sage: from sign_vectors.oriented_matroids import covectors_from_matrix
-        sage: covectors_from_matrix(M)
+        sage: from sign_vectors.oriented_matroids import OrientedMatroid
+        sage: from sign_vector_conditions.utility import non_negative_vectors_from_matrix
+        sage: OrientedMatroid(M).vectors()
         {(0000),
          (++-0),
          (--+0),
@@ -109,32 +208,10 @@ def non_negative_covectors_from_matrix(M, dual: bool = True) -> set:
          (----),
          (0+--),
          (+++-)}
-        sage: from sign_vector_conditions.utility import non_negative_covectors_from_matrix
-        sage: non_negative_covectors_from_matrix(M)
+        sage: non_negative_vectors_from_matrix(M)
         {(0000), (++00), (++0+), (+0+0), (+++0), (000+), (+0++), (++++)}
     """
-    cocircuits = [
-        cocircuit
-        for cocircuit in cocircuits_from_matrix(M, dual=dual)
-        if not cocircuit < 0
-    ]
-
-    if not cocircuits:
-        raise ValueError("List of cocircuits is empty.")
-    output = {zero_sign_vector(M.ncols())}
-    new_elements = {zero_sign_vector(M.ncols())}
-    while new_elements:
-        covector1 = new_elements.pop()
-        for covector2 in cocircuits:
-            if not covector2 >= 0:
-                continue
-            if covector2 <= covector1:
-                continue
-            composition = covector2.compose(covector1)
-            if composition not in output and composition >= 0:
-                output.add(composition)
-                new_elements.add(composition)
-    return output
+    return non_negative_covectors_from_cocircuits(circuits_from_matrix(M), M.ncols())
 
 
 def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bool = False) -> list:

@@ -52,13 +52,14 @@ Sign vectors and oriented matroids
 We consider an oriented matroid given by a matrix and compute the cocircuits and covectors::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: M = matrix([[1, 1, 2, 0], [0, 0, 1, 2]])
+    sage: M = matrix([[1, 3, -2, 1], [0, 4, -2, 1]])
     sage: M
-    [1 1 2 0]
-    [0 0 1 2]
-    sage: cocircuits_from_matrix(M)
+    [ 1  3 -2  1]
+    [ 0  4 -2  1]
+    sage: om = OrientedMatroid(M)
+    sage: om.cocircuits()
     {(0-+-), (+-00), (-+00), (-0+-), (0+-+), (+0-+)}
-    sage: covectors_from_matrix(M)
+    sage: om.covectors()
     {(0000),
      (0-+-),
      (-+-+),
@@ -96,7 +97,8 @@ To examine robustness of CBE, we compute the covectors corresponding to the resu
     [-1 -1  1  0  0]
     [ 0  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: covectors_from_matrix(S, dual=False)
+    sage: om = OrientedMatroid(S)
+    sage: om.covectors()
     {(00000),
      (--+-+),
      (0++-+),
@@ -163,7 +165,7 @@ To examine robustness of CBE, we compute the covectors corresponding to the resu
     [-a -b  1  0  0]
     [ c  0 -1  1  0]
     [-1  0  0  0  1]
-    sage: covectors_from_matrix(St(a=2, b=1, c=1), dual=False)
+    sage: OrientedMatroid(St(a=2, b=1, c=1)).covectors()
     {(00000),
      (--+-+),
      (0++-+),

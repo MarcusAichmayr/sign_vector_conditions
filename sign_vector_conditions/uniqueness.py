@@ -16,7 +16,7 @@ has at most one equilibrium for all rate constants.
 For this purpose, we compute the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cvS = covectors_from_matrix(S, dual=True, algorithm='fe')
+    sage: cvS = OrientedMatroid(S).vectors()
     sage: cvS
     {(000),
      (0+-),
@@ -31,7 +31,7 @@ For this purpose, we compute the corresponding oriented matroids::
      (+--),
      (-+-),
      (+-+)}
-    sage: cvSt = covectors_from_matrix(St, dual=False, algorithm='fe')
+    sage: cvSt = OrientedMatroid(St).covectors()
     sage: cvSt
     {(000), (+0+), (-0-)}
 
@@ -81,11 +81,11 @@ Now, we consider another example::
 
 Next, we compute the corresponding oriented matroids::
 
-    sage: covectors_from_matrix(S, dual=True, algorithm='fe', separate=True)
+    sage: OrientedMatroid(S).dual().all_faces()
     [{(000)},
-     {(0+-), (+-0), (-+0), (0-+), (+0-), (-0+)},
+     {(0+-), (+-0), (-+0), (+0-), (0-+), (-0+)},
      {(++-), (--+), (-++), (+--), (-+-), (+-+)}]
-    sage: covectors_from_matrix(St, dual=False, algorithm='fe', separate=True)
+    sage: OrientedMatroid(St).all_faces()
     [{(000)}, {(-+-), (+-+)}]
 
 Now, we check the condition from before::
@@ -155,7 +155,7 @@ In this case, it returns a system of inequalities::
 
 from sage.combinat.combination import Combinations
 
-from sign_vectors.oriented_matroids import covectors_from_matrix
+from sign_vectors.oriented_matroids import OrientedMatroid
 from elementary_vectors.utility import is_symbolic
 
 
@@ -207,9 +207,9 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix, kinetic_order_matri
         sage: condition_uniqueness_sign_vectors(A, B)
         True
     """
-    covectors = covectors_from_matrix(stoichiometric_matrix, dual=False)
+    covectors = OrientedMatroid(stoichiometric_matrix).covectors()
     counter = 0
-    for covector in covectors_from_matrix(kinetic_order_matrix, dual=True):
+    for covector in OrientedMatroid(kinetic_order_matrix).vectors():
         if covector in covectors:
             counter += 1
             if counter > 1:
