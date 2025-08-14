@@ -14,8 +14,7 @@ from sage.functions.generalized import sign
 from sage.rings.integer_ring import ZZ
 
 from elementary_vectors.utility import is_symbolic
-from sign_vectors import sign_vector, zero_sign_vector, SignVector
-from sign_vectors.oriented_matroids import cocircuits_from_matrix, circuits_from_matrix
+from sign_vectors import sign_vector, zero_sign_vector, SignVector, OrientedMatroid
 
 
 def non_negative_cocircuits_from_matrix(M) -> set[SignVector]:
@@ -33,14 +32,14 @@ def non_negative_cocircuits_from_matrix(M) -> set[SignVector]:
     EXAMPLES::
 
         sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
-        sage: from sign_vectors.oriented_matroids import cocircuits_from_matrix
+        sage: from sign_vectors import *
         sage: from sign_vector_conditions.utility import non_negative_cocircuits_from_matrix
-        sage: cocircuits_from_matrix(M)
+        sage: OrientedMatroid(M).cocircuits()
         {(0+-0), (--00), (0-+0), (000+), (++00), (+0+0), (-0-0), (000-)}
         sage: non_negative_cocircuits_from_matrix(M)
         {(+0+0), (000+), (++00)}
     """
-    return set(X for X in cocircuits_from_matrix(M) if X > 0)
+    return set(X for X in OrientedMatroid(M).cocircuits() if X > 0)
 
 
 def non_negative_circuits_from_matrix(M) -> set[SignVector]:
@@ -58,14 +57,14 @@ def non_negative_circuits_from_matrix(M) -> set[SignVector]:
     EXAMPLES::
 
         sage: M = matrix([[2, -1, -1, 0]])
-        sage: from sign_vector_conditions.utility import circuits_from_matrix
+        sage: from sign_vectors import *
         sage: from sign_vector_conditions.utility import non_negative_circuits_from_matrix
-        sage: circuits_from_matrix(M)
+        sage: OrientedMatroid(M).circuits()
         {(0+-0), (--00), (000+), (++00), (0-+0), (+0+0), (-0-0), (000-)}
         sage: non_negative_circuits_from_matrix(M)
         {(+0+0), (000+), (++00)}
     """
-    return set(X for X in circuits_from_matrix(M) if X > 0)
+    return set(X for X in OrientedMatroid(M).circuits() if X > 0)
 
 
 def non_negative_covectors_from_cocircuits(cocircuits: set[SignVector], length: int) -> set[SignVector]:
@@ -148,7 +147,7 @@ def non_negative_covectors_from_matrix(M) -> set[SignVector]:
         sage: non_negative_covectors_from_matrix(M)
         {(0000), (++00), (++0+), (+0+0), (+++0), (000+), (+0++), (++++)}
     """
-    return non_negative_covectors_from_cocircuits(cocircuits_from_matrix(M), M.ncols())
+    return non_negative_covectors_from_cocircuits(OrientedMatroid(M).cocircuits(), M.ncols())
 
 
 def non_negative_vectors_from_matrix(M) -> set[SignVector]:
@@ -211,7 +210,7 @@ def non_negative_vectors_from_matrix(M) -> set[SignVector]:
         sage: non_negative_vectors_from_matrix(M)
         {(0000), (++00), (++0+), (+0+0), (+++0), (000+), (+0++), (++++)}
     """
-    return non_negative_covectors_from_cocircuits(circuits_from_matrix(M), M.ncols())
+    return non_negative_covectors_from_cocircuits(OrientedMatroid(M).circuits(), M.ncols())
 
 
 def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bool = False) -> list:

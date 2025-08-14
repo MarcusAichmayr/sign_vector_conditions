@@ -51,7 +51,7 @@ Sign vectors and oriented matroids
 
 We consider an oriented matroid given by a matrix and compute the cocircuits and covectors::
 
-    sage: from sign_vectors.oriented_matroids import *
+    sage: from sign_vectors import *
     sage: M = matrix([[1, 3, -2, 1], [0, 4, -2, 1]])
     sage: M
     [ 1  3 -2  1]
@@ -91,7 +91,7 @@ Robustness
 Given is a chemical reaction network involving five complexes.
 To examine robustness of CBE, we compute the covectors corresponding to the resulting subspaces::
 
-    sage: from sign_vectors.oriented_matroids import *
+    sage: from sign_vectors import *
     sage: S = matrix([[-1, -1, 1, 0, 0], [0, 0, -1, 1, 0], [-1, 0, 0, 0, 1]])
     sage: S
     [-1 -1  1  0  0]
