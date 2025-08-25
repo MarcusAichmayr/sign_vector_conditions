@@ -13,7 +13,7 @@ LICENSE file), either version 3 or (at your option) any later version
 
 ## Requirements
 
-Sage 9.0 or later is recommended.
+Sage 10.0 or later is recommended.
 
 The package [elementary_vectors](https://github.com/MarcusAichmayr/elementary_vectors) is necessary for this package to work.
 
