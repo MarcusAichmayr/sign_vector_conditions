@@ -81,11 +81,11 @@ Now, we consider another example::
 
 Next, we compute the corresponding oriented matroids::
 
-    sage: OrientedMatroid(S).dual().all_faces()
+    sage: OrientedMatroid(S).dual().faces()
     [{(000)},
      {(0+-), (+-0), (-+0), (+0-), (0-+), (-0+)},
      {(++-), (--+), (-++), (+--), (-+-), (+-+)}]
-    sage: OrientedMatroid(St).all_faces()
+    sage: OrientedMatroid(St).faces()
     [{(000)}, {(-+-), (+-+)}]
 
 Now, we check the condition from before::
