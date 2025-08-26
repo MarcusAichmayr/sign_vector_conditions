@@ -1,7 +1,7 @@
 .PHONY: install
 
 install:
-	sage -pip install --upgrade --no-index .
+	sage -pip install --upgrade .
 
 test:
 	sage -t sign_vector_conditions/ examples/
