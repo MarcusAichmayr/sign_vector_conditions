@@ -188,7 +188,8 @@ from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 
 from elementary_vectors.functions import ElementaryVectors
-from vectors_in_intervals import exists_vector, vector_from_sign_vector, Intervals
+from vectors_in_intervals import exists_vector, Intervals
+from vectors_in_intervals.utility import vector_from_sign_vector
 
 from .utility import non_negative_circuits_from_matrix, non_negative_cocircuits_from_matrix, equal_entries_lists
 
