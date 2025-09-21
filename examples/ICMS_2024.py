@@ -41,8 +41,11 @@ To represent these objects, we use a matrix and a list of intervals::
     sage: I = Intervals.from_bounds([2, 5, 0, -oo], [5, oo, 8, 5], [True, True, False, False], [False, False, False, True])
     sage: I
     [2, 5) x [5, +oo) x (0, 8) x (-oo, 5]
-    sage: exists_vector(M, I)
+    sage: sys = LinearInequalitySystem(M, I)
+    sage: sys.has_solution()
     True
+    sage: sys.solve()
+    (5/2, 5)
 
 Therefore, the system has a solution.
 
