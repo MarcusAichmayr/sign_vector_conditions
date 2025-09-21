@@ -397,11 +397,9 @@ def non_negative_vectors(vectors) -> list:
         sage: non_negative_vectors(l)
         [(0, 0, 0, 0), (1, 0, 0, 1)]
         sage: from elementary_vectors import elementary_vectors
-        sage: from elementary_vectors.reductions import *
         sage: var('a')
         a
-        sage: A = matrix([[a, 0, 0, 0, 1], [0, 1, 0, 0, 1]])
-        sage: evs = reduce_vectors(elementary_vectors(A), cancel_factors=True)
+        sage: evs = [vector([0, 0, 1, 0, 0]), vector([0, 0, 0, 1, 0]), vector([-1, -a, 0, 0, a])]
         sage: evs
         [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0), (-1, -a, 0, 0, a)]
         sage: non_negative_vectors(evs)
