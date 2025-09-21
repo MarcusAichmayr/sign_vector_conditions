@@ -188,7 +188,7 @@ from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 
 from elementary_vectors.functions import ElementaryVectors
-from vectors_in_intervals import exists_vector, sign_vectors_in_intervals, vector_from_sign_vector, Intervals
+from vectors_in_intervals import exists_vector, vector_from_sign_vector, Intervals
 
 from .utility import non_negative_circuits_from_matrix, non_negative_cocircuits_from_matrix, equal_entries_lists
 
@@ -395,7 +395,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
             if exists_vector(evs.generator(dual=False), intervals):
                 if certify:
                     covectors_certificate_support_condition = []
-                for sign_pattern in sign_vectors_in_intervals(intervals):
+                for sign_pattern in intervals.sign_vectors(generator=True):
                     if not exists_vector(
                         evs.generator(dual=False), Intervals.from_sign_vector(sign_pattern)
                     ):
