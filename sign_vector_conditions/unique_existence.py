@@ -188,7 +188,7 @@ from sage.matrix.constructor import matrix
 from sage.rings.infinity import Infinity
 
 from elementary_vectors.functions import ElementaryVectors
-from vectors_in_intervals import exists_vector, Intervals
+from vectors_in_intervals import exists_vector, Intervals, LinearInequalitySystem
 from vectors_in_intervals.utility import vector_from_sign_vector
 
 from .utility import non_negative_circuits_from_matrix, non_negative_cocircuits_from_matrix, equal_entries_lists
@@ -391,15 +391,13 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
             matrix_new = matrix(
                 matrix_old.rows() + equal_entries_lists(length, covector.support())
             ).echelon_form()
-            evs = ElementaryVectors(matrix_new)
+            system = LinearInequalitySystem(matrix_new.right_kernel_matrix().T, intervals)
 
-            if exists_vector(evs.generator(dual=False), intervals):
+            if system.has_solution():
                 if certify:
                     covectors_certificate_support_condition = []
                 for sign_pattern in intervals.sign_vectors(generator=True):
-                    if not exists_vector(
-                        evs.generator(dual=False), Intervals.from_sign_vector(sign_pattern)
-                    ):
+                    if not system.with_intervals(Intervals.from_sign_vector(sign_pattern)).has_solution():
                         continue
                     if not any(
                         set(cocircuit.support()).issubset(sign_pattern.support())
@@ -408,7 +406,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
                         is_degenerate = True
                         if certify:
                             certificate = vector_from_sign_vector(
-                                evs.generator(dual=True),
+                                system.candidate_generator(dual=False),
                                 sign_pattern
                             )
                         return
@@ -419,9 +417,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
                         [indices_new, covectors_certificate_support_condition]
                     )
 
-            if exists_vector(
-                evs.generator(dual=False), Intervals.from_bounds(lower_bounds_new, upper_bounds_inf)
-            ):
+            if system.with_intervals(Intervals.from_bounds(lower_bounds_new, upper_bounds_inf)).has_solution():
                 if certify:
                     certificates_partial_cover.append(indices_new)
                 recursive_degenerate(
