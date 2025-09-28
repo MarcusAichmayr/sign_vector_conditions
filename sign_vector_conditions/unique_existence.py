@@ -389,6 +389,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
             matrix_new = Matrix(
                 matrix_old.rows() + equal_entries_lists(length, cocircuit.support())
             ).echelon_form()
+            # TODO don't use kernel matrix? consider evs in row space
             system = LinearInequalitySystem(matrix_new.right_kernel_matrix().T, intervals)
 
             if system.has_solution():

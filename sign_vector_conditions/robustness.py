@@ -104,13 +104,14 @@ For instance, the last set can be equivalently written as::
 #############################################################################
 
 from sage.combinat.combination import Combinations
+from sage.matrix.constructor import Matrix
 
 from sign_vectors.oriented_matroids import OrientedMatroid
 from .utility import closure_minors_utility
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_closure_sign_vectors(stoichiometric_matrix, kinetic_order_matrix) -> bool:
+def condition_closure_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Closure condition for robustness using sign vectors.
 
@@ -135,7 +136,7 @@ def condition_closure_sign_vectors(stoichiometric_matrix, kinetic_order_matrix) 
     return True
 
 
-def condition_closure_minors(stoichiometric_matrix, kinetic_order_matrix):
+def condition_closure_minors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
     r"""
     Closure condition for robustness using maximal maximal minors.
 

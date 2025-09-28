@@ -54,7 +54,7 @@ from typing import NamedTuple, Tuple, List, Dict, Union
 from sage.calculus.var import var
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
-from sage.matrix.constructor import matrix
+from sage.matrix.constructor import Matrix
 from sage.matrix.special import diagonal_matrix
 from sage.modules.free_module_element import vector
 from sage.misc.latex import latex
@@ -714,7 +714,7 @@ class ReactionNetwork(SageObject):
         return tuple(Complex.from_species(s) for s in self._species)
 
     @property
-    def matrix_of_complexes_stoichiometric(self) -> matrix:
+    def matrix_of_complexes_stoichiometric(self) -> Matrix:
         r"""
         Return the matrix that decodes the stoichiometric complexes of the reaction network.
 
@@ -723,7 +723,7 @@ class ReactionNetwork(SageObject):
         return self._get("_matrix_of_complexes_stoichiometric").T
 
     @property
-    def matrix_of_complexes_kinetic_order(self) -> matrix:
+    def matrix_of_complexes_kinetic_order(self) -> Matrix:
         r"""
         Return the matrix that decodes the kinetic-order complexes of the reaction network.
 
@@ -732,7 +732,7 @@ class ReactionNetwork(SageObject):
         return self._get("_matrix_of_complexes_kinetic_order").T
 
     @property
-    def stoichiometric_matrix(self) -> matrix:
+    def stoichiometric_matrix(self) -> Matrix:
         r"""
         Return the stoichiometric matrix where the columns correspond to the reactions.
 
@@ -741,7 +741,7 @@ class ReactionNetwork(SageObject):
         return self._get("_stoichiometric_matrix").T
 
     @property
-    def kinetic_order_matrix(self) -> matrix:
+    def kinetic_order_matrix(self) -> Matrix:
         r"""
         Return the kinetic-order matrix where the columns correspond to the reactions.
 
@@ -750,13 +750,13 @@ class ReactionNetwork(SageObject):
         return self._get("_kinetic_order_matrix").T
 
     @property
-    def stoichiometric_matrix_as_kernel(self) -> matrix:
+    def stoichiometric_matrix_as_kernel(self) -> Matrix:
         r"""Return the kernel matrix of the stoichiometric matrix."""
         self._update()
         return kernel_matrix_using_elementary_vectors(self._stoichiometric_matrix_reduced)
 
     @property
-    def kinetic_order_matrix_as_kernel(self) -> matrix:
+    def kinetic_order_matrix_as_kernel(self) -> Matrix:
         r"""Return the kernel matrix of the kinetic-order matrix."""
         self._update()
         return kernel_matrix_using_elementary_vectors(self._kinetic_order_matrix_reduced)
@@ -771,15 +771,15 @@ class ReactionNetwork(SageObject):
         r"""Return the kinetic-order deficiency."""
         return self._get("_deficiency_kinetic_order")
 
-    def incidence_matrix(self, **kwargs) -> matrix:
+    def incidence_matrix(self, **kwargs) -> Matrix:
         r"""Return the incidence matrix of the graph."""
         return self.graph.incidence_matrix(**kwargs)
 
-    def source_matrix(self, **kwargs) -> matrix:
+    def source_matrix(self, **kwargs) -> Matrix:
         r"""Return the source matrix of the graph."""
-        return matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix(**kwargs))
+        return Matrix((1 if value == -1 else 0 for value in row) for row in self.incidence_matrix(**kwargs))
 
-    def laplacian_matrix(self) -> matrix:
+    def laplacian_matrix(self) -> Matrix:
         r"""Return the Laplacian matrix of the graph."""
         return self.incidence_matrix() * diagonal_matrix(self.rate_constants()) * self.source_matrix().T
 
@@ -870,8 +870,8 @@ class ReactionNetwork(SageObject):
         self._stoichiometric_matrix_reduced = self._stoichiometric_matrix.matrix_from_rows(self._stoichiometric_matrix.pivot_rows())
         self._kinetic_order_matrix_reduced = self._kinetic_order_matrix.matrix_from_rows(self._kinetic_order_matrix.pivot_rows())
 
-    def _matrix_from_complexes(self, complexes: Dict[int, Complex]) -> matrix:
-        return matrix([complexes[v].get_coefficient(s) for s in self._species] for v in self.graph.vertices())
+    def _matrix_from_complexes(self, complexes: Dict[int, Complex]) -> Matrix:
+        return Matrix([complexes[v].get_coefficient(s) for s in self._species] for v in self.graph.vertices())
 
     def _compute_deficiencies(self) -> None:
         connected_components_number = self.graph.connected_components_number()

@@ -154,12 +154,13 @@ In this case, it returns a system of inequalities::
 #############################################################################
 
 from sage.combinat.combination import Combinations
+from sage.matrix.constructor import Matrix
 
 from sign_vectors.oriented_matroids import OrientedMatroid
 from elementary_vectors.utility import is_symbolic
 
 
-def condition_uniqueness_sign_vectors(stoichiometric_matrix, kinetic_order_matrix) -> bool:
+def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Uniqueness condition for existence of an equilibrium using sign vectors.
 
@@ -217,7 +218,7 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix, kinetic_order_matri
     return True
 
 
-def condition_uniqueness_minors(stoichiometric_matrix, kinetic_order_matrix):
+def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
     r"""
     Uniqueness condition for existence of an equilibrium using maximal minors.
 
