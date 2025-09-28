@@ -184,17 +184,17 @@ Further, ``v`` does not satisfy the support condition.
 
 from copy import copy
 
-from sage.matrix.constructor import matrix
+from sage.matrix.constructor import Matrix
 from sage.rings.infinity import Infinity
 
-from elementary_vectors.functions import ElementaryVectors
-from vectors_in_intervals import exists_vector, Intervals, LinearInequalitySystem
+from sign_vectors import SignVector
+from vectors_in_intervals import Intervals, LinearInequalitySystem
 from vectors_in_intervals.utility import vector_from_sign_vector
 
 from .utility import non_negative_circuits_from_matrix, non_negative_cocircuits_from_matrix, equal_entries_lists
 
 
-def condition_faces(stoichiometric_matrix, kinetic_order_matrix) -> bool:
+def condition_faces(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Condition on positive sign vectors for existence and uniqueness of equilibria
 
@@ -234,9 +234,7 @@ def condition_faces(stoichiometric_matrix, kinetic_order_matrix) -> bool:
     return True
 
 
-def condition_nondegenerate(
-    stoichiometric_matrix, kinetic_order_matrix
-) -> bool:
+def condition_nondegenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is nondegenerate.
 
@@ -256,7 +254,7 @@ def condition_nondegenerate(
     return not condition_degenerate(stoichiometric_matrix, kinetic_order_matrix)
 
 
-def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: bool = False) -> bool:
+def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix, certify: bool = False) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is degenerate.
 
@@ -342,7 +340,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
 
     non_negative_cocircuits = sorted(non_negative_cocircuits, key=lambda covector: len(covector.support()))
     length = kinetic_order_matrix.ncols()
-    is_degenerate = False
+    degenerate = False
 
     lower_bounds = [-Infinity] * length
     upper_bounds = [0] * length
@@ -358,7 +356,11 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
         certificate_support_condition = []
 
     def recursive_degenerate(
-        non_negative_cocircuits, matrix_old, indices, lower_bounds, upper_bounds
+        non_negative_cocircuits: set[SignVector],
+        matrix_old: Matrix,
+        indices: list[int],
+        lower_bounds: list[int],
+        upper_bounds: list[int]
     ):
         r"""
         Recursive function.
@@ -367,29 +369,25 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
 
         - ``non_negative_cocircuits`` -- a list of positive sign vectors
 
-        - ``matrix_old`` -- a matrix
-
-        - ``indices`` -- a list of indices
-
         - ``lower_bounds`` -- a list of values ``-Infinity`` and ``1``
 
         - ``upper_bounds`` -- a list of values ``0`` and ``Infinity``
         """
-        nonlocal is_degenerate
+        nonlocal degenerate
         nonlocal certificate
 
         while non_negative_cocircuits:
-            covector = non_negative_cocircuits.pop()
+            cocircuit = non_negative_cocircuits.pop()
             lower_bounds_new = copy(lower_bounds)
             upper_bounds_new = copy(upper_bounds)
-            for i in covector.support():
+            for i in cocircuit.support():
                 lower_bounds_new[i] = 1
                 upper_bounds_new[i] = Infinity
 
             intervals = Intervals.from_bounds(lower_bounds_new, upper_bounds_new)
-            indices_new = indices + [covector.support()]
-            matrix_new = matrix(
-                matrix_old.rows() + equal_entries_lists(length, covector.support())
+            indices_new = indices + [cocircuit.support()]
+            matrix_new = Matrix(
+                matrix_old.rows() + equal_entries_lists(length, cocircuit.support())
             ).echelon_form()
             system = LinearInequalitySystem(matrix_new.right_kernel_matrix().T, intervals)
 
@@ -403,7 +401,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
                         set(cocircuit.support()).issubset(sign_pattern.support())
                         for cocircuit in covectors_support_condition
                     ):
-                        is_degenerate = True
+                        degenerate = True
                         if certify:
                             certificate = vector_from_sign_vector(
                                 system.candidate_generator(dual=False),
@@ -430,7 +428,7 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
             elif certify:
                 certificates_zero_equal_components.append(indices_new)
 
-            if is_degenerate:
+            if degenerate:
                 return
         return
 
@@ -439,11 +437,11 @@ def condition_degenerate(stoichiometric_matrix, kinetic_order_matrix, certify: b
     )
 
     if certify:
-        if is_degenerate:
-            return is_degenerate, certificate
-        return is_degenerate, (
+        if degenerate:
+            return degenerate, certificate
+        return degenerate, (
             certificates_zero_equal_components,
             certificates_partial_cover,
             certificate_support_condition,
         )
-    return is_degenerate
+    return degenerate
