@@ -189,9 +189,13 @@ from sage.rings.infinity import Infinity
 
 from sign_vectors import SignVector
 from vectors_in_intervals import Intervals, LinearInequalitySystem
-from vectors_in_intervals.utility import vector_from_sign_vector
 
-from .utility import non_negative_circuits_from_matrix, non_negative_cocircuits_from_matrix, equal_entries_lists
+from .utility import (
+    non_negative_circuits_from_matrix,
+    non_negative_cocircuits_from_matrix,
+    equal_entries_lists,
+    vector_from_sign_vector
+)
 
 
 def condition_faces(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
