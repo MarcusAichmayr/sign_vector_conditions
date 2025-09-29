@@ -405,7 +405,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
                         degenerate = True
                         if certify:
                             certificate = vector_from_sign_vector(
-                                system.candidate_generator(dual=False),
+                                system._candidate_generator(dual=False),
                                 sign_pattern
                             )
                         return
