@@ -164,12 +164,6 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
     r"""
     Uniqueness condition for existence of an equilibrium using sign vectors.
 
-    INPUT:
-
-    - ``stoichiometric_matrix`` -- a matrix
-
-    - ``kinetic_order_matrix`` -- a matrix
-
     OUTPUT:
     Return whether there exists at most one equilibrium.
 
@@ -222,12 +216,6 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
     r"""
     Uniqueness condition for existence of an equilibrium using maximal minors.
 
-    INPUT:
-
-    - ``stoichiometric_matrix`` -- a matrix with maximal rank
-
-    - ``kinetic_order_matrix`` -- a matrix with maximal rank
-
     OUTPUT:
     Return whether there exists at most one equilibrium.
     If the result depends on variables, a list of sets is returned.
@@ -235,7 +223,7 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
 
     .. NOTE::
 
-        The matrices need to have the same rank and number of columns.
+        The matrices need to have maximal rank and the same dimensions.
         Otherwise, a ``ValueError`` is raised.
 
     EXAMPLES::

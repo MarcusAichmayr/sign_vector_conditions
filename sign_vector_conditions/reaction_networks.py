@@ -903,21 +903,16 @@ class ReactionNetwork(SageObject):
         - ``kinetic_order`` (bool, default: True):
           If True, displays both stoichiometric and kinetic-order complexes
           for each vertex. If False, only stoichiometric complexes are shown.
-
         - ``layout`` (str, default: "spring"):
           Specifies the layout of the graph. Common options include
           "circular" and "spring".
-
         - ``edge_labels`` (bool, default: False):
           If True, displays the rate constants as labels on the edges.
-
         - ``vertex_colors`` (str or list, default: "white"):
           Specifies the color of the vertices. Can be a single color or a
           list of colors corresponding to each vertex.
-
         - ``vertex_size`` (int, default: 6000):
           Specifies the size of the vertices in the plot.
-
         - ``**kwargs``:
           Additional keyword arguments passed to the underlying graph plotting
           function.

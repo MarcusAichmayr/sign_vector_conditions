@@ -115,12 +115,6 @@ def condition_closure_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_
     r"""
     Closure condition for robustness using sign vectors.
 
-    INPUT:
-
-    - ``stoichiometric_matrix`` -- a matrix
-
-    - ``kinetic_order_matrix`` -- a matrix
-
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
 
@@ -140,12 +134,6 @@ def condition_closure_minors(stoichiometric_matrix: Matrix, kinetic_order_matrix
     r"""
     Closure condition for robustness using maximal maximal minors.
 
-    INPUT:
-
-    - ``stoichiometric_matrix`` -- a matrix with maximal rank
-
-    - ``kinetic_order_matrix`` -- a matrix with maximal rank
-
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
     If the result depends on variables, a list of sets is returned.
@@ -153,7 +141,7 @@ def condition_closure_minors(stoichiometric_matrix: Matrix, kinetic_order_matrix
 
     .. NOTE::
 
-        The matrices need to have the same rank and number of columns.
+        The matrices need to have maximal rank and the same dimensions.
         Otherwise, a ``ValueError`` is raised.
     """
     positive_found = False

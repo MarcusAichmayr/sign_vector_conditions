@@ -198,12 +198,6 @@ def condition_faces(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix)
     r"""
     Condition on positive sign vectors for existence and uniqueness of equilibria
 
-    INPUT:
-
-    - ``stoichiometric_matrix`` -- a matrix
-
-    - ``kinetic_order_matrix`` -- a matrix
-
     OUTPUT:
     TODO
     Return whether every positive sign vector ``X`` corresponding to the rows of
@@ -238,12 +232,6 @@ def condition_nondegenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix:
     r"""
     Return whether a pair of subspaces given by matrices is nondegenerate.
 
-    INPUT:
-
-    - ``stoichiometric_matrix`` -- a matrix
-
-    - ``kinetic_order_matrix`` -- a matrix
-
     OUTPUT:
     a boolean
 
@@ -260,14 +248,6 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
 
     This condition is about whether all positive equal components of a vector in ``St``
     can be covered by covectors corresponding to the kernel of ``S``.
-
-    INPUT:
-
-    - ``stoichiometric_matrix`` -- a matrix
-
-    - ``kinetic_order_matrix`` -- a matrix
-
-    - ``certify`` -- a boolean (default: ``False``)
 
     OUTPUT:
     a boolean
@@ -368,9 +348,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
         INPUT:
 
         - ``non_negative_cocircuits`` -- a list of positive sign vectors
-
         - ``lower_bounds`` -- a list of values ``-Infinity`` and ``1``
-
         - ``upper_bounds`` -- a list of values ``0`` and ``Infinity``
         """
         nonlocal degenerate

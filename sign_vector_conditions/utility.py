@@ -11,23 +11,20 @@ r"""Utility functions"""
 #############################################################################
 
 from sage.functions.generalized import sign
+from sage.matrix.constructor import Matrix
 from sage.rings.integer_ring import ZZ
 
 from elementary_vectors.utility import is_symbolic
 from sign_vectors import sign_vector, zero_sign_vector, SignVector, OrientedMatroid
 
 
-def non_negative_cocircuits_from_matrix(M) -> set[SignVector]:
+def non_negative_cocircuits_from_matrix(matrix: Matrix) -> set[SignVector]:
     r"""
     Compute nonnegative cocircuits.
 
-    INPUT:
-
-    - ``M`` -- a matrix with real arguments.
-
     OUTPUT:
 
-    Return a set of nonnegative cocircuits determined by the kernel of ``M``.
+    Return a set of nonnegative cocircuits determined by the kernel of ``matrix``.
 
     EXAMPLES::
 
@@ -39,20 +36,16 @@ def non_negative_cocircuits_from_matrix(M) -> set[SignVector]:
         sage: non_negative_cocircuits_from_matrix(M)
         {(+0+0), (000+), (++00)}
     """
-    return set(X for X in OrientedMatroid(M).cocircuits() if X > 0)
+    return set(X for X in OrientedMatroid(matrix).cocircuits() if X > 0)
 
 
-def non_negative_circuits_from_matrix(M) -> set[SignVector]:
+def non_negative_circuits_from_matrix(matrix: Matrix) -> set[SignVector]:
     r"""
     Compute all nonnegative circuits.
 
-    INPUT:
-
-    - ``M`` -- a matrix with real arguments.
-
     OUTPUT:
 
-    Return a set of nonnegative circuits determined by the kernel of ``M``.
+    Return a set of nonnegative circuits determined by the kernel of ``matrix``.
 
     EXAMPLES::
 
@@ -64,7 +57,7 @@ def non_negative_circuits_from_matrix(M) -> set[SignVector]:
         sage: non_negative_circuits_from_matrix(M)
         {(+0+0), (000+), (++00)}
     """
-    return set(X for X in OrientedMatroid(M).circuits() if X > 0)
+    return set(X for X in OrientedMatroid(matrix).circuits() if X > 0)
 
 
 def non_negative_covectors_from_cocircuits(cocircuits: set[SignVector], length: int) -> set[SignVector]:
@@ -87,17 +80,13 @@ def non_negative_covectors_from_cocircuits(cocircuits: set[SignVector], length: 
     return output
 
 
-def non_negative_covectors_from_matrix(M) -> set[SignVector]:
+def non_negative_covectors_from_matrix(matrix: Matrix) -> set[SignVector]:
     r"""
     Compute all nonnegative covectors.
 
-    INPUT:
-
-    - ``M`` -- a matrix
-
     OUTPUT:
 
-    Return a set of nonnegative covectors determined by the kernel of ``M``.
+    Return a set of nonnegative covectors determined by the kernel of ``matrix``.
 
     EXAMPLES::
 
@@ -147,20 +136,16 @@ def non_negative_covectors_from_matrix(M) -> set[SignVector]:
         sage: non_negative_covectors_from_matrix(M)
         {(0000), (++00), (++0+), (+0+0), (+++0), (000+), (+0++), (++++)}
     """
-    return non_negative_covectors_from_cocircuits(OrientedMatroid(M).cocircuits(), M.ncols())
+    return non_negative_covectors_from_cocircuits(OrientedMatroid(matrix).cocircuits(), matrix.ncols())
 
 
-def non_negative_vectors_from_matrix(M) -> set[SignVector]:
+def non_negative_vectors_from_matrix(matrix: Matrix) -> set[SignVector]:
     r"""
     Compute all nonnegative covectors from a matrix.
 
-    INPUT:
-
-    - ``M`` -- a matrix with real arguments.
-
     OUTPUT:
 
-    Return a set of nonnegative covectors determined by the kernel of ``M``.
+    Return a set of nonnegative covectors determined by the kernel of ``matrix``.
 
     EXAMPLES::
 
@@ -210,7 +195,7 @@ def non_negative_vectors_from_matrix(M) -> set[SignVector]:
         sage: non_negative_vectors_from_matrix(M)
         {(0000), (++00), (++0+), (+0+0), (+++0), (000+), (+0++), (++++)}
     """
-    return non_negative_covectors_from_cocircuits(OrientedMatroid(M).circuits(), M.ncols())
+    return non_negative_covectors_from_cocircuits(OrientedMatroid(matrix).circuits(), matrix.ncols())
 
 
 def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bool = False) -> list:
@@ -220,9 +205,7 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
     INPUT:
 
     - ``pairs`` -- an iterable of pairs consisting of a minor and a product
-
     - ``positive_only`` -- a boolean, considers only positive products if true
-
     - ``negative_only`` -- a boolean, considers only negative products if true
 
     OUTPUT:
@@ -343,15 +326,6 @@ def remove_duplicates(iterable):
 def equal_entries_lists(length: int, indices: list[int]) -> list[list[int]]:
     r"""
     Return a list of lists such that the corresponding kernel matrix has equal entries.
-
-    INPUT:
-
-    - ``length`` -- an integer
-
-    - ``indices`` -- a list of integers
-
-    OUTPUT:
-    a list of lists
 
     EXAMPLES::
 
