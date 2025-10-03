@@ -374,11 +374,11 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
             # TODO don't use kernel matrix? consider evs in row space
             system = LinearInequalitySystem(matrix_new.right_kernel_matrix().T, intervals)
 
-            if system.has_solution():
+            if system.is_solvable():
                 if certify:
                     covectors_certificate_support_condition = []
                 for sign_pattern in intervals.sign_vectors(generator=True):
-                    if not system.with_intervals(Intervals.from_sign_vector(sign_pattern)).has_solution():
+                    if not system.with_intervals(Intervals.from_sign_vector(sign_pattern)).is_solvable():
                         continue
                     if not any(
                         set(cocircuit.support()).issubset(sign_pattern.support())
@@ -398,7 +398,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
                         [indices_new, covectors_certificate_support_condition]
                     )
 
-            if system.with_intervals(Intervals.from_bounds(lower_bounds_new, upper_bounds_inf)).has_solution():
+            if system.with_intervals(Intervals.from_bounds(lower_bounds_new, upper_bounds_inf)).is_solvable():
                 if certify:
                     certificates_partial_cover.append(indices_new)
                 recursive_degenerate(

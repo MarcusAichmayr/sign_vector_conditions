@@ -42,9 +42,9 @@ To represent these objects, we use a matrix and a list of intervals::
     sage: I
     [2, 5) x [5, +oo) x (0, 8) x (-oo, 5]
     sage: sys = LinearInequalitySystem(M, I)
-    sage: sys.has_solution()
+    sage: sys.is_solvable()
     True
-    sage: sys.solve()
+    sage: sys.find_solution()
     (5/2, 5)
 
 Therefore, the system has a solution.
