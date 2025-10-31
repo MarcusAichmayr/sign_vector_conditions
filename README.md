@@ -2,7 +2,7 @@
 
 ## Description
 
-a SageMath package to work with sign vector conditions for chemical reaction networks
+SageMath package for (chemical) reaction networks using sign vector conditions
 
 ## License
 
