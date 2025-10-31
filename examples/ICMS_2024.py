@@ -13,7 +13,7 @@ Elementary vectors
 Functions dealing with elementary vectors, solvability of linear inequality systems and oriented matroids
 are implemented in the package `elementary_vectors <https://github.com/MarcusAichmayr/elementary_vectors>`_.
 
-We compute elementary vectors, using maximal minors::
+We compute elementary vectors (circuits), using maximal minors::
 
     sage: from elementary_vectors import *
     sage: M = matrix([[1, 1, 2, 0], [0, 0, 1, 2]])
@@ -22,7 +22,7 @@ We compute elementary vectors, using maximal minors::
     [0 0 1 2]
     sage: M.minors(2)
     [0, 1, 2, 1, 2, 4]
-    sage: elementary_vectors(M)
+    sage: circuits(M)
     [(1, -1, 0, 0), (4, 0, -2, 1), (0, 4, -2, 1)]
 
 Solvability of linear inequality systems

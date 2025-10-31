@@ -374,7 +374,6 @@ def non_negative_vectors(vectors) -> list:
         [(1, 1, 0, -1), (0, 0, 0, 0), (1, 0, 0, 1)]
         sage: non_negative_vectors(l)
         [(0, 0, 0, 0), (1, 0, 0, 1)]
-        sage: from elementary_vectors import elementary_vectors
         sage: var('a')
         a
         sage: evs = [vector([0, 0, 1, 0, 0]), vector([0, 0, 0, 1, 0]), vector([-1, -a, 0, 0, a])]
@@ -437,8 +436,7 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
         (1, 0, 2, 0)
         sage: vector_from_sign_vector(M, sign_vector("+-0+"))
         (1, -2, 0, 1)
-        sage: evs = elementary_vectors(M, kernel=False)
-        sage: vector_from_sign_vector(evs, sign_vector("+-0+"))
+        sage: vector_from_sign_vector(cocircuits(M), sign_vector("+-0+"))
         (1, -2, 0, 1)
         sage: vector_from_sign_vector(M, sign_vector("+0-0"))
         Traceback (most recent call last):

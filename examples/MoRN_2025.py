@@ -203,9 +203,9 @@ We define a matrix::
     [1 2 0 0]
     [0 1 2 3]
 
-We compute the elements with minimal-support in `ker P`::
+We compute the elements with minimal-support in the kernel of `P`::
 
-    sage: elementary_vectors(P)
+    sage: circuits(P)
     [(4, -2, 1, 0), (6, -3, 0, 1), (0, 0, -3, 2)]
 
 Next, we compute the sign vectors with minimal support::
