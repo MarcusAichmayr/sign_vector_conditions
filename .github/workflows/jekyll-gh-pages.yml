@@ -34,8 +34,12 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Install SageMath
         run: sudo apt-get update && sudo apt-get install sagemath
-      - name: Install required package
+      - name: Install required package elementary_vectors
         run: sage -pip install git+https://github.com/MarcusAichmayr/elementary_vectors.git
+      - name: Install required package sign_vectors
+        run: sage -pip install git+https://github.com/MarcusAichmayr/sign_vectors.git
+      - name: Install required package certineq
+        run: sage -pip install git+https://github.com/MarcusAichmayr/certineq.git
       - name: Install this package
         run: make install
       - name: Run doctests
