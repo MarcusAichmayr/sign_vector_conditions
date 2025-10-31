@@ -122,7 +122,7 @@ Depending on this parameter, the chemical reaction network has a unique equilibr
     [1 1 0 0 0 0]
     [0 0 1 1 2 0]
     [1 0 0 0 0 1]
-    sage: from elementary_vectors.functions import division_free_kernel_matrix
+    sage: from elementary_vectors import division_free_kernel_matrix
     sage: St = division_free_kernel_matrix(Wt) # prevents division by ``a``
     sage: St
     [-1 -1  0  0 -2  0]
