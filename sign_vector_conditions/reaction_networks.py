@@ -60,7 +60,7 @@ from sage.modules.free_module_element import vector
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 
-from elementary_vectors import kernel_matrix_using_elementary_vectors
+from elementary_vectors import division_free_kernel_matrix
 from sign_vectors import sign_vector
 
 from .uniqueness import condition_uniqueness_minors
@@ -753,13 +753,13 @@ class ReactionNetwork(SageObject):
     def stoichiometric_matrix_as_kernel(self) -> Matrix:
         r"""Return the kernel matrix of the stoichiometric matrix."""
         self._update()
-        return kernel_matrix_using_elementary_vectors(self._stoichiometric_matrix_reduced)
+        return division_free_kernel_matrix(self._stoichiometric_matrix_reduced)
 
     @property
     def kinetic_order_matrix_as_kernel(self) -> Matrix:
         r"""Return the kernel matrix of the kinetic-order matrix."""
         self._update()
-        return kernel_matrix_using_elementary_vectors(self._kinetic_order_matrix_reduced)
+        return division_free_kernel_matrix(self._kinetic_order_matrix_reduced)
 
     @property
     def deficiency_stoichiometric(self) -> int:
