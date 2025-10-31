@@ -437,7 +437,7 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
         (1, 0, 2, 0)
         sage: vector_from_sign_vector(M, sign_vector("+-0+"))
         (1, -2, 0, 1)
-        sage: evs = elementary_vectors(M, dual=False)
+        sage: evs = elementary_vectors(M, kernel=False)
         sage: vector_from_sign_vector(evs, sign_vector("+-0+"))
         (1, -2, 0, 1)
         sage: vector_from_sign_vector(M, sign_vector("+0-0"))
@@ -459,7 +459,7 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
     else:
         evs_object = ElementaryVectors(data)
         # evs_object.set_combinations_dual(Combinations(upper.support(), evs_object.length - evs_object.rank + 1))
-        evs = evs_object.generator(dual=False)
+        evs = evs_object.generator(kernel=False)
         result = zero_vector(data.base_ring(), sv.length())
 
     if sign_vector(result) == sv:
