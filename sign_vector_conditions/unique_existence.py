@@ -188,7 +188,7 @@ from sage.matrix.constructor import Matrix
 from sage.rings.infinity import Infinity
 
 from sign_vectors import SignVector
-from vectors_in_intervals import Intervals, LinearInequalitySystem
+from certineq import Intervals, LinearInequalitySystem
 
 from .utility import (
     non_negative_circuits_from_matrix,

@@ -9,18 +9,17 @@ def readfile(filename):
 
 setup(
     name="sign_vector_conditions",
-    version="v1.2",
+    version="2.0",
     description="a SageMath package to work with sign vector conditions for chemical reaction networks",
     long_description=readfile("README.md"),
     long_description_content_type="text/markdown",
     url="https://github.com/MarcusAichmayr/sign_vector_conditions",
     author="Marcus S. Aichmayr",
     author_email="aichmayr@mathematik.uni-kassel.de",
-    license="GPLv3",
+    license="GPL-3.0-or-later",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Operating System :: OS Independent",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Mathematics",
@@ -34,7 +33,7 @@ setup(
         "oriented matroids",
     ],
     packages=["sign_vector_conditions", "examples"],
-    setup_requires=["elementary_vectors>=1.2"],
+    install_requires=["elementary_vectors>=2.0", "sign_vectors>=1.0", "certineq>=1.0"],
     extras_require={
         "passagemath": [
             "passagemath-symbolics",
