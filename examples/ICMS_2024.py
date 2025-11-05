@@ -1,5 +1,5 @@
 r"""
-Examples for ICMS 2024.
+Up-to-date examples of [AMR24]_.
 
 A SageMath Package for Elementary and Sign Vectors with Applications to Chemical Reaction Networks
 --------------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ The paper is also available at `ARXIV <https://arxiv.org/abs/2407.12660>`_.
 Elementary vectors
 ~~~~~~~~~~~~~~~~~~
 
-Functions dealing with elementary vectors, solvability of linear inequality systems and oriented matroids
+Functions dealing with elementary vectors (circuits of a subspace given by a matrix)
 are implemented in the package `elementary_vectors <https://github.com/MarcusAichmayr/elementary_vectors>`_.
 
 We compute elementary vectors (circuits), using maximal minors::
@@ -28,6 +28,8 @@ We compute elementary vectors (circuits), using maximal minors::
 Solvability of linear inequality systems
 ****************************************
 
+Our package `certlin <https://github.com/MarcusAichmayr/certlin>`_
+provides tools for the solvability of linear inequality systems and oriented matroids.
 We state linear inequality systems as intersection of a vector space and a Cartesian product of intervals.
 To represent these objects, we use a matrix and a list of intervals::
 
@@ -42,6 +44,11 @@ To represent these objects, we use a matrix and a list of intervals::
     sage: I
     [2, 5) x [5, +oo) x (0, 8) x (-oo, 5]
     sage: sys = LinearInequalitySystem(M, I)
+    sage: sys
+    [1 0]  x
+    [0 1]
+    [1 1]
+    [0 1]
     sage: sys.certify()
     (True, (5/2, 5))
     sage: sys.find_solution()
@@ -52,6 +59,8 @@ Therefore, the system has a solution.
 Sign vectors and oriented matroids
 **********************************
 
+The package `sign_vectors <https://github.com/MarcusAichmayr/sign_vectors>`_
+provides functions for sign vectors and oriented matroids.
 We consider an oriented matroid given by a matrix and compute the cocircuits and covectors::
 
     sage: from sign_vectors import *
@@ -76,8 +85,6 @@ We consider an oriented matroid given by a matrix and compute the cocircuits and
      (-++-),
      (+0-+),
      (++-+)}
-
-For further examples on elementary vectors, solvability of linear inequality systems, sign vectors and oriented matroids, see `<https://marcusaichmayr.github.io/elementary_vectors/>`_.
 
 Chemical reaction networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
