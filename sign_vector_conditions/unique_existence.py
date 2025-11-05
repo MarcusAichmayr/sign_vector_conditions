@@ -1,6 +1,6 @@
 r"""
-Existence and uniqueness of equilibria
-======================================
+Existence and uniqueness of CBE
+===============================
 
 Let us consider the following matrices to describe a chemical reaction network::
 

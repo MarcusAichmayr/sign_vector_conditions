@@ -1,6 +1,6 @@
 r"""
-Uniqueness of equilibria
-========================
+Uniqueness of CBE
+=================
 
 We define some matrices::
 

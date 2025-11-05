@@ -1,5 +1,5 @@
 r"""
-Setting up reaction networks
+Define species, complexes, and reaction networks.
 
 This module provides tools for defining species, complexes, and reaction networks
 with (generalized) mass-action kinetics.

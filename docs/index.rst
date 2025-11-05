@@ -1,19 +1,21 @@
-Sign Vector Conditions for Reaction Networks
-============================================
+Sign vector conditions for (chemical) reaction networks
+=======================================================
+
+This package provides functionality for analyzing reaction networks,
+such as checking weak reversibility, computing deficiencies, and verifying conditions
+for unique positive complex-balanced equilibria (CBE) based on [MHR19]_.
+See [AMR24]_ for more details.
 
 To install this package, visit the `repository on GitHub <https://github.com/MarcusAichmayr/sign_vector_conditions>`_.
 
 .. rubric:: Reaction networks
+
 .. autosummary::
     :toctree: generated
 
     sign_vector_conditions.reaction_networks
 
 .. rubric:: Sign vector conditions
-
-The conditions for existence and uniqueness of complex-balanced equilibria for (chemical) reaction networks
-with generalized mass-action kinetics are based on [MHR19]_.
-See [AMR24]_ for more details.
 
 .. autosummary::
     :toctree: generated
