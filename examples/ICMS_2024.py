@@ -31,7 +31,7 @@ Solvability of linear inequality systems
 We state linear inequality systems as intersection of a vector space and a Cartesian product of intervals.
 To represent these objects, we use a matrix and a list of intervals::
 
-    sage: from certineq import *
+    sage: from certlin import *
     sage: M = matrix([[1, 0], [0, 1], [1, 1], [0, 1]])
     sage: M
     [1 0]

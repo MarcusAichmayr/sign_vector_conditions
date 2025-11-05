@@ -38,8 +38,8 @@ jobs:
         run: sage -pip install git+https://github.com/MarcusAichmayr/elementary_vectors.git
       - name: Install required package sign_vectors
         run: sage -pip install git+https://github.com/MarcusAichmayr/sign_vectors.git
-      - name: Install required package certineq
-        run: sage -pip install git+https://github.com/MarcusAichmayr/certineq.git
+      - name: Install required package certlin
+        run: sage -pip install git+https://github.com/MarcusAichmayr/certlin.git
       - name: Install this package
         run: make install
       - name: Run doctests
