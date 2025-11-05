@@ -457,7 +457,7 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
     else:
         evs_object = ElementaryVectors(data)
         # evs_object.set_combinations_dual(Combinations(upper.support(), evs_object.length - evs_object.rank + 1))
-        evs = evs_object.generator(kernel=False)
+        evs = evs_object.cocircuit_generator()
         result = zero_vector(data.base_ring(), sv.length())
 
     if sign_vector(result) == sv:
