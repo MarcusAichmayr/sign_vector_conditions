@@ -44,17 +44,10 @@ jobs:
         run: make install
       - name: Run doctests
         id: doctests
-        run: |
-          make test
-          echo $? > result.txt
+        run: make test
         continue-on-error: true
-      - name: Fail if doctests failed
-        run: |
-          if [ "$(cat result.txt)" != "0" ]; then
-            echo "Doctests failed"
-            exit 1
-          fi
-        continue-on-error: true
+      - name: Install docs dependencies
+        run: sage --pip install -r docs/requirements.txt
       - name: Generate documentation
         run: make doc
       - name: Move documentation
