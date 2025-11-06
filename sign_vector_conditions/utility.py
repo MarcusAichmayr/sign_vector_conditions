@@ -11,14 +11,18 @@ r"""Utility functions"""
 #############################################################################
 
 from collections.abc import Generator
+from typing import Iterator
 
 from sage.functions.generalized import sign
 from sage.matrix.constructor import Matrix
+from sage.misc.mrange import cartesian_product_iterator
 from sage.modules.free_module_element import vector, zero_vector
 from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import minus_infinity, Infinity
 
 from elementary_vectors import ElementaryVectors
 from elementary_vectors.utility import is_symbolic
+from certlin import Interval, Intervals
 from sign_vectors import sign_vector, zero_sign_vector, SignVector, OrientedMatroid
 
 
@@ -471,3 +475,81 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
                 break
 
     raise ValueError("Cannot find vector corresponding to given sign vector.")
+
+
+def intervals_to_sign_vectors(intervals: Intervals) -> Iterator[SignVector]:
+    r"""
+    Generate all sign vectors that correspond to a vector with components in given intervals.
+
+    INPUT:
+
+    - ``intervals`` -- an `Intervals` object
+
+    EXAMPLES::
+
+        sage: from certlin import *
+        sage: from sign_vector_conditions.utility import intervals_to_sign_vectors
+        sage: intervals = Intervals.from_bounds([-1, 1], [0, 1])
+        sage: list(intervals_to_sign_vectors(intervals))
+        [(0+), (-+)]
+        sage: intervals = Intervals.from_bounds([-1, -2], [0, 1])
+        sage: list(intervals_to_sign_vectors(intervals))
+        [(00), (0+), (0-), (-0), (-+), (--)]
+        sage: intervals = Intervals.from_bounds([-1, -1, 0], [0, 5, 0])
+        sage: list(intervals_to_sign_vectors(intervals))
+        [(000), (0+0), (0-0), (-00), (-+0), (--0)]
+        sage: intervals = Intervals.from_bounds([-1, -1, -1], [0, 1, 0], False, False)
+        sage: list(intervals_to_sign_vectors(intervals))
+        [(-0-), (-+-), (---)]
+
+    TESTS::
+
+        sage: intervals = Intervals.from_bounds([-1, 0], [1, 0], False, False)
+        sage: list(intervals_to_sign_vectors(intervals))
+        []
+        sage: intervals = Intervals.from_bounds([], [])
+        sage: list(intervals_to_sign_vectors(intervals))
+        []
+    """
+    list_of_signs = []
+    if intervals.is_empty():
+        def empty():
+            yield from ()
+        return empty()
+    for interval in intervals:
+        available_signs = []
+        if 0 in interval:
+            available_signs.append(0)
+        if interval.supremum() > 0:
+            available_signs.append(1)
+        if interval.infimum() < 0:
+            available_signs.append(-1)
+        list_of_signs.append(available_signs)
+
+    return (
+        sign_vector(signs) for signs in cartesian_product_iterator(list_of_signs)
+    )
+
+
+def sign_vector_to_intervals(sv: SignVector) -> Intervals:
+    r"""
+    Return intervals that correspond to a sign vector.
+
+    EXAMPLES::
+
+        sage: from certlin import *
+        sage: from sign_vectors import *
+        sage: from sign_vector_conditions.utility import sign_vector_to_intervals
+        sage: sv = sign_vector("+0-")
+        sage: sign_vector_to_intervals(sv)
+        (0, +oo) x {0} x (-oo, 0)
+    """
+    return Intervals([
+        Interval(
+            0 if element > 0 else (minus_infinity if element < 0 else 0),
+            Infinity if element > 0 else (0 if element < 0 else 0),
+            element == 0,
+            element == 0
+        )
+        for element in sv
+    ])

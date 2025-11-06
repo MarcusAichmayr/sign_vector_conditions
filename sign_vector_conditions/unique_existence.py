@@ -189,6 +189,7 @@ from sage.rings.infinity import Infinity
 
 from sign_vectors import SignVector
 from certlin import Intervals, LinearInequalitySystem
+from .utility import intervals_to_sign_vectors, sign_vector_to_intervals
 
 from .utility import (
     non_negative_circuits_from_matrix,
@@ -377,22 +378,22 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
             if system.certify()[0]:
                 if certify:
                     covectors_certificate_support_condition = []
-                for sign_pattern in intervals.sign_vectors(generator=True):
-                    if not system.with_intervals(Intervals.from_sign_vector(sign_pattern)).certify()[0]:
+                for sv in intervals_to_sign_vectors(intervals):
+                    if not system.with_intervals(sign_vector_to_intervals(sv)).certify()[0]:
                         continue
                     if not any(
-                        set(cocircuit.support()).issubset(sign_pattern.support())
+                        set(cocircuit.support()).issubset(sv.support())
                         for cocircuit in covectors_support_condition
                     ):
                         degenerate = True
                         if certify:
                             certificate = vector_from_sign_vector(
                                 system._evs_generator(kernel=False),
-                                sign_pattern
+                                sv
                             )
                         return
                     if certify:
-                        covectors_certificate_support_condition.append(sign_pattern)
+                        covectors_certificate_support_condition.append(sv)
                 if certify:
                     certificate_support_condition.append(
                         [indices_new, covectors_certificate_support_condition]
