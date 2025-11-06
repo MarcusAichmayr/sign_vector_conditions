@@ -45,10 +45,10 @@ To represent these objects, we use a matrix and a list of intervals::
     [2, 5) x [5, +oo) x (0, 8) x (-oo, 5]
     sage: sys = LinearInequalitySystem(M, I)
     sage: sys
-    [1 0]  x
-    [0 1]
-    [1 1]
-    [0 1]
+    [1 0]  x in  [2, 5)
+    [0 1]  x in  [5, +oo)
+    [1 1]  x in  (0, 8)
+    [0 1]  x in  (-oo, 5]
     sage: sys.certify()
     (True, (5/2, 5))
     sage: sys.find_solution()
