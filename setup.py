@@ -33,7 +33,7 @@ setup(
         "oriented matroids",
     ],
     packages=["sign_vector_conditions", "examples"],
-    install_requires=["elementary_vectors>=2.0", "sign_vectors>=1.0", "certlin>=1.0"],
+    install_requires=["elementary_vectors>=2.1", "sign_vectors>=1.1", "certlin>=1.1"],
     extras_require={
         "passagemath": [
             "passagemath-symbolics",
