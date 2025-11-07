@@ -157,7 +157,7 @@ from sage.combinat.combination import Combinations
 from sage.matrix.constructor import Matrix
 
 from sign_vectors.oriented_matroids import OrientedMatroid
-from elementary_vectors.utility import is_symbolic
+from elementary_vectors.utility import is_constant
 
 
 def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
@@ -296,7 +296,7 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
         product = (
             minor1 * kinetic_order_matrix.matrix_from_columns(indices).det()
         )
-        if is_symbolic(product):
+        if not is_constant(product):
             symbolic_expressions.add(product)
         elif product > 0:
             positive_product_found = True

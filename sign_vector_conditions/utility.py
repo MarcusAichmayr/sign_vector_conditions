@@ -21,7 +21,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import minus_infinity, Infinity
 
 from elementary_vectors import ElementaryVectors
-from elementary_vectors.utility import is_symbolic
+from elementary_vectors.utility import is_constant
 from certlin import Interval, Intervals
 from sign_vectors import sign_vector, zero_sign_vector, SignVector, OrientedMatroid
 
@@ -268,7 +268,7 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
             if not minor in zero_expressions and not minor.is_zero()
         ]
         for minor, _ in pairs:
-            if is_symbolic(minor) and not minor in non_zero_expressions:
+            if not is_constant(minor) and not minor in non_zero_expressions:
                 yield from recursive(
                     pairs, zero_expressions.union([minor]), non_zero_expressions
                 )
@@ -313,9 +313,9 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
 
 def sign_or_symbolic(expression):
     r"""Return the sign of an expression if defined."""
-    if is_symbolic(expression):
-        return expression
-    return ZZ(sign(expression))
+    if is_constant(expression):
+        return ZZ(sign(expression))
+    return expression
 
 
 def remove_duplicates(iterable):

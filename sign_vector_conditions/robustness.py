@@ -108,7 +108,7 @@ from sage.matrix.constructor import Matrix
 
 from sign_vectors.oriented_matroids import OrientedMatroid
 from .utility import closure_minors_utility
-from elementary_vectors.utility import is_symbolic
+from elementary_vectors.utility import is_constant
 
 
 def condition_closure_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
@@ -155,7 +155,7 @@ def condition_closure_minors(stoichiometric_matrix: Matrix, kinetic_order_matrix
         if not minor2:
             return False
         product = minor1 * minor2
-        if is_symbolic(product):
+        if not is_constant(product):
             symbolic_pairs.add((minor1, product))
             continue
         if product > 0:
