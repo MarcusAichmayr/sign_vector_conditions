@@ -34,7 +34,7 @@ setup(
         "sign vector conditions",
     ],
     packages=["sign_crn", "examples"],
-    install_requires=["elementary_vectors>=2.1", "sign_vectors>=1.1", "certlin>=1.1"],
+    install_requires=["elementary_vectors>=2.2", "sign_vectors>=1.2", "certlin>=1.2"],
     extras_require={
         "passagemath": [
             "passagemath-symbolics",
