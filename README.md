@@ -6,8 +6,7 @@ SageMath package for (chemical) reaction networks using sign vector conditions
 
 ## License
 
-Distributed under the terms of the GNU General Public License (GPL, see the
-LICENSE file), either version 3 or (at your option) any later version
+Distributed under the terms of the GNU General Public License (GPL, see the LICENSE file), either version 3 or (at your option) any later version
 
 - http://www.gnu.org/licenses/
 
@@ -15,7 +14,10 @@ LICENSE file), either version 3 or (at your option) any later version
 
 Sage 10.0 or later is recommended.
 
-The package [elementary_vectors](https://github.com/MarcusAichmayr/elementary_vectors) is necessary for this package to work.
+The following packages are required:
+* [elementary_vectors](https://github.com/MarcusAichmayr/elementary_vectors)
+* [sign_vectors](https://github.com/MarcusAichmayr/sign_vectors)
+* [certlin](https://github.com/MarcusAichmayr/certlin)
 
 ## Installation
 
