@@ -14,7 +14,7 @@ EXAMPLES:
 
 First, we define species for a reaction network::
 
-    sage: from sign_vector_conditions import *
+    sage: from sign_crn import *
     sage: A, B, C = species("A, B, C")
 
 Now, we create a reaction network and add complexes and reactions::
@@ -79,7 +79,7 @@ def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions import *
+        sage: from sign_crn import *
         sage: species("A")
         A
         sage: A
@@ -148,7 +148,7 @@ class Complex(SageObject):
 
     First, we define some species::
 
-        sage: from sign_vector_conditions import *
+        sage: from sign_crn import *
         sage: species("A, B, C")
         (A, B, C)
 
@@ -306,7 +306,7 @@ class Complex(SageObject):
 
         TESTS::
 
-            sage: from sign_vector_conditions import *
+            sage: from sign_crn import *
             sage: species("A")
             A
             sage: var("a")
@@ -394,7 +394,7 @@ class ReactionNetwork(SageObject):
 
     We define a reaction network with two complexes involving variables in the kinetic orders::
 
-        sage: from sign_vector_conditions import *
+        sage: from sign_crn import *
         sage: var("a, b")
         (a, b)
         sage: species("A, B, C")
@@ -795,7 +795,7 @@ class ReactionNetwork(SageObject):
 
         EXAMPLES::
 
-            sage: from sign_vector_conditions import *
+            sage: from sign_crn import *
             sage: species("A, B, C")
             (A, B, C)
             sage: rn = ReactionNetwork()
@@ -907,7 +907,7 @@ class ReactionNetwork(SageObject):
 
         EXAMPLES::
 
-            sage: from sign_vector_conditions import *
+            sage: from sign_crn import *
             sage: species("A, B, C")
             (A, B, C)
             sage: rn = ReactionNetwork()
@@ -1026,7 +1026,7 @@ class ReactionNetwork(SageObject):
 
         EXAMPLES::
 
-            sage: from sign_vector_conditions import *
+            sage: from sign_crn import *
             sage: species("X, Y")
             (X, Y)
             sage: rn = ReactionNetwork()

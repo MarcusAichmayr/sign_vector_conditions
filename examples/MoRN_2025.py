@@ -10,7 +10,7 @@ A simple example
 
 We define a reaction network::
 
-    sage: from sign_vector_conditions import *
+    sage: from sign_crn import *
     sage: species("H_2, O_2, H_2O")
     (H_2, O_2, H_2O)
     sage: rn = ReactionNetwork()

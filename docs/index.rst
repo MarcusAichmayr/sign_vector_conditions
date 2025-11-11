@@ -6,24 +6,24 @@ such as checking weak reversibility, computing deficiencies, and verifying condi
 for unique positive complex-balanced equilibria (CBE) based on [MHR19]_.
 See [AMR24]_ for more details.
 
-To install this package, visit the `repository on GitHub <https://github.com/MarcusAichmayr/sign_vector_conditions>`_.
+To install this package, visit the `repository on GitHub <https://github.com/MarcusAichmayr/sign_crn>`_.
 
 .. rubric:: Reaction networks
 
 .. autosummary::
     :toctree: generated
 
-    sign_vector_conditions.reaction_networks
+    sign_crn.reaction_networks
 
 .. rubric:: Sign vector conditions
 
 .. autosummary::
     :toctree: generated
 
-    sign_vector_conditions.uniqueness
-    sign_vector_conditions.unique_existence
-    sign_vector_conditions.robustness
-    sign_vector_conditions.utility
+    sign_crn.uniqueness
+    sign_crn.unique_existence
+    sign_crn.robustness
+    sign_crn.utility
 
 .. rubric:: Conferences and presentations
 

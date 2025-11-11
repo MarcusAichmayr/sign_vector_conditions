@@ -89,11 +89,11 @@ We consider an oriented matroid given by a matrix and compute the cocircuits and
 Chemical reaction networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See :func:`sign_vector_conditions.reaction_networks.ReactionNetwork`
+See :func:`sign_crn.reaction_networks.ReactionNetwork`
 for a user-friendly class to define chemical reaction networks.
 
 Several sign vector conditions for chemical reaction networks are implemented
-in the package `sign_vector_conditions <https://github.com/MarcusAichmayr/elementary_vectors>`_.
+in the package `sign_crn <https://github.com/MarcusAichmayr/sign_crn>`_.
 
 Robustness
 **********
@@ -261,7 +261,7 @@ To consider the general case, we compute the maximal minors of :math:`S` and :ma
     sage: St
     [    1     0     a a - c     1]
     [    0     1     b     b     0]
-    sage: from sign_vector_conditions import *
+    sage: from sign_crn import *
     sage: condition_closure_minors(S, St) # random order
     [{a > 0, b > 0, a - c > 0}]
 

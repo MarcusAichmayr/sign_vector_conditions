@@ -4,7 +4,7 @@ install:
 	sage -pip install --upgrade .
 
 test:
-	sage -t sign_vector_conditions/ examples/
+	sage -t sign_crn/ examples/
 
 doc:
 	cd docs && make html

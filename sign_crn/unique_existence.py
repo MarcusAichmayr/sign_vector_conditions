@@ -16,7 +16,7 @@ Let us consider the following matrices to describe a chemical reaction network::
 
 To check whether a unique equilibrium exists, we apply :func:`~condition_uniqueness_minors`::
 
-    sage: from sign_vector_conditions import *
+    sage: from sign_crn import *
     sage: condition_uniqueness_minors(S, St)
     True
 
@@ -213,7 +213,7 @@ def condition_faces(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix)
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.unique_existence import condition_faces
+        sage: from sign_crn.unique_existence import condition_faces
         sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
         sage: S
         [ 1  0 -1  0]
@@ -262,7 +262,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.unique_existence import *
+        sage: from sign_crn.unique_existence import *
 
     Next, we certify our results. In the first examples, the subspaces are trivially nondegenerate
     since there are no nonnegative covectors in the kernel of ``S``::

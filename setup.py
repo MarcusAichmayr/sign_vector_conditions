@@ -8,12 +8,12 @@ def readfile(filename):
 
 
 setup(
-    name="sign_vector_conditions",
-    version="2.1",
+    name="sign_crn",
+    version="2.2",
     description="SageMath package for (chemical) reaction networks using sign vector conditions",
     long_description=readfile("README.md"),
     long_description_content_type="text/markdown",
-    url="https://github.com/MarcusAichmayr/sign_vector_conditions",
+    url="https://github.com/MarcusAichmayr/sign_crn",
     author="Marcus S. Aichmayr",
     author_email="aichmayr@mathematik.uni-kassel.de",
     license="GPL-3.0-or-later",
@@ -26,13 +26,14 @@ setup(
     ],  # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords=[
         "reaction networks",
+        "crn",
         "equilibrium",
-        "robustness",
         "generalized mass-action",
-        "sign vector conditions",
+        "robustness",
         "oriented matroids",
+        "sign vector conditions",
     ],
-    packages=["sign_vector_conditions", "examples"],
+    packages=["sign_crn", "examples"],
     install_requires=["elementary_vectors>=2.1", "sign_vectors>=1.1", "certlin>=1.1"],
     extras_require={
         "passagemath": [

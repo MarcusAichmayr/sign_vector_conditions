@@ -44,7 +44,7 @@ We can compute the intersection directly by applying the built in method interse
 Therefore, there is at most one equilibrium.
 We can also check this condition in the following way::
 
-    sage: from sign_vector_conditions import *
+    sage: from sign_crn import *
     sage: condition_uniqueness_sign_vectors(S, St)
     True
 
@@ -174,7 +174,7 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions import *
+        sage: from sign_crn import *
         sage: S = matrix([[1, 1, 1]])
         sage: S
         [1 1 1]
@@ -196,7 +196,7 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
 
     TESTS::
 
-        sage: from sign_vector_conditions.uniqueness import condition_uniqueness_sign_vectors
+        sage: from sign_crn.uniqueness import condition_uniqueness_sign_vectors
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
         sage: condition_uniqueness_sign_vectors(A, B)
@@ -228,7 +228,7 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions import *
+        sage: from sign_crn import *
         sage: S = matrix([[1, 0, -1], [0, 1, -1]])
         sage: S
         [ 1  0 -1]

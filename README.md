@@ -26,19 +26,19 @@ The following packages are required:
 To download and install the latest development version on a system where Sage
 was built from source or installed from official packages, run
 
-    sage -pip install git+https://github.com/MarcusAichmayr/sign_vector_conditions.git
+    sage -pip install git+https://github.com/MarcusAichmayr/sign_crn.git
 
 ### Install from PyPI (recommended)
 
 To install the package for Python directly, run:
 
-    pip install sign-vector-conditions
+    pip install sign-crn
 
 ### Local install from source
 
 Download the source from the git repository:
 
-    git clone https://github.com/MarcusAichmayr/sign_vector_conditions.git
+    git clone https://github.com/MarcusAichmayr/sign_crn.git
 
 Change to the root directory of the repository and run:
 
@@ -48,7 +48,7 @@ Change to the root directory of the repository and run:
 
 Download the source from the git repository:
 
-    git clone https://github.com/MarcusAichmayr/sign_vector_conditions.git
+    git clone https://github.com/MarcusAichmayr/sign_crn.git
 
 Change to the root directory of the repository and run:
 
@@ -60,7 +60,7 @@ Change to the root directory of the repository and run:
 
 The documentation of this package is available on GitHub:
 
-https://marcusaichmayr.github.io/sign_vector_conditions/index.html
+https://marcusaichmayr.github.io/sign_crn/index.html
 
 To generate it, run
 

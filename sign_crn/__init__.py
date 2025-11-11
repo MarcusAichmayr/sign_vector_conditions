@@ -1,4 +1,4 @@
-r"""Sign vector conditions for reaction networks."""
+r"""Sign vector conditions for (chemical) reaction networks."""
 
 #############################################################################
 #  Copyright (C) 2025                                                       #

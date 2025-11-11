@@ -38,7 +38,7 @@ def non_negative_cocircuits_from_matrix(matrix: Matrix) -> set[SignVector]:
 
         sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: from sign_vectors import *
-        sage: from sign_vector_conditions.utility import non_negative_cocircuits_from_matrix
+        sage: from sign_crn.utility import non_negative_cocircuits_from_matrix
         sage: OrientedMatroid(M).cocircuits()
         {(0+-0), (--00), (0-+0), (000+), (++00), (+0+0), (-0-0), (000-)}
         sage: non_negative_cocircuits_from_matrix(M)
@@ -59,7 +59,7 @@ def non_negative_circuits_from_matrix(matrix: Matrix) -> set[SignVector]:
 
         sage: M = matrix([[2, -1, -1, 0]])
         sage: from sign_vectors import *
-        sage: from sign_vector_conditions.utility import non_negative_circuits_from_matrix
+        sage: from sign_crn.utility import non_negative_circuits_from_matrix
         sage: OrientedMatroid(M).circuits()
         {(0+-0), (--00), (000+), (++00), (0-+0), (+0+0), (-0-0), (000-)}
         sage: non_negative_circuits_from_matrix(M)
@@ -100,7 +100,7 @@ def non_negative_covectors_from_matrix(matrix: Matrix) -> set[SignVector]:
 
         sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: from sign_vectors.oriented_matroids import OrientedMatroid
-        sage: from sign_vector_conditions.utility import non_negative_covectors_from_matrix
+        sage: from sign_crn.utility import non_negative_covectors_from_matrix
         sage: OrientedMatroid(M).covectors()
         {(0000),
          (++-0),
@@ -159,7 +159,7 @@ def non_negative_vectors_from_matrix(matrix: Matrix) -> set[SignVector]:
 
         sage: M = matrix([[2, -1, -1, 0]])
         sage: from sign_vectors.oriented_matroids import OrientedMatroid
-        sage: from sign_vector_conditions.utility import non_negative_vectors_from_matrix
+        sage: from sign_crn.utility import non_negative_vectors_from_matrix
         sage: OrientedMatroid(M).vectors()
         {(0000),
          (++-0),
@@ -225,7 +225,7 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
 
     TESTS::
 
-        sage: from sign_vector_conditions.utility import closure_minors_utility
+        sage: from sign_crn.utility import closure_minors_utility
         sage: var('a, b, c')
         (a, b, c)
         sage: closure_minors_utility(zip([0, a], [0, a]), positive_only=True)
@@ -337,7 +337,7 @@ def equal_entries_lists(length: int, indices: list[int]) -> list[list[int]]:
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.utility import equal_entries_lists
+        sage: from sign_crn.utility import equal_entries_lists
         sage: equal_entries_lists(5, [1, 2, 3])
         [[0, 1, -1, 0, 0], [0, 1, 0, -1, 0]]
         sage: equal_entries_lists(3, [0])
@@ -372,7 +372,7 @@ def non_negative_vectors(vectors) -> list:
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.utility import non_negative_vectors
+        sage: from sign_crn.utility import non_negative_vectors
         sage: l = [vector([1, 1, 0, -1]), vector([0, 0, 0, 0]), vector([1, 0, 0, 1])]
         sage: l
         [(1, 1, 0, -1), (0, 0, 0, 0), (1, 0, 0, 1)]
@@ -428,7 +428,7 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
 
     EXAMPLES::
 
-        sage: from sign_vector_conditions.utility import vector_from_sign_vector
+        sage: from sign_crn.utility import vector_from_sign_vector
         sage: from elementary_vectors import *
         sage: from sign_vectors import *
         sage: M = matrix([[1, 0, 2, 0], [0, 1, 1, 0], [0, 0, 0, 1]])
@@ -488,7 +488,7 @@ def intervals_to_sign_vectors(intervals: Intervals) -> Iterator[SignVector]:
     EXAMPLES::
 
         sage: from certlin import *
-        sage: from sign_vector_conditions.utility import intervals_to_sign_vectors
+        sage: from sign_crn.utility import intervals_to_sign_vectors
         sage: intervals = Intervals.from_bounds([-1, 1], [0, 1])
         sage: list(intervals_to_sign_vectors(intervals))
         [(0+), (-+)]
@@ -539,7 +539,7 @@ def sign_vector_to_intervals(sv: SignVector) -> Intervals:
 
         sage: from certlin import *
         sage: from sign_vectors import *
-        sage: from sign_vector_conditions.utility import sign_vector_to_intervals
+        sage: from sign_crn.utility import sign_vector_to_intervals
         sage: sv = sign_vector("+0-")
         sage: sign_vector_to_intervals(sv)
         (0, +oo) x {0} x (-oo, 0)

@@ -18,19 +18,19 @@ sys.path.insert(0, os.path.abspath('../src'))
 
 # Imports of some subpackages of Sage fail if executed in the wrong order.
 # We work around that issue by having Sphinx import sage.all before trying
-# to import anything from sign_vector_conditions.
+# to import anything from sign_crn.
 import sage.all
 
 # -- Project information -----------------------------------------------------
 
-project = u'sign_vector_conditions'
+project = u'sign_crn'
 copyright = u'2025, Marcus S. Aichmayr'
 author = u'Marcus S. Aichmayr'
 
 # The short X.Y version
-version = u'1.3'
+version = u'2.2'
 # The full version, including alpha/beta/rc tags
-release = u'1.3'
+release = u'2.2'
 
 # -- General configuration ---------------------------------------------------
 
@@ -108,7 +108,7 @@ html_static_path = []
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'sign_vector_conditions_doc'
+htmlhelp_basename = 'sign_crn_doc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -135,7 +135,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'sign_vector_conditions.tex', u'sign\\_vector\\_conditions Documentation',
+    (master_doc, 'sign_crn.tex', u'sign\\_crn Documentation',
      u'Marcus S. Aichmayr', 'manual'),
 ]
 
@@ -145,7 +145,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'sign_vector_conditions', u'sign_vector_conditions Documentation',
+    (master_doc, 'sign_crn', u'sign_crn Documentation',
      [author], 1)
 ]
 
@@ -156,8 +156,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'sign_vector_conditions', u'sign_vector_conditions Documentation',
-     author, 'sign_vector_conditions', 'One line description of project.',
+    (master_doc, 'sign_crn', u'sign_crn Documentation',
+     author, 'sign_crn', 'One line description of project.',
      'Miscellaneous'),
 ]
 

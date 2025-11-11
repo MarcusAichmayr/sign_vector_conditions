@@ -30,7 +30,7 @@ Therefore, the exponential map is a diffeomorphism for all ``c > 0``
 and all small perturbations of ``St``.
 The package offers a function that checks this condition directly::
 
-    sage: from sign_vector_conditions import *
+    sage: from sign_crn import *
     sage: condition_closure_sign_vectors(S, St)
     True
 
