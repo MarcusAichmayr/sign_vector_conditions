@@ -23,6 +23,7 @@ To install this package, visit the `repository on GitHub <https://github.com/Mar
     sign_vector_conditions.uniqueness
     sign_vector_conditions.unique_existence
     sign_vector_conditions.robustness
+    sign_vector_conditions.utility
 
 .. rubric:: Conferences and presentations
 
