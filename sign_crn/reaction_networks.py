@@ -570,7 +570,7 @@ class ReactionNetwork(SageObject):
         sage: rn.has_exactly_one_cbe()
         Traceback (most recent call last):
         ...
-        ValueError: Method does not support variables!
+        ValueError: Method does not support variables.
         sage: rn(a=2, b=1, c=1).has_exactly_one_cbe()
         True
 
@@ -1013,7 +1013,7 @@ class ReactionNetwork(SageObject):
         self._check_network_conditions()
         at_most_one = self.has_at_most_one_cbe()
         if at_most_one not in [True, False]:
-            raise ValueError("Method does not support variables!")
+            raise ValueError("Method does not support variables.")
         return at_most_one and self._condition_faces() and self._are_subspaces_nondegenerate()
 
     def has_exactly_one_equilibrium(self) -> bool:
@@ -1064,7 +1064,7 @@ class ReactionNetwork(SageObject):
 
         first_condition = condition_uniqueness_minors(A_bar, B_bar)
         if first_condition not in [True, False]:
-            raise ValueError("Method does not support variables!")
+            raise ValueError("Method does not support variables.")
         if not first_condition:
             return False
 

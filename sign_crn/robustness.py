@@ -13,7 +13,6 @@ Let us consider the following matrices::
     [ 1  0  1  1]
     [ 0  1  0 -1]
 
-
 To check, whether the corresponding chemical reaction network
 has a unique equilibrium for all rate constants and all small perturbations of ``St``,
 we consider the topes of the corresponding oriented matroids::
