@@ -585,7 +585,7 @@ class ReactionNetwork(SageObject):
     Here is an example involving molecules::
 
         sage: A, B, C = species("H_2, O_2, H_2O")
-        sage: var('a')
+        sage: var("a")
         a
         sage: rn = ReactionNetwork()
         sage: rn.add_complex(0, 2 * A + B, 2 * a * A + a * B)
