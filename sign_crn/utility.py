@@ -20,7 +20,7 @@ from sage.modules.free_module_element import vector, zero_vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import minus_infinity, Infinity
 
-from elementary_vectors import ElementaryVectors
+from elementary_vectors import CircuitEnumerator
 from elementary_vectors.utility import is_constant
 from certlin import Interval, Intervals
 from sign_vectors import sign_vector, zero_sign_vector, SignVector, OrientedMatroid
@@ -459,7 +459,7 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
         evs = data
         result = zero_vector(sv.length())
     else:
-        evs_object = ElementaryVectors(data)
+        evs_object = CircuitEnumerator(data)
         # evs_object.set_combinations_dual(Combinations(upper.support(), evs_object.length - evs_object.rank + 1))
         evs = evs_object.cocircuit_generator()
         result = zero_vector(data.base_ring(), sv.length())
