@@ -385,7 +385,7 @@ def non_negative_vectors(vectors) -> list:
         [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0), (-1, -a, 0, 0, a)]
         sage: non_negative_vectors(evs)
         ...
-        UserWarning: Cannot determine sign of symbolic expression, using ``0`` instead.
+        UserWarning: Cannot determine sign of symbolic expression, using 0 instead.
         [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0), (1, a, 0, 0, -a)]
         sage: assume(a > 0)
         sage: non_negative_vectors(evs)
