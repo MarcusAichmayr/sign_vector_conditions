@@ -15,6 +15,14 @@ To install this package, visit the `repository on GitHub <https://github.com/Mar
 
     sign_crn.reaction_networks
 
+.. rubric:: Conferences and presentations
+
+.. autosummary::
+    :toctree: generated
+
+    examples.MoRN_2025
+    examples.ICMS_2024
+
 .. rubric:: Sign vector conditions
 
 .. autosummary::
@@ -24,14 +32,6 @@ To install this package, visit the `repository on GitHub <https://github.com/Mar
     sign_crn.unique_existence
     sign_crn.robustness
     sign_crn.utility
-
-.. rubric:: Conferences and presentations
-
-.. autosummary::
-    :toctree: generated
-
-    examples.ICMS_2024
-    examples.MoRN_2025
 
 .. rubric:: References
 
