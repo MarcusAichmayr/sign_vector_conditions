@@ -32,6 +32,8 @@ We analyze the reaction network::
     True
     sage: rn.deficiency_stoichiometric
     0
+    sage: rn.has_exactly_one_cbe()
+    True
 """
 
 #############################################################################
