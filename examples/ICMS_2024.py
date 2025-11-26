@@ -317,7 +317,7 @@ Also the face condition is satisfied::
     sage: condition_faces(S, St)
     True
 
-For specific values of ``a``, the pair of subspaces
+For specific values of :math:`a`, the pair of subspaces
 determined by kernels of the matrices is nondegenerate.
 This is exactly the case for :math:`a \in (0, 1) \cup (1, 2)`.
 We demonstrate this for specific values::
