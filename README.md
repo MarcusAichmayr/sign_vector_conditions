@@ -60,7 +60,7 @@ Change to the root directory of the repository and run:
 
 The documentation of this package is available on GitHub:
 
-https://marcusaichmayr.github.io/sign_crn/index.html
+https://marcusaichmayr.github.io/sign_crn/
 
 To generate it, run
 
