@@ -29,7 +29,7 @@ Solvability of linear inequality systems
 ****************************************
 
 Our package `certlin <https://github.com/MarcusAichmayr/certlin>`_
-provides tools for the solvability of linear inequality systems and oriented matroids.
+provides tools for the solvability of linear inequality systems.
 We state linear inequality systems as intersection of a vector space and a Cartesian product of intervals.
 To represent these objects, we use a matrix and a list of intervals::
 
@@ -40,15 +40,22 @@ To represent these objects, we use a matrix and a list of intervals::
     [0 1]
     [1 1]
     [0 1]
-    sage: I = Intervals.from_bounds([2, 5, 0, -oo], [5, oo, 8, 5], [True, True, False, False], [False, False, False, True])
+    sage: lower = [2, 5, 0, -oo]
+    sage: upper = [5, oo, 8, 5]
+    sage: lower_closed = [True, True, False, False]
+    sage: upper_closed = [False, False, False, True]
+    sage: I = Intervals.from_bounds(lower, upper, lower_closed, upper_closed)
     sage: I
     [2, 5) x [5, +oo) x (0, 8) x (-oo, 5]
     sage: sys = LinearInequalitySystem(M, I)
     sage: sys
-    [1 0]  x in  [2, 5)
-    [0 1]  x in  [5, +oo)
-    [1 1]  x in  (0, 8)
-    [0 1]  x in  (-oo, 5]
+    [1 0]  x in [2, 5)
+    [0 1]  x in [5, +oo)
+    [1 1]  x in (0, 8)
+    [0 1]  x in (-oo, 5]
+
+The package can certify whether the system has a solution or not::
+
     sage: sys.certify()
     (True, (5/2, 5))
     sage: sys.find_solution()
@@ -90,9 +97,9 @@ Chemical reaction networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See :func:`sign_crn.reaction_networks.ReactionNetwork`
-for a user-friendly class to define chemical reaction networks.
+for a user-friendly class to define (chemical) reaction networks.
 
-Several sign vector conditions for chemical reaction networks are implemented
+Several sign vector conditions for such networks are implemented
 in the package `sign_crn <https://github.com/MarcusAichmayr/sign_crn>`_.
 
 Robustness
@@ -168,7 +175,7 @@ To examine robustness of CBE, we compute the covectors corresponding to the resu
      (+++-0),
      (-+-0+),
      (0+0-+)}
-    sage: var('a, b, c')
+    sage: var("a, b, c")
     (a, b, c)
     sage: St = matrix([[-a, -b, 1, 0, 0], [c, 0, -1, 1, 0], [-1, 0, 0, 0, 1]])
     sage: St
@@ -255,7 +262,7 @@ To consider the general case, we compute the maximal minors of :math:`S` and :ma
     sage: S
     [1 0 1 1 1]
     [0 1 1 1 0]
-    sage: var('a, b, c')
+    sage: var("a, b, c")
     (a, b, c)
     sage: St = matrix([[1, 0, a, a - c, 1], [0, 1, b, b, 0]])
     sage: St
@@ -284,7 +291,7 @@ Now, we consider Example 20 from [MHR19]_.
 Here, we have a parameter :math:`a > 0`.
 Depending on this parameter, the network has a unique positive CBE::
 
-    sage: var('a')
+    sage: var("a")
     a
     sage: assume(a > 0)
     sage: S = matrix([[1, 0, 0, 0, 0, 1], [0, 1, 0, 0, 0, -1], [0, 0, 1, 1, 2, 0]])
