@@ -4,7 +4,7 @@ install:
 	sage -pip install --upgrade .
 
 test:
-	sage -t sign_crn/ examples/
+	sage -t sign_crn/
 
 doc:
 	cd docs && make html

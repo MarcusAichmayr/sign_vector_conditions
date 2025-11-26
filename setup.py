@@ -33,7 +33,7 @@ setup(
         "oriented matroids",
         "sign vector conditions",
     ],
-    packages=["sign_crn", "examples"],
+    packages=["sign_crn"],
     install_requires=["elementary_vectors>=2.2", "sign_vectors>=1.2", "certlin>=1.2"],
     extras_require={
         "passagemath": [
