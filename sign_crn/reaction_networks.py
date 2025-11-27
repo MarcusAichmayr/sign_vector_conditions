@@ -10,9 +10,7 @@ It includes functionality for analyzing reaction networks, such as checking weak
 computing deficiencies, and verifying conditions for positive complex-balanced equilibria (CBE)
 based on [MHR19]_ and [AMR24]_.
 
-EXAMPLES:
-
-First, we define species for a reaction network::
+We define species for a reaction network::
 
     sage: from sign_crn import *
     sage: A, B, C = species("A, B, C")
