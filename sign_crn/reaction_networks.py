@@ -1020,7 +1020,7 @@ class ReactionNetwork(SageObject):
 
     def has_exactly_one_equilibrium(self) -> bool:
         r"""
-        Check whether there is a unique positive complex-balanced equilibrium.
+        Check whether there is a unique positive equilibrium.
 
         .. NOTE::
 
