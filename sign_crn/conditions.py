@@ -11,44 +11,22 @@ In this context, the conditions are equivalent to conditions for positive comple
 Uniqueness
 ----------
 
-We define some matrices::
+We define matrices that describe an exponential map::
 
     sage: from sign_crn import *
     sage: S = matrix([[1, 1, 1]])
     sage: St = matrix([[1, 0, 1]])
 
-We want to check whether the corresponding map is injective.
-For this purpose, we consider the corresponding oriented matroids::
+The package uses maximal minors to study injectivity::
 
-    sage: from sign_vectors.oriented_matroids import *
-    sage: OrientedMatroid(S).vectors()
-    {(000),
-     (0+-),
-     (+-0),
-     (-+0),
-     (++-),
-     (-0+),
-     (--+),
-     (-++),
-     (+0-),
-     (0-+),
-     (+--),
-     (-+-),
-     (+-+)}
-    sage: OrientedMatroid(St).covectors()
-    {(000), (+0+), (-0-)}
+    sage: uniqueness_condition(S, St)
+    True
 
-Since the intersection of theses sets of sign vectors contains only the zero sign vector,
-the corresponding map is injective.
-The package offers a function to check this condition directly::
+Therefore, the map is injective.
+Instead, we can consider the oriented matroids determined by these matrices::
 
     sage: from sign_crn.conditions import uniqueness_condition_sign_vectors
     sage: uniqueness_condition_sign_vectors(S, St)
-    True
-
-Instead of computing sign vectors, we can instead use maximal minors to check this condition::
-
-    sage: uniqueness_condition(S, St)
     True
 
 Now, we consider another example::
@@ -58,21 +36,12 @@ Now, we consider another example::
 
 The condition is violated::
 
-    sage: uniqueness_condition_sign_vectors(S, St)
+    sage: uniqueness_condition(S, St)
     False
-
-In fact, the intersection of the sets of sign vectors is nontrivial::
-
-    sage: OrientedMatroid(S).dual().faces()
-    [{(000)},
-     {(0+-), (+-0), (-+0), (+0-), (0-+), (-0+)},
-     {(++-), (--+), (-++), (+--), (-+-), (+-+)}]
-    sage: OrientedMatroid(St).faces()
-    [{(000)}, {(-+-), (+-+)}]
 
 Therefore, the corresponding exponential map is not injective.
 
-Finally, we consider an example with variables::
+Finally, we consider an example with parameters :math:`a, b \in \mathbb{R}`::
 
     sage: var('a, b')
     (a, b)
@@ -83,26 +52,14 @@ Finally, we consider an example with variables::
     sage: St
     [ a  b -1]
 
-The matrix ``St`` contains variables :math:`a, b \in \mathbb{R}`.
-Consequently, we cannot compute the corresponding oriented matroids.
-However, we can still compare the products of the maximal minors of ``S`` and ``St``, that is::
-
-    sage: m1 = S.minors(1)
-    sage: m1
-    [1, 1, 1]
-    sage: m2 = St.minors(1)
-    sage: m2
-    [a, b, -1]
-    sage: [m1[i] * m2[i] for i in range(len(m1))]
-    [a, b, -1]
-
-The corresponding map is injective, 
-if all these products are smaller than or equal to zero if :math:`a, b \leq 0`.
-The function :func:`~uniqueness_condition` also works for matrices with symbolic entries.
-In this case, it returns a system of inequalities::
+Here, the function returns a system of inequalities::
 
     sage: uniqueness_condition(S, St) # random order
     [{-a >= 0, -b >= 0}]
+
+Hence, the map is injective if :math:`a, b \leq 0`.
+
+Note that we cannot apply :func:`~uniqueness_condition_sign_vectors` because of the parameters.
 
 Existence and uniqueness
 ------------------------
@@ -123,37 +80,12 @@ The corresponding map is injective::
     sage: uniqueness_condition(S, St)
     True
 
-To examine bijectivity, we first check the face condition.
-For this purpose, we compute the circuits of the corresponding oriented matroids::
-
-    sage: circuits = OrientedMatroid(S).circuits()
-    sage: circuits
-    {(0+0+), (+0+0), (0-0-), (-0-0)}
-    sage: circuits_t = OrientedMatroid(St).circuits()
-    sage: circuits_t
-    {(---0), (-00+), (+00-), (+++0), (0+++), (0---)}
-
-Here, we are only interested in the positive elements::
-
-    sage: [X for X in circuits if X > 0]
-    [(0+0+), (+0+0)]
-    sage: [X for X in circuits_t if X > 0]
-    [(+++0), (0+++)]
-
-The fact condition is satisfied since every positive circuit of ``St`` has a smaller element in ``S``.
-The package also offers a function to check this condition directly::
+To examine bijectivity, we first check the face condition::
 
     sage: face_condition(S, St)
     True
 
-We need to check a third condition to verify bijectivity.
-For this purpose, we consider again the oriented matroid determined by ``S``::
-
-    sage: OrientedMatroid(S).covectors()
-    {(0000), (-++-), (+0-0), (0-0+), (+--+), (-0+0), (--++), (0+0-), (++--)}
-
-Since there are no nonnegative covectors, the chemical reaction network has at least one equilibrium.
-The package offers a function to check this condition condition::
+Finally, we apply the nondegeneracy condition::
 
     sage: nondegeneracy_condition(S, St)
     True
@@ -177,9 +109,8 @@ The face condition is violated::
 
 Consequently, the map is not bijective.
 
-Now, we consider a map given by two matrices involving a parameter.
-(see Example 20 of [MHR19]_)
-Depending on this parameter, the map is bijective::
+Now, we consider a map involving a parameter.
+(see Example 20 of [MHR19]_)::
 
     sage: var("a")
     a
@@ -251,41 +182,20 @@ We consider the following matrices::
     [ 1  0  1  1]
     [ 0  1  0 -1]
 
-To check, whether the corresponding map is bijective for small perturbations of ``St``,
-we consider the topes of the corresponding oriented matroids::
+To study robustness of the corresponding map,
+we consider again a condition involving maximal minors.
 
-    sage: from sign_vectors.oriented_matroids import *
-    sage: OrientedMatroid(S).topes()
-    {(-0-+), (-0--), (+0++), (+0+-)}
-    sage: OrientedMatroid(St).topes()
-    {(---+), (-+--), (++++), (----), (+-++), (+++-)}
+    sage: closure_condition(S, St)
+    True
 
-One can see that for every tope ``X`` of the oriented matroid corresponding to ``S`` there is a
-tope ``Y`` corresponding to ``St`` such that ``X`` conforms to ``Y``.
-Therefore, the exponential map is a diffeomorphism for all ``c > 0``
-and all small perturbations of ``St``.
-The package offers a function that checks this condition directly::
+Hence, the map is bijective for small perturbations of ``St``.
+There is also an equivalent condition using sign vectors::
 
     sage: from sign_crn.conditions import closure_condition_sign_vectors
     sage: closure_condition_sign_vectors(S, St)
     True
 
-There is an equivalent condition.
-To verify it, we compute the maximal minors of the two matrices::
-
-    sage: S.minors(2)
-    [0, 0, 1, 0, 0, 1]
-    sage: St.minors(2)
-    [1, 0, -1, -1, -1, -1]
-
-From the output, we see whenever a minor of ``S`` is nonzero,
-the corresponding minor of ``St`` has the opposite sign.
-Hence, this condition is fulfilled::
-
-    sage: closure_condition(S, St)
-    True
-
-Now, we consider matrices with variables::
+Now, we consider an example involving parameters::
 
     sage: var('a, b, c')
     (a, b, c)
@@ -296,8 +206,7 @@ Now, we consider matrices with variables::
     sage: St
     [ a  b -1]
 
-The function from the package supports symbolic matrices as input.
-In this case, we obtain the following equations on the variables::
+We obtain the following condition on the variables::
 
     sage: closure_condition(S, St) # random
     [{-b > 0, c == 0},
