@@ -42,6 +42,7 @@ Since the intersection of theses sets of sign vectors contains only the zero sig
 the corresponding map is injective.
 The package offers a function to check this condition directly::
 
+    sage: from sign_crn.conditions import uniqueness_condition_sign_vectors
     sage: uniqueness_condition_sign_vectors(S, St)
     True
 
@@ -265,6 +266,7 @@ Therefore, the exponential map is a diffeomorphism for all ``c > 0``
 and all small perturbations of ``St``.
 The package offers a function that checks this condition directly::
 
+    sage: from sign_crn.conditions import closure_condition_sign_vectors
     sage: closure_condition_sign_vectors(S, St)
     True
 
@@ -354,7 +356,7 @@ def uniqueness_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
 
     EXAMPLES::
 
-        sage: from sign_crn import *
+        sage: from sign_crn.conditions import uniqueness_condition_sign_vectors
         sage: S = matrix([[1, 1, 1]])
         sage: S
         [1 1 1]
@@ -376,7 +378,7 @@ def uniqueness_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
 
     TESTS::
 
-        sage: from sign_crn import uniqueness_condition_sign_vectors
+        sage: from sign_crn.conditions import uniqueness_condition_sign_vectors
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
         sage: uniqueness_condition_sign_vectors(A, B)
