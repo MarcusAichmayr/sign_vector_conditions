@@ -42,12 +42,12 @@ Since the intersection of theses sets of sign vectors contains only the zero sig
 the corresponding map is injective.
 The package offers a function to check this condition directly::
 
-    sage: condition_uniqueness_sign_vectors(S, St)
+    sage: uniqueness_condition_sign_vectors(S, St)
     True
 
 Instead of computing sign vectors, we can instead use maximal minors to check this condition::
 
-    sage: condition_uniqueness_minors(S, St)
+    sage: uniqueness_condition(S, St)
     True
 
 Now, we consider another example::
@@ -57,7 +57,7 @@ Now, we consider another example::
 
 The condition is violated::
 
-    sage: condition_uniqueness_sign_vectors(S, St)
+    sage: uniqueness_condition_sign_vectors(S, St)
     False
 
 In fact, the intersection of the sets of sign vectors is nontrivial::
@@ -97,10 +97,10 @@ However, we can still compare the products of the maximal minors of ``S`` and ``
 
 The corresponding map is injective, 
 if all these products are smaller than or equal to zero if :math:`a, b \leq 0`.
-The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
+The function :func:`~uniqueness_condition` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
-    sage: condition_uniqueness_minors(S, St) # random order
+    sage: uniqueness_condition(S, St) # random order
     [{-a >= 0, -b >= 0}]
 
 Existence and uniqueness
@@ -119,7 +119,7 @@ We consider the following matrices to describe an exponential map::
 
 The corresponding map is injective::
 
-    sage: condition_uniqueness_minors(S, St)
+    sage: uniqueness_condition(S, St)
     True
 
 To examine bijectivity, we first check the face condition.
@@ -142,7 +142,7 @@ Here, we are only interested in the positive elements::
 The fact condition is satisfied since every positive circuit of ``St`` has a smaller element in ``S``.
 The package also offers a function to check this condition directly::
 
-    sage: condition_faces(S, St)
+    sage: face_condition(S, St)
     True
 
 We need to check a third condition to verify bijectivity.
@@ -154,7 +154,7 @@ For this purpose, we consider again the oriented matroid determined by ``S``::
 Since there are no nonnegative covectors, the chemical reaction network has at least one equilibrium.
 The package offers a function to check this condition condition::
 
-    sage: condition_nondegenerate(S, St)
+    sage: nondegeneracy_condition(S, St)
     True
 
 Hence, the exponential map is bijective.
@@ -166,12 +166,12 @@ We swap the two matrices from before::
 
 Because of symmetry, the map is injective::
 
-    sage: condition_uniqueness_sign_vectors(S, St)
+    sage: uniqueness_condition_sign_vectors(S, St)
     True
 
 The face condition is violated::
 
-    sage: condition_faces(S, St)
+    sage: face_condition(S, St)
     False
 
 Consequently, the map is not bijective.
@@ -197,13 +197,13 @@ Depending on this parameter, the map is bijective::
 The first two conditions depend on the sign vectors corresponding
 to the rows of these matrices which are independent of the specific value for :math:`a`::
 
-    sage: condition_uniqueness_sign_vectors(S, St)
+    sage: uniqueness_condition_sign_vectors(S, St)
     True
 
 Hence, the map is injective.
 Also the face condition is satisfied::
 
-    sage: condition_faces(S, St)
+    sage: face_condition(S, St)
     True
 
 For specific values of :math:`a`, the pair of subspaces
@@ -211,29 +211,29 @@ determined by kernels of the matrices is nondegenerate.
 This is exactly the case for :math:`a \in (0, 1) \cup (1, 2)`.
 We demonstrate this for specific values::
 
-    sage: condition_nondegenerate(S, St(a=1/2))
+    sage: nondegeneracy_condition(S, St(a=1/2))
     True
-    sage: condition_nondegenerate(S, St(a=3/2))
+    sage: nondegeneracy_condition(S, St(a=3/2))
     True
 
 On the other hand, this condition does not hold if
 :math:`a \in {1} \cup [2, \infty)`::
 
-    sage: condition_nondegenerate(S, St(a=1))
+    sage: nondegeneracy_condition(S, St(a=1))
     False
 
 To certify the result, we call::
 
-    sage: condition_degenerate(S, St(a=1), certify=True)
+    sage: degeneracy_condition(S, St(a=1), certify=True)
     (True, (1, 1, 0, 0, -1, 1))
 
 Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``St``
 can be covered by a sign vector ``(++000+)`` corresponding to ``ker(S)``.
 Further, ``v`` does not satisfy the support condition.
 
-    sage: condition_nondegenerate(S, St(a=2))
+    sage: nondegeneracy_condition(S, St(a=2))
     False
-    sage: condition_nondegenerate(S, St(a=3))
+    sage: nondegeneracy_condition(S, St(a=3))
     False
 
 Robustness of existence and uniqueness
@@ -265,7 +265,7 @@ Therefore, the exponential map is a diffeomorphism for all ``c > 0``
 and all small perturbations of ``St``.
 The package offers a function that checks this condition directly::
 
-    sage: condition_closure_sign_vectors(S, St)
+    sage: closure_condition_sign_vectors(S, St)
     True
 
 There is an equivalent condition.
@@ -280,7 +280,7 @@ From the output, we see whenever a minor of ``S`` is nonzero,
 the corresponding minor of ``St`` has the opposite sign.
 Hence, this condition is fulfilled::
 
-    sage: condition_closure_minors(S, St)
+    sage: closure_condition(S, St)
     True
 
 Now, we consider matrices with variables::
@@ -297,7 +297,7 @@ Now, we consider matrices with variables::
 The function from the package supports symbolic matrices as input.
 In this case, we obtain the following equations on the variables::
 
-    sage: condition_closure_minors(S, St) # random
+    sage: closure_condition(S, St) # random
     [{-b > 0, c == 0},
      {-b < 0, c == 0},
      {-b > 0, c > 0, -a*c > 0},
@@ -340,7 +340,7 @@ from .utility import (
 )
 
 
-def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
+def uniqueness_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Uniqueness condition for existence of an equilibrium using sign vectors.
 
@@ -350,7 +350,7 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
     .. NOTE::
 
         This implementation is inefficient and should not be used for large examples.
-        Instead, use :func:`~condition_uniqueness_minors`.
+        Instead, use :func:`~uniqueness_condition`.
 
     EXAMPLES::
 
@@ -361,7 +361,7 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
         sage: St = matrix([[1, 0, 1]])
         sage: St
         [1 0 1]
-        sage: condition_uniqueness_sign_vectors(S, St)
+        sage: uniqueness_condition_sign_vectors(S, St)
         True
         sage: S = matrix([[1, 0, -1], [0, 1, -1]])
         sage: S
@@ -371,15 +371,15 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
         sage: St
         [ 1  0 -1]
         [ 0  1  1]
-        sage: condition_uniqueness_sign_vectors(S, St)
+        sage: uniqueness_condition_sign_vectors(S, St)
         False
 
     TESTS::
 
-        sage: from sign_crn.uniqueness import condition_uniqueness_sign_vectors
+        sage: from sign_crn import uniqueness_condition_sign_vectors
         sage: A = identity_matrix(3)
         sage: B = A # kernel of B is empty
-        sage: condition_uniqueness_sign_vectors(A, B)
+        sage: uniqueness_condition_sign_vectors(A, B)
         True
     """
     covectors = OrientedMatroid(stoichiometric_matrix).covectors()
@@ -392,7 +392,7 @@ def condition_uniqueness_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
     return True
 
 
-def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
+def uniqueness_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
     r"""
     Uniqueness condition for existence of an equilibrium using maximal minors.
 
@@ -419,15 +419,15 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
         sage: St
         [1 0 a]
         [0 1 b]
-        sage: condition_uniqueness_minors(S, St) # random order
+        sage: uniqueness_condition(S, St) # random order
         [{-a >= 0, -b >= 0}]
-        sage: conditions = condition_uniqueness_minors(S, St)[0]
+        sage: conditions = uniqueness_condition(S, St)[0]
         sage: conditions # random order
         sage: (-a >= 0) in conditions and (-b >= 0) in conditions #
         True
         sage: S = matrix([[a, 0, 1, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: St = matrix([[1, 0, 0, -1], [0, b, 1, 1], [0, 0, a, 1]])
-        sage: condition_uniqueness_minors(S, St) # random
+        sage: uniqueness_condition(S, St) # random
         [{(a - 1)*a >= 0, a*b >= 0}, {(a - 1)*a <= 0, a*b <= 0}]
         sage: len(_), len(_[0]) # for testing
         (2, 2)
@@ -467,7 +467,7 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
     return False
 
 
-def condition_faces(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
+def face_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Condition on positive sign vectors for existence and uniqueness of equilibria
 
@@ -487,7 +487,7 @@ def condition_faces(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix)
     return True
 
 
-def condition_nondegenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
+def nondegeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is nondegenerate.
 
@@ -496,12 +496,12 @@ def condition_nondegenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix:
 
     .. SEEALSO::
 
-        :func:`~condition_degenerate`
+        :func:`~degeneracy_condition`
     """
-    return not condition_degenerate(stoichiometric_matrix, kinetic_order_matrix)
+    return not degeneracy_condition(stoichiometric_matrix, kinetic_order_matrix)
 
 
-def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix, certify: bool = False) -> bool:
+def degeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix, certify: bool = False) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is degenerate.
 
@@ -516,21 +516,21 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
 
     EXAMPLES::
 
-        sage: from sign_crn.unique_existence import *
+        sage: from sign_crn import *
 
     Next, we certify our results. In the first examples, the subspaces are trivially nondegenerate
     since there are no nonnegative covectors in the kernel of ``S``::
 
         sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
         sage: St = matrix([[1, 0, 0, 1], [0, 1, 0, 1]])
-        sage: condition_degenerate(S, St, certify=True)
+        sage: degeneracy_condition(S, St, certify=True)
         (False, 'no nonnegative covectors')
 
     Here, we have a pair of degenerate subspaces::
 
         sage: S = matrix([[1, 1, 0]])
         sage: St = matrix([[0, 0, 1]])
-        sage: condition_degenerate(S, St, certify=True)
+        sage: degeneracy_condition(S, St, certify=True)
         (True, (1, 1, 0))
 
     The resulting vector lies in the row space of ``St``.
@@ -548,7 +548,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
         [ 1  0  0  1 -1]
         [ 0  1  0  1 -1]
         [ 0  0  1  0 -1]
-        sage: condition_degenerate(S, St, certify=True)
+        sage: degeneracy_condition(S, St, certify=True)
         (False, ([[[1, 2, 3]], [[0, 2, 3]]], [[[2, 4]]], []))
 
     The certificate tells us that there is no vector in the row space of ``St``
@@ -561,7 +561,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
 
         sage: S = matrix([[1, -1, 0, 0], [0, 0, 1, 1]])
         sage: St = matrix([[1, 0, 0, 1], [0, 1, 0, 1]])
-        sage: condition_degenerate(S, St, certify=True)
+        sage: degeneracy_condition(S, St, certify=True)
         (False, ([], [[[2, 3]]], [[[[2, 3]], [(--++)]]]))
 
     In fact, a vector in ``St`` with equal positive components on ``[2, 3]``
@@ -685,7 +685,7 @@ def condition_degenerate(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
     return degenerate
 
 
-def condition_closure_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
+def closure_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
     Closure condition for robustness using sign vectors.
 
@@ -695,7 +695,7 @@ def condition_closure_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_
     .. NOTE::
 
         This implementation is inefficient and should not be used for large examples.
-        Instead, use :func:`~condition_closure_minors`.
+        Instead, use :func:`~closure_condition`.
     """
     topes = OrientedMatroid(kinetic_order_matrix).topes()
     for covector1 in OrientedMatroid(stoichiometric_matrix).topes():
@@ -704,7 +704,7 @@ def condition_closure_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_
     return True
 
 
-def condition_closure_minors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
+def closure_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
     r"""
     Closure condition for robustness using maximal maximal minors.
 

@@ -62,7 +62,7 @@ from sage.misc.misc_c import prod
 from elementary_vectors import circuit_kernel_matrix
 from sign_vectors import sign_vector
 
-from .conditions import condition_uniqueness_minors, condition_faces, condition_nondegenerate, condition_closure_minors
+from .conditions import uniqueness_condition, face_condition, nondegeneracy_condition, closure_condition
 from .utility import non_negative_covectors_from_matrix, non_negative_vectors_from_matrix
 
 
@@ -979,7 +979,7 @@ class ReactionNetwork(SageObject):
         for all rate constants and for all small perturbations of the kinetic orders.
         """
         self._check_network_conditions()
-        return condition_closure_minors(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
+        return closure_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def has_at_most_one_cbe(self) -> bool:
         r"""
@@ -987,17 +987,17 @@ class ReactionNetwork(SageObject):
         and for all rate constants.
         """
         self._update()
-        return condition_uniqueness_minors(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
+        return uniqueness_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
-    def _condition_faces(self) -> bool:
+    def _face_condition(self) -> bool:
         r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_faces(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
+        return face_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def _are_subspaces_nondegenerate(self) -> bool:
         r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return condition_nondegenerate(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
+        return nondegeneracy_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def has_exactly_one_cbe(self) -> bool:
         r"""
@@ -1012,7 +1012,7 @@ class ReactionNetwork(SageObject):
         at_most_one = self.has_at_most_one_cbe()
         if at_most_one not in [True, False]:
             raise ValueError("Method does not support variables.")
-        return at_most_one and self._condition_faces() and self._are_subspaces_nondegenerate()
+        return at_most_one and self._face_condition() and self._are_subspaces_nondegenerate()
 
     def has_exactly_one_equilibrium(self) -> bool:
         r"""
@@ -1060,7 +1060,7 @@ class ReactionNetwork(SageObject):
         A_bar = matrix_with_one_row(A)
         B_bar = matrix_with_one_row(B)
 
-        first_condition = condition_uniqueness_minors(A_bar, B_bar)
+        first_condition = uniqueness_condition(A_bar, B_bar)
         if first_condition not in [True, False]:
             raise ValueError("Method does not support variables.")
         if not first_condition:

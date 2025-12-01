@@ -14,11 +14,11 @@ from __future__ import absolute_import
 
 from .reaction_networks import ReactionNetwork, species
 from .conditions import (
-    condition_uniqueness_sign_vectors,
-    condition_uniqueness_minors,
-    condition_faces,
-    condition_nondegenerate,
-    condition_degenerate,
-    condition_closure_sign_vectors,
-    condition_closure_minors,
+    uniqueness_condition_sign_vectors,
+    uniqueness_condition,
+    face_condition,
+    nondegeneracy_condition,
+    degeneracy_condition,
+    closure_condition_sign_vectors,
+    closure_condition,
 )
