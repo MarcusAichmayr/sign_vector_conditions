@@ -62,9 +62,7 @@ from sage.misc.misc_c import prod
 from elementary_vectors import circuit_kernel_matrix
 from sign_vectors import sign_vector
 
-from .uniqueness import condition_uniqueness_minors
-from .unique_existence import condition_faces, condition_nondegenerate
-from .robustness import condition_closure_minors
+from .conditions import condition_uniqueness_minors, condition_faces, condition_nondegenerate, condition_closure_minors
 from .utility import non_negative_covectors_from_matrix, non_negative_vectors_from_matrix
 
 

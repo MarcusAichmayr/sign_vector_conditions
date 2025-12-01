@@ -20,9 +20,7 @@ To install this package, visit the `repository on GitHub <https://github.com/Mar
 .. autosummary::
     :toctree: generated
 
-    sign_crn.uniqueness
-    sign_crn.unique_existence
-    sign_crn.robustness
+    sign_crn.conditions
     sign_crn.utility
 
 .. rubric:: References

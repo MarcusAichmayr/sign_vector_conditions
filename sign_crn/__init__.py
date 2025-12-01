@@ -13,6 +13,12 @@ r"""Sign vector conditions for (chemical) reaction networks."""
 from __future__ import absolute_import
 
 from .reaction_networks import ReactionNetwork, species
-from .uniqueness import condition_uniqueness_sign_vectors, condition_uniqueness_minors
-from .unique_existence import condition_faces, condition_nondegenerate, condition_degenerate
-from .robustness import condition_closure_sign_vectors, condition_closure_minors
+from .conditions import (
+    condition_uniqueness_sign_vectors,
+    condition_uniqueness_minors,
+    condition_faces,
+    condition_nondegenerate,
+    condition_degenerate,
+    condition_closure_sign_vectors,
+    condition_closure_minors,
+)
