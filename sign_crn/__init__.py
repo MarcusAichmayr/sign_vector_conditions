@@ -13,10 +13,4 @@ r"""Sign vector conditions for (chemical) reaction networks."""
 from __future__ import absolute_import
 
 from .reaction_networks import ReactionNetwork, species
-from .conditions import (
-    uniqueness_condition,
-    face_condition,
-    nondegeneracy_condition,
-    degeneracy_condition,
-    closure_condition,
-)
+from .conditions import uniqueness_condition, face_condition, degeneracy_condition, closure_condition

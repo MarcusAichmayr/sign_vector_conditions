@@ -85,10 +85,10 @@ To examine bijectivity, we first check the face condition::
     sage: face_condition(S, St)
     True
 
-Finally, we apply the nondegeneracy condition::
+Finally, we apply the degeneracy condition::
 
-    sage: nondegeneracy_condition(S, St)
-    True
+    sage: degeneracy_condition(S, St)
+    False
 
 Hence, the exponential map is bijective.
 
@@ -143,16 +143,16 @@ determined by kernels of the matrices is nondegenerate.
 This is exactly the case for :math:`a \in (0, 1) \cup (1, 2)`.
 We demonstrate this for specific values::
 
-    sage: nondegeneracy_condition(S, St(a=1/2))
-    True
-    sage: nondegeneracy_condition(S, St(a=3/2))
-    True
+    sage: degeneracy_condition(S, St(a=1/2))
+    False
+    sage: degeneracy_condition(S, St(a=3/2))
+    False
 
 On the other hand, this condition does not hold if
 :math:`a \in {1} \cup [2, \infty)`::
 
-    sage: nondegeneracy_condition(S, St(a=1))
-    False
+    sage: degeneracy_condition(S, St(a=1))
+    True
 
 To certify the result, we call::
 
@@ -163,10 +163,10 @@ Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``St``
 can be covered by a sign vector ``(++000+)`` corresponding to ``ker(S)``.
 Further, ``v`` does not satisfy the support condition.
 
-    sage: nondegeneracy_condition(S, St(a=2))
-    False
-    sage: nondegeneracy_condition(S, St(a=3))
-    False
+    sage: degeneracy_condition(S, St(a=2))
+    True
+    sage: degeneracy_condition(S, St(a=3))
+    True
 
 Robustness of existence and uniqueness
 --------------------------------------
@@ -398,20 +398,6 @@ def face_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) 
     return True
 
 
-def nondegeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
-    r"""
-    Return whether a pair of subspaces given by matrices is nondegenerate.
-
-    OUTPUT:
-    a boolean
-
-    .. SEEALSO::
-
-        :func:`~degeneracy_condition`
-    """
-    return not degeneracy_condition(stoichiometric_matrix, kinetic_order_matrix)
-
-
 def degeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix, certify: bool = False) -> bool:
     r"""
     Return whether a pair of subspaces given by matrices is degenerate.
@@ -447,7 +433,7 @@ def degeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
     The resulting vector lies in the row space of ``St``.
     The nonnegative covector ``(++0)`` in the kernel of ``S`` covers the first two equal components.
 
-    In the following, we have another example for nondegenerate subspaces::
+    We have another example for nondegenerate subspaces::
 
         sage: S = matrix([[1, 0, 0, 1, -1], [0, 1, 0, 1, -1], [0, 0, 1, 0, 1]])
         sage: S

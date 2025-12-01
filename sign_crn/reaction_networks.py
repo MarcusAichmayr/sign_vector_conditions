@@ -62,7 +62,7 @@ from sage.misc.misc_c import prod
 from elementary_vectors import circuit_kernel_matrix
 from sign_vectors import sign_vector
 
-from .conditions import uniqueness_condition, face_condition, nondegeneracy_condition, closure_condition
+from .conditions import uniqueness_condition, face_condition, degeneracy_condition, closure_condition
 from .utility import non_negative_covectors_from_matrix, non_negative_vectors_from_matrix
 
 
@@ -994,10 +994,10 @@ class ReactionNetwork(SageObject):
         self._check_network_conditions()
         return face_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
-    def _are_subspaces_nondegenerate(self) -> bool:
-        r"""Check whether the system satisfies the nondegenerate condition for existence of a unique positive CBE."""
+    def _are_subspaces_degenerate(self) -> bool:
+        r"""Check whether the system satisfies the degeneracy condition for existence of a unique positive CBE."""
         self._check_network_conditions()
-        return nondegeneracy_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
+        return degeneracy_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def has_exactly_one_cbe(self) -> bool:
         r"""
@@ -1012,7 +1012,7 @@ class ReactionNetwork(SageObject):
         at_most_one = self.has_at_most_one_cbe()
         if at_most_one not in [True, False]:
             raise ValueError("Method does not support variables.")
-        return at_most_one and self._face_condition() and self._are_subspaces_nondegenerate()
+        return at_most_one and self._face_condition() and not self._are_subspaces_degenerate()
 
     def has_exactly_one_equilibrium(self) -> bool:
         r"""
