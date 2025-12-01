@@ -2,25 +2,26 @@ r"""
 Conditions for CBE
 ==================
 
-Uniqueness of CBE
------------------
+We consider polynomial and exponential maps given by two matrices as in [MHR19]_
+and study conditions for injectivity, bijectivity and robustness.
+
+These matrices also describe a chemical reaction network.
+In this context, the conditions are equivalent to conditions for positive complex-balanced equilibria (CBE).
+
+Uniqueness
+----------
 
 We define some matrices::
 
+    sage: from sign_crn import *
     sage: S = matrix([[1, 1, 1]])
-    sage: S
-    [1 1 1]
     sage: St = matrix([[1, 0, 1]])
-    sage: St
-    [1 0 1]
 
-We want to check whether the corresponding chemical reaction network
-has at most one equilibrium for all rate constants.
-For this purpose, we compute the corresponding oriented matroids::
+We want to check whether the corresponding map is injective.
+For this purpose, we consider the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
-    sage: cvS = OrientedMatroid(S).vectors()
-    sage: cvS
+    sage: OrientedMatroid(S).vectors()
     {(000),
      (0+-),
      (+-0),
@@ -34,40 +35,17 @@ For this purpose, we compute the corresponding oriented matroids::
      (+--),
      (-+-),
      (+-+)}
-    sage: cvSt = OrientedMatroid(St).covectors()
-    sage: cvSt
+    sage: OrientedMatroid(St).covectors()
     {(000), (+0+), (-0-)}
 
-The intersection of these oriented matroids consists only of the zero sign vector.
-We can compute the intersection directly by applying the built in method intersection::
+Since the intersection of theses sets of sign vectors contains only the zero sign vector,
+the corresponding map is injective.
+The package offers a function to check this condition directly::
 
-    sage: set(cvS).intersection(cvSt)
-    {(000)}
-
-Therefore, there is at most one equilibrium.
-We can also check this condition in the following way::
-
-    sage: from sign_crn import *
     sage: condition_uniqueness_sign_vectors(S, St)
     True
 
-There is another way to check this condition
-that involves the computation of maximal minors of the corresponding matrices::
-
-    sage: m1 = S.minors(1)
-    sage: m1
-    [1, 1, 1]
-    sage: m2 = St.minors(1)
-    sage: m2
-    [1, 0, 1]
-
-We multiply those minors component-wise::
-
-    sage: [m1[i] * m2[i] for i in range(len(m1))]
-    [1, 0, 1]
-
-Since all arguments are greater or equal zero, there is at most one equilibrium.
-We can also check this condition by applying the following function from this package::
+Instead of computing sign vectors, we can instead use maximal minors to check this condition::
 
     sage: condition_uniqueness_minors(S, St)
     True
@@ -75,14 +53,14 @@ We can also check this condition by applying the following function from this pa
 Now, we consider another example::
 
     sage: S = matrix([[1, 1, 1]])
-    sage: S
-    [1 1 1]
-    sage: St = matrix([[1, 0, -1], [0, 1, 1]])
     sage: St = matrix([[1, -1, 1]])
-    sage: St
-    [ 1 -1  1]
 
-Next, we compute the corresponding oriented matroids::
+The condition is violated::
+
+    sage: condition_uniqueness_sign_vectors(S, St)
+    False
+
+In fact, the intersection of the sets of sign vectors is nontrivial::
 
     sage: OrientedMatroid(S).dual().faces()
     [{(000)},
@@ -91,28 +69,7 @@ Next, we compute the corresponding oriented matroids::
     sage: OrientedMatroid(St).faces()
     [{(000)}, {(-+-), (+-+)}]
 
-Now, we check the condition from before::
-
-    sage: condition_uniqueness_sign_vectors(S, St)
-    False
-
 Therefore, the corresponding exponential map is not injective.
-Furthermore, we obtain the following minors::
-
-    sage: m1 = S.minors(1)
-    sage: m1
-    [1, 1, 1]
-    sage: m2 = St.minors(1)
-    sage: m2
-    [1, -1, 1]
-    sage: [m1[i] * m2[i] for i in range(len(m1))]
-    [1, -1, 1]
-
-There are positive and negative elements in the resulting list.
-Hence, this condition also states that there is no unique equilibrium::
-
-    sage: condition_uniqueness_minors(S, St)
-    False
 
 Finally, we consider an example with variables::
 
@@ -127,7 +84,7 @@ Finally, we consider an example with variables::
 
 The matrix ``St`` contains variables :math:`a, b \in \mathbb{R}`.
 Consequently, we cannot compute the corresponding oriented matroids.
-On the other hand, we can still compute the minors of ``S`` and ``St``, that is::
+However, we can still compare the products of the maximal minors of ``S`` and ``St``, that is::
 
     sage: m1 = S.minors(1)
     sage: m1
@@ -138,17 +95,18 @@ On the other hand, we can still compute the minors of ``S`` and ``St``, that is:
     sage: [m1[i] * m2[i] for i in range(len(m1))]
     [a, b, -1]
 
-Therefore, there is at most one equilibrium if and only if :math:`a, b \leq 0`.
+The corresponding map is injective, 
+if all these products are smaller than or equal to zero if :math:`a, b \leq 0`.
 The function :func:`~condition_uniqueness_minors` also works for matrices with symbolic entries.
 In this case, it returns a system of inequalities::
 
     sage: condition_uniqueness_minors(S, St) # random order
     [{-a >= 0, -b >= 0}]
 
-Existence and uniqueness of CBE
--------------------------------
+Existence and uniqueness
+------------------------
 
-Let us consider the following matrices to describe a chemical reaction network::
+We consider the following matrices to describe an exponential map::
 
     sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
     sage: S
@@ -159,45 +117,35 @@ Let us consider the following matrices to describe a chemical reaction network::
     [ 1  0 -1  1]
     [ 0  1 -1  0]
 
+The corresponding map is injective::
 
-To check whether a unique equilibrium exists, we apply :func:`~condition_uniqueness_minors`::
-
-    sage: from sign_crn import *
     sage: condition_uniqueness_minors(S, St)
     True
 
-This means that the chemical reaction network has at most one equilibrium.
-Next, we verify whether an equilibrium exists.
-First, we check the face condition.
-For this purpose, we compute the cocircuits of the oriented matroids
-corresponding to the matrices::
+To examine bijectivity, we first check the face condition.
+For this purpose, we compute the circuits of the corresponding oriented matroids::
 
-    sage: from sign_vectors.oriented_matroids import *
-    sage: cc1 = OrientedMatroid(S).circuits()
-    sage: cc1
+    sage: circuits = OrientedMatroid(S).circuits()
+    sage: circuits
     {(0+0+), (+0+0), (0-0-), (-0-0)}
-    sage: cc2 = OrientedMatroid(St).circuits()
-    sage: cc2
+    sage: circuits_t = OrientedMatroid(St).circuits()
+    sage: circuits_t
     {(---0), (-00+), (+00-), (+++0), (0+++), (0---)}
 
-Here, we are only interested in the positive cocircuits::
+Here, we are only interested in the positive elements::
 
-    sage: cc1p = [X for X in cc1 if X > 0]
-    sage: cc1p
+    sage: [X for X in circuits if X > 0]
     [(0+0+), (+0+0)]
-    sage: cc2p = [X for X in cc2 if X > 0]
-    sage: cc2p
+    sage: [X for X in circuits_t if X > 0]
     [(+++0), (0+++)]
 
-Since every sign vector in ``cc2p`` has a smaller element in ``cc1p``,
-the face condition is satisfied.
-There is also a function in the package that can be used directly
-to check whether this condition is fulfilled::
+The fact condition is satisfied since every positive circuit of ``St`` has a smaller element in ``S``.
+The package also offers a function to check this condition directly::
 
     sage: condition_faces(S, St)
     True
 
-We need to check a third condition to verify surjectivity.
+We need to check a third condition to verify bijectivity.
 For this purpose, we consider again the oriented matroid determined by ``S``::
 
     sage: OrientedMatroid(S).covectors()
@@ -209,47 +157,28 @@ The package offers a function to check this condition condition::
     sage: condition_nondegenerate(S, St)
     True
 
-Hence, the chemical reaction network has a unique equilibrium.
+Hence, the exponential map is bijective.
 
 Let us consider another example.
 We swap the two matrices from before::
 
     sage: S, St = St, S
 
-Because of symmetry, there is at most one equilibrium::
+Because of symmetry, the map is injective::
 
     sage: condition_uniqueness_sign_vectors(S, St)
     True
 
-Now, we check the face condition::
-
-    sage: cc1 = OrientedMatroid(S).circuits()
-    sage: cc1
-    {(---0), (-00+), (+00-), (+++0), (0+++), (0---)}
-    sage: cc2 = OrientedMatroid(St).circuits()
-    sage: cc2
-    {(0+0+), (+0+0), (0-0-), (-0-0)}
-
-Again, we are only interested in the positive cocircuits::
-
-    sage: cc1p = [X for X in cc1 if X > 0]
-    sage: cc1p
-    [(+++0), (0+++)]
-    sage: cc2p = [X for X in cc2 if X > 0]
-    sage: cc2p
-    [(0+0+), (+0+0)]
-
-Therefore, the condition does not hold.
-We also apply the corresponding function from the package::
+The face condition is violated::
 
     sage: condition_faces(S, St)
     False
 
-Consequently, there exists no unique equilibrium.
+Consequently, the map is not bijective.
 
-Now, we consider a network given by two matrices involving a parameter.
+Now, we consider a map given by two matrices involving a parameter.
 (see Example 20 of [MHR19]_)
-Depending on this parameter, the network has a unique positive CBE::
+Depending on this parameter, the map is bijective::
 
     sage: var("a")
     a
@@ -271,7 +200,7 @@ to the rows of these matrices which are independent of the specific value for :m
     sage: condition_uniqueness_sign_vectors(S, St)
     True
 
-Hence, there exists at most one equilibrium.
+Hence, the map is injective.
 Also the face condition is satisfied::
 
     sage: condition_faces(S, St)
@@ -307,10 +236,10 @@ Further, ``v`` does not satisfy the support condition.
     sage: condition_nondegenerate(S, St(a=3))
     False
 
-Robustness of existence and uniqueness of CBE
----------------------------------------------
+Robustness of existence and uniqueness
+--------------------------------------
 
-Let us consider the following matrices::
+We consider the following matrices::
 
     sage: S = matrix([[1, 0, 1, 0], [0, 0, 0, 1]])
     sage: S
@@ -321,8 +250,7 @@ Let us consider the following matrices::
     [ 1  0  1  1]
     [ 0  1  0 -1]
 
-To check, whether the corresponding chemical reaction network
-has a unique equilibrium for all rate constants and all small perturbations of ``St``,
+To check, whether the corresponding map is bijective for small perturbations of ``St``,
 we consider the topes of the corresponding oriented matroids::
 
     sage: from sign_vectors.oriented_matroids import *
@@ -337,7 +265,6 @@ Therefore, the exponential map is a diffeomorphism for all ``c > 0``
 and all small perturbations of ``St``.
 The package offers a function that checks this condition directly::
 
-    sage: from sign_crn import *
     sage: condition_closure_sign_vectors(S, St)
     True
 
@@ -350,9 +277,8 @@ To verify it, we compute the maximal minors of the two matrices::
     [1, 0, -1, -1, -1, -1]
 
 From the output, we see whenever a minor of ``S`` is nonzero,
-the corresponding minor of ``St`` has the same sign.
-Hence, this condition is fulfilled.
-This condition can also be checked directly with the package::
+the corresponding minor of ``St`` has the opposite sign.
+Hence, this condition is fulfilled::
 
     sage: condition_closure_minors(S, St)
     True
@@ -368,16 +294,6 @@ Now, we consider matrices with variables::
     sage: St
     [ a  b -1]
 
-We cannot check the first condition since there are variables in ``S`` and ``St``.
-Therefore, we want to obtain equations on the variables ``a``, ``b``, ``c``
-such that this condition is satisfied.
-First, we compute the minors of the matrices::
-
-    sage: S.minors(1)
-    [c, 1, c]
-    sage: St.minors(1)
-    [a, b, -1]
-
 The function from the package supports symbolic matrices as input.
 In this case, we obtain the following equations on the variables::
 
@@ -392,12 +308,6 @@ From the first two sets of conditions, we see that the closure condition is sati
 if ``c`` is zero and ``b`` is nonzero.
 The closure condition is also satisfied if ``a`` and ``b`` are negative and ``c`` is positive
 or if ``a`` and ``b`` are positive and ``c`` is negative.
-
-We can also apply the built-in function ``solve_ineq`` to the resulting sets of inequalities.
-For instance, the last set can be equivalently written as::
-
-    sage: solve_ineq(list(condition_closure_minors(S, St)[3])) # random
-    [[c < 0, 0 < b, a < 0]]
 """
 
 #############################################################################
@@ -496,29 +406,9 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
         The matrices need to have maximal rank and the same dimensions.
         Otherwise, a ``ValueError`` is raised.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sign_crn import *
-        sage: S = matrix([[1, 0, -1], [0, 1, -1]])
-        sage: S
-        [ 1  0 -1]
-        [ 0  1 -1]
-        sage: St = matrix([[1, 0, -1], [0, 1, 0]])
-        sage: St
-        [ 1  0 -1]
-        [ 0  1  0]
-        sage: condition_uniqueness_minors(S, St)
-        True
-        sage: S = matrix([[1, 0, -1], [0, 1, -1]])
-        sage: S
-        [ 1  0 -1]
-        [ 0  1 -1]
-        sage: St = matrix([[1, 0, -1], [0, 1, 1]])
-        sage: St
-        [ 1  0 -1]
-        [ 0  1  1]
-        sage: condition_uniqueness_minors(S, St)
-        False
         sage: var('a, b')
         (a, b)
         sage: S = matrix([[1, 0, -1], [0, 1, -1]])
@@ -541,19 +431,6 @@ def condition_uniqueness_minors(stoichiometric_matrix: Matrix, kinetic_order_mat
         [{(a - 1)*a >= 0, a*b >= 0}, {(a - 1)*a <= 0, a*b <= 0}]
         sage: len(_), len(_[0]) # for testing
         (2, 2)
-
-    We can also apply the built-in function ``solve_ineq`` to the resulting sets of inequalities.
-    For instance, the first set can be equivalently written as::
-
-        sage: solve_ineq(list(condition_uniqueness_minors(S, St)[0])) # random
-        [[b == 0, a == 0],
-        [a == 0],
-        [b == 0, a == 1],
-        [a == 1, 0 < b],
-        [b == 0, 1 < a],
-        [0 < b, 1 < a],
-        [b == 0, a < 0],
-        [b < 0, a < 0]]
     """
     positive_product_found = False
     negative_product_found = False
@@ -601,20 +478,6 @@ def condition_faces(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix)
     such that ``Y <= X``.
 
     Return a boolean.
-
-    EXAMPLES::
-
-        sage: from sign_crn.unique_existence import condition_faces
-        sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
-        sage: S
-        [ 1  0 -1  0]
-        [ 0  1  0 -1]
-        sage: St = matrix([[1, 0, -1, 1], [0, 1, -1, 0]])
-        sage: St
-        [ 1  0 -1  1]
-        [ 0  1 -1  0]
-        sage: condition_faces(S, St)
-        True
     """
     non_negative_cocircuits = non_negative_circuits_from_matrix(stoichiometric_matrix)
 
