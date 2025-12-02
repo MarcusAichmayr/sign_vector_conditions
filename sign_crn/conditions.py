@@ -43,7 +43,7 @@ Therefore, the corresponding exponential map is not injective.
 
 Finally, we consider an example with parameters :math:`a, b \in \mathbb{R}`::
 
-    sage: var('a, b')
+    sage: var("a, b")
     (a, b)
     sage: S = matrix([[1, 1, 1]])
     sage: S
@@ -161,7 +161,7 @@ To certify the result, we call::
 
 Hence, the positive support of the vector ``v = (1, 1, 0, 0, -1, 1)`` of ``St``
 can be covered by a sign vector ``(++000+)`` corresponding to ``ker(S)``.
-Further, ``v`` does not satisfy the support condition.
+Further, ``v`` does not satisfy the support condition::
 
     sage: degeneracy_condition(S, St(a=2))
     True
@@ -183,7 +183,7 @@ We consider the following matrices::
     [ 0  1  0 -1]
 
 To study robustness of the corresponding map,
-we consider again a condition involving maximal minors.
+we consider again a condition involving maximal minors::
 
     sage: closure_condition(S, St)
     True
@@ -197,7 +197,7 @@ There is also an equivalent condition using sign vectors::
 
 Now, we consider an example involving parameters::
 
-    sage: var('a, b, c')
+    sage: var("a, b, c")
     (a, b, c)
     sage: S = matrix([[c, 1, c]])
     sage: S
@@ -216,9 +216,9 @@ We obtain the following condition on the variables::
 
 Thus, there are four possibilities to set the variables:
 From the first two sets of conditions, we see that the closure condition is satisfied
-if ``c`` is zero and ``b`` is nonzero.
-The closure condition is also satisfied if ``a`` and ``b`` are negative and ``c`` is positive
-or if ``a`` and ``b`` are positive and ``c`` is negative.
+if :math:`c` is zero and :math:`b` is nonzero.
+The closure condition is also satisfied if :math:`a` and :math:`b` are negative and :math:`c` is positive
+or if :math:`a` and :math:`b` are positive and :math:`c` is negative.
 """
 
 #############################################################################
@@ -257,6 +257,10 @@ def uniqueness_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
 
     OUTPUT:
     Return whether there exists at most one equilibrium.
+
+    .. SEEALSO::
+
+        :func:`uniqueness_condition`
 
     .. NOTE::
 
@@ -312,6 +316,10 @@ def uniqueness_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
     If the result depends on variables, a list of sets is returned.
     The condition holds if the inequalities in exactly one of these sets are satisfied.
 
+    .. SEEALSO::
+
+        :func:`uniqueness_condition_sign_vectors`
+
     .. NOTE::
 
         The matrices need to have maximal rank and the same dimensions.
@@ -320,7 +328,7 @@ def uniqueness_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
     TESTS::
 
         sage: from sign_crn import *
-        sage: var('a, b')
+        sage: var("a, b")
         (a, b)
         sage: S = matrix([[1, 0, -1], [0, 1, -1]])
         sage: S
@@ -334,13 +342,13 @@ def uniqueness_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
         [{-a >= 0, -b >= 0}]
         sage: conditions = uniqueness_condition(S, St)[0]
         sage: conditions # random order
-        sage: (-a >= 0) in conditions and (-b >= 0) in conditions #
+        sage: (-a >= 0) in conditions and (-b >= 0) in conditions
         True
         sage: S = matrix([[a, 0, 1, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: St = matrix([[1, 0, 0, -1], [0, b, 1, 1], [0, 0, a, 1]])
-        sage: uniqueness_condition(S, St) # random
+        sage: uniqueness_condition(S, St) # random order
         [{(a - 1)*a >= 0, a*b >= 0}, {(a - 1)*a <= 0, a*b <= 0}]
-        sage: len(_), len(_[0]) # for testing
+        sage: len(_), len(_[0])
         (2, 2)
     """
     positive_product_found = False
@@ -411,19 +419,24 @@ def degeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
     If ``certify`` is true, a list is returned to certify the result.
     (see the examples)
 
-    EXAMPLES::
+    EXAMPLES:
+
+    We consider the following matrices::
 
         sage: from sign_crn import *
-
-    Next, we certify our results. In the first examples, the subspaces are trivially nondegenerate
-    since there are no nonnegative covectors in the kernel of ``S``::
-
         sage: S = matrix([[1, 0, -1, 0], [0, 1, 0, -1]])
         sage: St = matrix([[1, 0, 0, 1], [0, 1, 0, 1]])
+        sage: degeneracy_condition(S, St)
+        False
+
+    Next, we certify the result.
+    The corresponding subspaces are trivially nondegenerate
+    since there are no nonnegative covectors in the kernel of ``S``::
+
         sage: degeneracy_condition(S, St, certify=True)
         (False, 'no nonnegative covectors')
 
-    Here, we have a pair of degenerate subspaces::
+    Now, we consider an example of degenerate subspaces::
 
         sage: S = matrix([[1, 1, 0]])
         sage: St = matrix([[0, 0, 1]])
@@ -589,6 +602,10 @@ def closure_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
 
+    .. SEEALSO::
+
+        :func:`closure_condition`
+
     .. NOTE::
 
         This implementation is inefficient and should not be used for large examples.
@@ -603,12 +620,16 @@ def closure_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_
 
 def closure_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
     r"""
-    Closure condition for robustness using maximal maximal minors.
+    Closure condition for robustness of bijectivity using maximal minors.
 
     OUTPUT:
     Return whether the closure condition for robustness regarding small perturbations is satisfied.
     If the result depends on variables, a list of sets is returned.
     The condition holds if the inequalities in (at least) one of these sets are satisfied.
+
+    .. SEEALSO::
+
+        :func:`closure_condition_sign_vectors`
 
     .. NOTE::
 
