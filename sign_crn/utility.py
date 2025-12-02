@@ -226,7 +226,7 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
     TESTS::
 
         sage: from sign_crn.utility import closure_minors_utility
-        sage: var('a, b, c')
+        sage: var("a, b, c")
         (a, b, c)
         sage: closure_minors_utility(zip([0, a], [0, a]), positive_only=True)
         [{a == 0}, {a > 0}]
@@ -378,7 +378,7 @@ def non_negative_vectors(vectors) -> list:
         [(1, 1, 0, -1), (0, 0, 0, 0), (1, 0, 0, 1)]
         sage: non_negative_vectors(l)
         [(0, 0, 0, 0), (1, 0, 0, 1)]
-        sage: var('a')
+        sage: var("a")
         a
         sage: evs = [vector([0, 0, 1, 0, 0]), vector([0, 0, 0, 1, 0]), vector([-1, -a, 0, 0, a])]
         sage: evs
