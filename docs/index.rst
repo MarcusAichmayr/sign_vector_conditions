@@ -1,25 +1,19 @@
-Sign vector conditions for (chemical) reaction networks
-=======================================================
+Sign vector conditions for chemical reaction networks
+=====================================================
+
+To install this package, visit the `repository on GitHub <https://github.com/MarcusAichmayr/sign_crn>`_.
 
 This package provides functionality for analyzing reaction networks,
 such as checking weak reversibility, computing deficiencies, and verifying conditions
 for unique positive complex-balanced equilibria (CBE) based on [MHR19]_.
 See [AMR24]_ for more details.
 
-To install this package, visit the `repository on GitHub <https://github.com/MarcusAichmayr/sign_crn>`_.
-
-.. rubric:: Reaction networks
+.. rubric:: Reaction networks and conditions
 
 .. autosummary::
     :toctree: generated
 
     sign_crn.reaction_networks
-
-.. rubric:: Sign vector conditions
-
-.. autosummary::
-    :toctree: generated
-
     sign_crn.conditions
     sign_crn.utility
 
