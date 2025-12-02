@@ -355,57 +355,6 @@ def equal_entries_lists(length: int, indices: list[int]) -> list[list[int]]:
     ] for minus_one_position in indices[1:]]
 
 
-def non_negative_vectors(vectors) -> list:
-    r"""
-    Return nonnegative vectors.
-
-    INPUT:
-
-    - ``vectors`` -- an iterable of vectors
-
-    OUTPUT:
-
-    Return all vectors of ``vectors`` that are
-    - non_negative in each component; or
-    - negative in each component. Those will be multiplied by ``-1``; or
-    - containing variables such that no opposing signs occur.
-
-    EXAMPLES::
-
-        sage: from sign_crn.utility import non_negative_vectors
-        sage: l = [vector([1, 1, 0, -1]), vector([0, 0, 0, 0]), vector([1, 0, 0, 1])]
-        sage: l
-        [(1, 1, 0, -1), (0, 0, 0, 0), (1, 0, 0, 1)]
-        sage: non_negative_vectors(l)
-        [(0, 0, 0, 0), (1, 0, 0, 1)]
-        sage: var("a")
-        a
-        sage: evs = [vector([0, 0, 1, 0, 0]), vector([0, 0, 0, 1, 0]), vector([-1, -a, 0, 0, a])]
-        sage: evs
-        [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0), (-1, -a, 0, 0, a)]
-        sage: non_negative_vectors(evs)
-        ...
-        UserWarning: Cannot determine sign of symbolic expression, using 0 instead.
-        [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0), (1, a, 0, 0, -a)]
-        sage: assume(a > 0)
-        sage: non_negative_vectors(evs)
-        [(0, 0, 1, 0, 0), (0, 0, 0, 1, 0)]
-
-    TESTS::
-
-        sage: l = [vector([x, 0, 0])]
-        sage: non_negative_vectors(l)
-        [(x, 0, 0)]
-    """
-    result = []
-    for element in vectors:
-        if sign_vector(element) >= 0:
-            result.append(element)
-        elif sign_vector(element) < 0:
-            result.append(-element)
-    return result
-
-
 def vector_from_sign_vector(data, sv: SignVector) -> vector:
     r"""
     Find a vector in the row space of a matrix that has given signs.
