@@ -1,6 +1,6 @@
 r"""
-Conditions for CBE
-==================
+Conditions for polynomial and exponential maps
+==============================================
 
 We consider polynomial and exponential maps given by two matrices as in [MHR19]_
 and study conditions for injectivity, bijectivity and robustness.
