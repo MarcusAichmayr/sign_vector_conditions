@@ -253,10 +253,7 @@ from .utility import (
 
 def uniqueness_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
-    Uniqueness condition for existence of an equilibrium using sign vectors.
-
-    OUTPUT:
-    Return whether there exists at most one equilibrium.
+    Uniqueness condition for existence using sign vectors.
 
     .. SEEALSO::
 
@@ -307,9 +304,9 @@ def uniqueness_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_ord
     return True
 
 
-def uniqueness_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
+def uniqueness_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool | list[set]:
     r"""
-    Uniqueness condition for existence of an equilibrium using maximal minors.
+    Uniqueness condition for existence using maximal minors.
 
     OUTPUT:
     Return whether there exists at most one equilibrium.
@@ -388,15 +385,9 @@ def uniqueness_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
 
 def face_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
-    Condition on positive sign vectors for existence and uniqueness of equilibria
+    Face condition for unique existence using nonnegative sign vectors.
 
-    OUTPUT:
-    TODO
-    Return whether every positive sign vector ``X`` corresponding to the rows of
-    ``St`` has a positive sign vector ``Y`` corresponding to the rows of ``S``
-    such that ``Y <= X``.
-
-    Return a boolean.
+    This condition is about nonnegative circuits covering other nonnegative circuits.
     """
     non_negative_cocircuits = non_negative_circuits_from_matrix(stoichiometric_matrix)
 
@@ -408,13 +399,10 @@ def face_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) 
 
 def degeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix, certify: bool = False) -> bool:
     r"""
-    Return whether a pair of subspaces given by matrices is degenerate.
+    Degeneracy condition for unique existence.
 
-    This condition is about whether all positive equal components of a vector in ``St``
-    can be covered by covectors corresponding to the kernel of ``S``.
-
-    OUTPUT:
-    a boolean
+    This condition is about whether all positive equal components of a vector
+    can be covered by nonnegative cocircuits.
 
     If ``certify`` is true, a list is returned to certify the result.
     (see the examples)
@@ -516,7 +504,7 @@ def degeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
 
         INPUT:
 
-        - ``non_negative_cocircuits`` -- a list of positive sign vectors
+        - ``non_negative_cocircuits`` -- a list of nonnegative sign vectors
         - ``lower_bounds`` -- a list of values ``-Infinity`` and ``1``
         - ``upper_bounds`` -- a list of values ``0`` and ``Infinity``
         """
@@ -597,10 +585,11 @@ def degeneracy_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Ma
 
 def closure_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool:
     r"""
-    Closure condition for robustness using sign vectors.
+    Closure condition for robustness of unique existence using sign vectors.
 
-    OUTPUT:
-    Return whether the closure condition for robustness regarding small perturbations is satisfied.
+    This condition is about
+    whether a set of sign vectors is contained in the closure of another set of sign vectors,
+    or equivalently, whether covectors are covered by topes.
 
     .. SEEALSO::
 
@@ -612,18 +601,17 @@ def closure_condition_sign_vectors(stoichiometric_matrix: Matrix, kinetic_order_
         Instead, use :func:`~closure_condition`.
     """
     topes = OrientedMatroid(kinetic_order_matrix).topes()
-    for covector1 in OrientedMatroid(stoichiometric_matrix).topes():
-        if not any(covector1 <= covector2 for covector2 in topes):
+    for covector in OrientedMatroid(stoichiometric_matrix).topes():
+        if not any(covector <= tope for tope in topes):
             return False
     return True
 
 
-def closure_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix):
+def closure_condition(stoichiometric_matrix: Matrix, kinetic_order_matrix: Matrix) -> bool | list[set]:
     r"""
-    Closure condition for robustness of bijectivity using maximal minors.
+    Closure condition for robustness of unique existence using maximal minors.
 
     OUTPUT:
-    Return whether the closure condition for robustness regarding small perturbations is satisfied.
     If the result depends on variables, a list of sets is returned.
     The condition holds if the inequalities in (at least) one of these sets are satisfied.
 
