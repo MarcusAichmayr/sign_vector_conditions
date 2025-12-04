@@ -1,21 +1,21 @@
 r"""
 Define species, complexes, and reaction networks.
 
-Reaction networks
-=================
+(Chemical) reaction networks
+============================
 
-This module provides tools for defining species, complexes, and reaction networks
+This module provides tools for defining species, complexes, and (chemical) reaction networks
 with (generalized) mass-action kinetics.
 It includes functionality for analyzing reaction networks, such as checking weak reversibility,
-computing deficiencies, and verifying conditions for positive complex-balanced equilibria (CBE)
-based on [MHR19]_ and [AMR24]_.
+computing deficiencies, and verifying conditions for existence and uniqueness
+of positive complex-balanced equilibria (CBE) based on [MHR19]_ and [AMR24]_.
 
 We define species for a reaction network::
 
     sage: from sign_crn import *
     sage: A, B, C = species("A, B, C")
 
-Now, we create a reaction network and add complexes and reactions::
+Next, we create a reaction network and add complexes and reactions::
 
     sage: rn = ReactionNetwork()
     sage: rn.add_complex(0, A + B)
@@ -32,6 +32,8 @@ We analyze the reaction network::
     0
     sage: rn.has_exactly_one_cbe()
     True
+
+For further examples, see the class :class:`ReactionNetwork`.
 """
 
 #############################################################################
@@ -71,7 +73,7 @@ def species(names: str) -> Union[Complex, Tuple[Complex, ...]]:
     Define species from a string of names.
 
     The string can contain species names separated by commas or spaces.
-    The function defines each species globally similar as :func:`var`.
+    The function defines each species globally, similar to :func:`var`.
 
     See :class:`Complex` for operations and more details.
 
@@ -138,7 +140,7 @@ class Complex(SageObject):
     r"""
     A complex involving species.
 
-    This class represents a linear combination of species with coefficients,
+    This class represents a linear combination of species,
     supporting various operations such as addition, subtraction, and scalar multiplication.
     It also supports symbolic expressions and substitution of values for variables.
 
@@ -157,7 +159,7 @@ class Complex(SageObject):
         sage: 2 * A + 3 * B
         2*A + 3*B
 
-    Symbolic expressions are also supported::
+    Symbolic expressions work as well::
 
         sage: var("a")
         a
@@ -376,16 +378,15 @@ class ReactionNetwork(SageObject):
     r"""
     A reaction network with (generalized) mass-action kinetics.
 
-    This class represents a reaction network, where complexes are connected
-    by directed reactions. It supports generalized mass-action kinetics, allowing
-    for symbolic rate constants and kinetic orders.
+    This class represents a reaction network, where complexes are connected by directed reactions.
+    It supports generalized mass-action kinetics and symbolic rate constants.
 
-    The ``ReactionNetwork`` class provides tools for:
+    This class provides tools for:
 
     - Adding and removing complexes and reactions.
     - Computing stoichiometric and kinetic-order matrices.
     - Analyzing network properties, such as weak reversibility and deficiencies.
-    - Checking conditions for unique positive complex-balanced equilibria (CBE).
+    - Checking conditions for uniqueness and existence of positive complex-balanced equilibria (CBE).
     - Visualizing the reaction network as a directed graph.
 
     EXAMPLES:
@@ -435,14 +436,8 @@ class ReactionNetwork(SageObject):
         [-a  a]
         [-b  b]
         [ 1 -1]
-        sage: rn.stoichiometric_matrix_as_kernel
-        [1 0 1]
-        [0 1 1]
-        sage: rn.kinetic_order_matrix_as_kernel
-        [1 0 a]
-        [0 1 b]
 
-    We check some conditions for our system::
+    We check some conditions for our reaction network::
 
         sage: rn.are_both_deficiencies_zero()
         True
@@ -455,7 +450,7 @@ class ReactionNetwork(SageObject):
         sage: rn.has_at_most_one_cbe()
         [{a >= 0, b >= 0}]
 
-    We extend our network by adding further complexes and reactions::
+    To extend our network, we add further complexes and reactions::
 
         sage: var("c")
         c
@@ -468,7 +463,7 @@ class ReactionNetwork(SageObject):
         sage: rn.plot()
         Graphics object consisting of 15 graphics primitives
 
-    To make this system weakly reversible, we add another reaction::
+    To make this network weakly reversible, we add another reaction::
 
         sage: rn.is_weakly_reversible()
         False
@@ -486,7 +481,7 @@ class ReactionNetwork(SageObject):
         sage: rn.rate_constants()
         (k_0_1, k_1_0, k_1_2, k_2_0, k_3_4, k_4_3)
 
-    We compute the incidence and source matrices of the directed graph::
+    We compute the incidence and source matrices of the corresponding directed graph::
 
         sage: rn.incidence_matrix()
         [-1  1  0  1  0  0]
@@ -549,7 +544,7 @@ class ReactionNetwork(SageObject):
         [    1     0     a a - c     1]
         [    0     1     b     b     0]
 
-    We check some conditions for our system::
+    We check some conditions for our network::
 
         sage: rn.deficiency_stoichiometric
         0
@@ -568,11 +563,11 @@ class ReactionNetwork(SageObject):
         sage: rn.has_exactly_one_cbe()
         Traceback (most recent call last):
         ...
-        ValueError: Method does not support variables.
+        ValueError: Method does not support parameters in the complexes.
         sage: rn(a=2, b=1, c=1).has_exactly_one_cbe()
         True
 
-    We remove one component and a reaction of our system::
+    Next, we remove one component and a reaction of our network::
 
         sage: rn.remove_complex(3)
         sage: rn.remove_complex(4)
@@ -580,7 +575,7 @@ class ReactionNetwork(SageObject):
         sage: rn
         Reaction network with 3 complexes, 3 reactions and 4 species.
 
-    Here is an example involving molecules::
+    We define a reaction network involving molecules::
 
         sage: A, B, C = species("H_2, O_2, H_2O")
         sage: var("a")
@@ -648,31 +643,31 @@ class ReactionNetwork(SageObject):
         return new
 
     def add_complexes(self, complexes: List[Tuple[int, Complex, Union[Complex, None]]]) -> None:
-        r"""Add complexes to system."""
+        r"""Add complexes to reaction network."""
         for element in complexes:
             self.add_complex(*element)
 
     def add_complex(self, i: int, complex_stoichiometric: Complex, complex_kinetic_order: Union[Complex, None] = None) -> None:
-        r"""Add complex to system."""
+        r"""Add complex to reaction network."""
         self.complexes_stoichiometric[i] = complex_stoichiometric
         self.complexes_kinetic_order[i] = complex_stoichiometric if complex_kinetic_order is None else complex_kinetic_order
         self.graph.add_vertex(i)
         self._update_needed = True
 
     def remove_complex(self, i: int) -> None:
-        r"""Remove complex from system."""
+        r"""Remove complex from reaction network."""
         self.complexes_stoichiometric.pop(i)
         self.complexes_kinetic_order.pop(i)
         self.graph.delete_vertex(i)
         self._update_needed = True
 
     def add_reactions(self, reactions: List[Tuple[int, int]]) -> None:
-        r"""Add reactions to system."""
+        r"""Add reactions to reaction network."""
         for reaction in reactions:
             self.add_reaction(*reaction)
 
     def add_reaction(self, start: int, end: int) -> None:
-        r"""Add reaction to system."""
+        r"""Add reaction to reaction network."""
         for vertex in (start, end):
             if vertex not in self.complexes_stoichiometric:
                 self.add_complex(vertex, 0)
@@ -680,7 +675,7 @@ class ReactionNetwork(SageObject):
         self._update_needed = True
 
     def remove_reaction(self, start: int, end: int) -> None:
-        r"""Remove reaction from system."""
+        r"""Remove reaction from reaction network."""
         self.graph.delete_edge(start, end)
         self._update_needed = True
 
@@ -766,7 +761,7 @@ class ReactionNetwork(SageObject):
         return self.incidence_matrix() * diagonal_matrix(self.rate_constants()) * self.source_matrix().T
 
     def ode_rhs(self) -> vector:
-        r"""Return the right hand side of the ordinary differential equation of this system."""
+        r"""Return the right hand side of the ordinary differential equation of this reaction network."""
         self._update()
         x = vector(var(f"x_{s}", latex_name=f"x_{{{s}}}") for s in self.species)
         return (
@@ -955,7 +950,7 @@ class ReactionNetwork(SageObject):
         return self._deficiency_stoichiometric == self._deficiency_kinetic_order == 0
 
     def is_weakly_reversible(self) -> bool:
-        r"""Return whether each component of the system is strongly connected."""
+        r"""Return whether each component of the reaction network is strongly connected."""
         return all(g.is_strongly_connected() for g in self.graph.connected_components_subgraphs())
 
     def _check_network_conditions(self) -> None:
@@ -990,12 +985,12 @@ class ReactionNetwork(SageObject):
         return uniqueness_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def _face_condition(self) -> bool:
-        r"""Check whether the system satisfies the face condition for existence of a unique positive CBE."""
+        r"""Check whether the reaction network satisfies the face condition for existence of a unique positive CBE."""
         self._check_network_conditions()
         return face_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
     def _are_subspaces_degenerate(self) -> bool:
-        r"""Check whether the system satisfies the degeneracy condition for existence of a unique positive CBE."""
+        r"""Check whether the reaction network satisfies the degeneracy condition for existence of a unique positive CBE."""
         self._check_network_conditions()
         return degeneracy_condition(self._stoichiometric_matrix_reduced, self._kinetic_order_matrix_reduced)
 
@@ -1011,7 +1006,7 @@ class ReactionNetwork(SageObject):
         self._check_network_conditions()
         at_most_one = self.has_at_most_one_cbe()
         if at_most_one not in [True, False]:
-            raise ValueError("Method does not support variables.")
+            raise ValueError("Method does not support parameters in the complexes.")
         return at_most_one and self._face_condition() and not self._are_subspaces_degenerate()
 
     def has_exactly_one_equilibrium(self) -> bool:
@@ -1062,7 +1057,7 @@ class ReactionNetwork(SageObject):
 
         first_condition = uniqueness_condition(A_bar, B_bar)
         if first_condition not in [True, False]:
-            raise ValueError("Method does not support variables.")
+            raise ValueError("Method does not support parameters in the complexes.")
         if not first_condition:
             return False
 
