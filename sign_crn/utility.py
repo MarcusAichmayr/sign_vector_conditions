@@ -36,9 +36,9 @@ def non_negative_cocircuits_from_matrix(matrix: Matrix) -> set[SignVector]:
 
     EXAMPLES::
 
-        sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: from sign_vectors import *
         sage: from sign_crn.utility import non_negative_cocircuits_from_matrix
+        sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: OrientedMatroid(M).cocircuits()
         {(0+-0), (--00), (0-+0), (000+), (++00), (+0+0), (-0-0), (000-)}
         sage: non_negative_cocircuits_from_matrix(M)
@@ -57,9 +57,9 @@ def non_negative_circuits_from_matrix(matrix: Matrix) -> set[SignVector]:
 
     EXAMPLES::
 
-        sage: M = matrix([[2, -1, -1, 0]])
         sage: from sign_vectors import *
         sage: from sign_crn.utility import non_negative_circuits_from_matrix
+        sage: M = matrix([[2, -1, -1, 0]])
         sage: OrientedMatroid(M).circuits()
         {(0+-0), (--00), (000+), (++00), (0-+0), (+0+0), (-0-0), (000-)}
         sage: non_negative_circuits_from_matrix(M)
@@ -98,9 +98,9 @@ def non_negative_covectors_from_matrix(matrix: Matrix) -> set[SignVector]:
 
     EXAMPLES::
 
-        sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: from sign_vectors.oriented_matroids import OrientedMatroid
         sage: from sign_crn.utility import non_negative_covectors_from_matrix
+        sage: M = matrix([[1, 0, 2, 0], [0, 1, -1, 0], [0, 0, 0, 1]])
         sage: OrientedMatroid(M).covectors()
         {(0000),
          (++-0),
@@ -157,9 +157,9 @@ def non_negative_vectors_from_matrix(matrix: Matrix) -> set[SignVector]:
 
     EXAMPLES::
 
-        sage: M = matrix([[2, -1, -1, 0]])
         sage: from sign_vectors.oriented_matroids import OrientedMatroid
         sage: from sign_crn.utility import non_negative_vectors_from_matrix
+        sage: M = matrix([[2, -1, -1, 0]])
         sage: OrientedMatroid(M).vectors()
         {(0000),
          (++-0),
@@ -208,7 +208,7 @@ def non_negative_vectors_from_matrix(matrix: Matrix) -> set[SignVector]:
 
 def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bool = False) -> list:
     r"""
-    Return whether all products of components are positive (or negative) if first element is nonzero.
+    Return whether all component products with nonzero first component are positive (or negative).
 
     INPUT:
 
@@ -230,14 +230,14 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
         (a, b, c)
         sage: closure_minors_utility(zip([0, a], [0, a]), positive_only=True)
         [{a == 0}, {a > 0}]
-        sage: len(_) # for testing
+        sage: len(_)
         2
         sage: closure_minors_utility(zip([c, -1, c], [c, -b, -a * c])) # random
         [{-b > 0, c == 0},
          {-b < 0, c == 0},
          {-b > 0, c > 0, -a*c > 0},
          {-b < 0, c < 0, -a*c < 0}]
-        sage: len(_) # for testing
+        sage: len(_)
         4
         sage: closure_minors_utility(zip([c, -1, a], [c, -b, -a * c])) # random
         [{-b > 0, a == 0, c == 0},
@@ -248,8 +248,11 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
          {-b < 0, a != 0, c < 0, -a*c < 0},
          {-a*c > 0, c > 0, -b > 0},
          {-a*c < 0, c < 0, -b < 0}]]
-        sage: len(_) # for testing
+        sage: len(_)
         8
+
+    ::
+
         sage: closure_minors_utility(zip([-1, -1], [-1, -1]))
         True
         sage: closure_minors_utility(zip([-1, 1], [-1, 1]))
@@ -269,12 +272,8 @@ def closure_minors_utility(pairs, positive_only: bool = False, negative_only: bo
         ]
         for minor, _ in pairs:
             if not is_constant(minor) and not minor in non_zero_expressions:
-                yield from recursive(
-                    pairs, zero_expressions.union([minor]), non_zero_expressions
-                )
-                yield from recursive(
-                    pairs, zero_expressions, non_zero_expressions.union([minor])
-                )
+                yield from recursive(pairs, zero_expressions.union([minor]), non_zero_expressions)
+                yield from recursive(pairs, zero_expressions, non_zero_expressions.union([minor]))
 
         products = set(
             sign_or_symbolic(
@@ -361,15 +360,14 @@ def vector_from_sign_vector(data, sv: SignVector) -> vector:
 
     INPUT:
 
-    - ``data`` -- either a real matrix with ``n`` columns or a list of
-                elementary vectors of length ``n``
+    - ``data`` -- either a real matrix with ``n`` columns or a list of circuits of length ``n``
     - ``sv`` -- a sign vector of length ``n``
 
     OUTPUT:
-    Return a conformal sum of elementary vectors that lies in the given subspace.
+    Return a conformal sum of circuits that lies in the given subspace.
 
-    If ``data`` is a matrix, the elementary vectors in the kernel of this matrix are used for the result.
-    If ``data`` is a list of elementary vectors, those are used.
+    If ``data`` is a matrix, the circuits of this matrix are used for the result.
+    If ``data`` is a list of circuits, those are used.
 
     .. NOTE::
 
@@ -486,7 +484,6 @@ def sign_vector_to_intervals(sv: SignVector) -> Intervals:
 
     EXAMPLES::
 
-        sage: from certlin import *
         sage: from sign_vectors import *
         sage: from sign_crn.utility import sign_vector_to_intervals
         sage: sv = sign_vector("+0-")
